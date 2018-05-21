@@ -16,10 +16,11 @@ public class PokemonBattle
     /**
      * Class to create, initialize, and store pokemon moves with their
      * respective varibles. 
-     * De'Anthony TODO: Add the accuracy variable, which determines the
-     * hit chance for a specific move.
-     * De'Anthony TODO: ALSO - add a PP variable, determining how many times
+     * De'Anthony TODO: Add and implement the accuracy variable, which determines the
+     * hit chance for a specific move (see hit() method).
+     * De'Anthony TODO: ALSO - add and implement a PP variable, determining how many times
      * a move can be used during a battle.
+     * Andrew TODO: Add and implement a Physical vs. Special attack label for each move.
      */
     public static class Move
     {
@@ -60,11 +61,15 @@ public class PokemonBattle
     
     /**
      * Class to create, initialize, and store a Pokemon and their moves. 
-     * De'Anthony TODO: Add and defense attribute, which determines the final
-     * multiplier for how much damage a Pokemon takes from an attack. Give charmander
-     * higher defense than squirtle for testing purposes. TODO: Make 'type' an array of size 2,
-     * so that we can have Pokemon with two types (Pokemon with 1 type will have a 2nd type of "",
-     * alternatively, an ArrayList could be used so that size 1 and 2 would be possible
+     * De'Anthony TODO: Add (BUT DON'T IMPLEMENT) the defense attribute, attack attribute, and 
+     * their respective getters and setters. 
+     * De'Anthony TODO: Change health to a double and update all methods and code accordingly, 
+     * make a decimal formatter for getHealth that rounds to 2 decimals
+     * De'Anthony TODO: Make 'type' an array of size 2, so that we can have Pokemon with two types 
+     * (Pokemon with 1 type will have a 2nd type of "", alternatively, an ArrayList could be used 
+     * so that size 1 and 2 would both be possible.
+     * Andrew TODO: Implement the Attack and Defense variables, add and implement Special Attack 
+     * and Special Defense.
     */
     public static class Pokemon
     {
@@ -174,7 +179,7 @@ public class PokemonBattle
         }
         
         // If the type does not match any case, error displays and program ends.
-        System.out.print("ERROR, NO CASE MATCHED"); 
+        System.out.print("ERROR, NO CASE MATCHED. PLEASE CHECK TYPE NAMES"); 
         System.exit(0); 
         return result;        
     }
@@ -248,7 +253,7 @@ public class PokemonBattle
         }
         
         // If the type does not match any case, error displays and program ends.
-        System.out.print("ERROR, NO CASE MATCHED");
+        System.out.print("ERROR, NO CASE MATCHED. PLEASE CHECK TYPE NAMES");
         System.exit(0);
         return result;   
     }
@@ -289,7 +294,7 @@ public class PokemonBattle
      * with every attack. 
      * De'Anthony TODO: Add 'accuracy' to Move class, adjust moves and 
      * method accordingly (just for the sake of testing, give water gun 
-     * and flamethrower 80% hit accuracy, and quick attack 100%.
+     * and flamethrower 70% hit accuracy, and quick attack 100%.
      * @return whether the attack landed or not.
      */
     public static boolean hit() 
@@ -303,7 +308,7 @@ public class PokemonBattle
     /**
     * Checks to see which Pokemon will be attacking first in the battle. 
     * If neither move has a priority factor, then it is decided by
-    * comparing the two Pokemon's speed numbers. 
+    * comparing the two Pokemon's speed stats. 
     * @return Pokemon who is going first.
     */
     public static Pokemon whosFirst(Pokemon pa, Pokemon pb, Move ma, Move mb)
@@ -340,8 +345,8 @@ public class PokemonBattle
      * Carries out an attack during the round and determines the
      * appropriate damage values by comparing types. Outputs
      * the results.
-     * De'Anthony TODO: Implement the defense system here once the attribute
-     * is added to the Pokemon class
+     * Andrew TODO: Implement the attack / defense stats here once the attributes
+     * are added to the Pokemon class.
      * @param m Move being used.
      * @param defender Pokemon being attacked.
      * @param attacker Pokemon attacking. 
@@ -374,14 +379,6 @@ public class PokemonBattle
         if (pokeType.equals(zero)){
             damage = 0;
         }
-        
-        /**
-         * De'Anthony TODO: Reduce the damage based on the defender Pokemon's 
-         * defense, maybe something like 0.5% less damage for each defense point.
-         * So if a pokemon has 10 defense, we do damage = damage * .95. Might have
-         * to change health from an int to a double when implementing this, and 
-         * create a rounding format for 2 decimals.
-         */
         
         // Check if the attack has landed
         if (hit()){
@@ -451,8 +448,6 @@ public class PokemonBattle
     /**
      * Main method, creates two Pokemon and their respective Moves and
      * begins the battle
-     * TODO (either of us): Much later, make the second pokemon a computer player where 
-     * move choices are randomly selected so the user only controls one Pokemon.
      * @param args.
      * @throws InterruptedException Thread sleeps for user to process results
      */
@@ -577,7 +572,13 @@ public class PokemonBattle
     }
     
     // De'Anthony TODO: GIT GUD
+    // De'Anthony TODO: Any other small edits and bug fixes you see necessary. 
     
 }
 
+/**
+ * De'Anthony TODO: After completing all changes, create a new main method
+ * and import all necessary classes into it. Copy over the current main code
+ * but create 2 different pokemon and movesets in that main method instead.
+ */
 // 8=======D
