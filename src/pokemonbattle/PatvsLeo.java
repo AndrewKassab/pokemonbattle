@@ -1,10 +1,11 @@
+package pokemonbattle;
 
 import java.util.Scanner;
-import pokemonbattle.PokemonBattle;
 import static pokemonbattle.PokemonBattle.*;
 
 /**
  * Battle between Patrick and Leo
+ * Uses the PokemonBattle class and its methods
  * @author PreciseMotion
  * @version 1.0
  */
@@ -14,15 +15,15 @@ public class PatvsLeo {
         
         Scanner keyboard = new Scanner(System.in);
            
-        Move patOne = new Move("Apologize", "normal", 10, true);
-        Move patTwo = new Move("Being gay", "normal", 20, false);
-        Move patThree = new Move("Show dank memes", "normal", 25, false);
-        Move patFour = new Move("Kills self", "normal", 0, true);
+        Move patOne = new Move("Apologize", "normal", 10, true,true,true);
+        Move patTwo = new Move("Being gay", "normal", 20, false,true,true);
+        Move patThree = new Move("Show dank memes", "normal", 25, false,true,true);
+        Move patFour = new Move("Kills self", "normal", 0, true,true,true);
         
-        Move leoOne = new Move("Rope and stool", "normal", 10, true );
-        Move leoTwo = new Move("Being gay", "normal", 20, false);
-        Move leoThree = new Move("Self Loathing", "normal",25,false);
-        Move leoFour = new Move("Does Nothing","normal", 0, true);        
+        Move leoOne = new Move("Rope and stool", "normal", 10, true,true,true );
+        Move leoTwo = new Move("Being gay", "normal", 20, false,true,true);
+        Move leoThree = new Move("Self Loathing", "normal",25,false,true,true);
+        Move leoFour = new Move("Does Nothing","normal", 0, true,true,true);        
            
         int pokeOneNumber;
         int pokeTwoNumber;        
