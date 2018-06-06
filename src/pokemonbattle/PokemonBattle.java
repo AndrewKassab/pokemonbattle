@@ -20,7 +20,6 @@ public class PokemonBattle
      * hit chance for a specific move (see hit() method).
      * De'Anthony TODO: ALSO - add and implement a PP variable, determining how many times
      * a move can be used during a battle.
-     * Andrew TODO: Add and implement a Physical vs. Special attack label for each move.
      */
     public static class Move
     {
@@ -29,12 +28,16 @@ public class PokemonBattle
         private String type;
         private int damage;
         private boolean priority;
+        private boolean physical;
+        private boolean special;
           
-        public Move(String n, String a, int d, boolean p){
+        public Move(String n, String a, int d, boolean p, boolean ph, boolean sp){
             name = n;
             type = a;
             damage = d;
             priority = p;
+            physical = ph;
+            special = sp;
         }
         
         public String getType(){
@@ -456,19 +459,19 @@ public class PokemonBattle
         Scanner keyboard = new Scanner(System.in);
         
         //De'Anthony TODO make sure to update with accuracy and PP
-        Move moveOne = new Move("Flamethrower","fire",20,false);
+        Move moveOne = new Move("Flamethrower","fire",20,false,false,true);
         
         // Move to test priority system
-        Move moveTwo = new Move("Quick Attack","normal",15,true); 
-        Move moveThree = new Move("Water gun","water",20,false);
-        Move moveFour = new Move("Tackle","normal",20,false);
+        Move moveTwo = new Move("Quick Attack","normal",15,true,true,false); 
+        Move moveThree = new Move("Water gun","water",20,false,false,true);
+        Move moveFour = new Move("Tackle","normal",20,false,true,false);
         
         // Temporary filler Move
-        Move empty = new Move("TEMPORARY FILLER","normal",0,false); 
+        Move empty = new Move("TEMPORARY FILLER","normal",0,false,true,true); 
         
         //De'Anthony TODO: Make 4th move for testing purposes
         // Make sure it gives me a good laugh (then get rid of filler)
-        Move moveFive = new Move("","",0,false);
+        Move moveFive = new Move("","",0,false,true,true);
         
         // Variables used for move selection
         int pokeOneNumber;
