@@ -311,7 +311,11 @@ public class PokemonBattle
     /**
     * Checks to see which Pokemon will be attacking first in the battle. 
     * If neither move has a priority factor, then it is decided by
-    * comparing the two Pokemon's speed stats. 
+    * comparing the two Pokemon's speed stats.
+    * @param pa Pokemon A
+    * @param pb Pokemon B
+    * @param ma Move used by Pokemon A
+    * @param mb Move used by Pokemon B
     * @return Pokemon who is going first.
     */
     public static Pokemon whosFirst(Pokemon pa, Pokemon pb, Move ma, Move mb)
