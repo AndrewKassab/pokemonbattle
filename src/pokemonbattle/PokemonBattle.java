@@ -1,6 +1,7 @@
 package pokemonbattle;
 
 import java.util.Scanner;
+import java.util.ArrayList;
 
 /**
  * Pokemon battle. This class contains the necessary
@@ -23,7 +24,6 @@ public class PokemonBattle
      */
     public static class Move
     {
-        
         private String name;
         private String type;
         private int damage;
@@ -79,6 +79,7 @@ public class PokemonBattle
         
         private String name;
         private int health;
+        private int maxHealth;
         private String type;
         private int speed;
         private Move[] moves = new Move[4];
@@ -89,6 +90,7 @@ public class PokemonBattle
             type = a;
             speed = s;
             moves = m;
+            maxHealth = h;
         }
         
         public String getName(){
@@ -97,6 +99,10 @@ public class PokemonBattle
         
         public int getHealth(){
             return health;
+        }
+        
+        public int getMaxHealth() {
+        	return maxHealth;
         }
         
         public void setHealth(int h){
@@ -453,6 +459,21 @@ public class PokemonBattle
     }
     
     /**
+     * Displays a trainers current party Pokemon
+     * TODO: Add in code to display whether a Pokemon is fainted
+     * and unable to battle.
+     */
+    public static void displayPokemon(ArrayList<Pokemon> trainer) {
+    	System.out.printf("%-15s%7s%n","POKEMON","HEALTH");
+    	System.out.println("-----------------------");
+    	for (int i = 0; i < trainer.size(); i++) {
+    		System.out.printf("%-15s%-8s%n", trainer.get(i).getName(), 
+    				trainer.get(i).getHealth() + "/" + trainer.get(i).getMaxHealth());
+    	}
+    	System.out.println();
+    }
+    
+    /**
      * Main method, creates two Pokemon and their respective Moves and
      * begins the battle
      * @param args.
@@ -491,11 +512,27 @@ public class PokemonBattle
         
         Move[] pokeOneMoves = new Move[]{moveOne,moveTwo,moveFour,empty};
         Move[] pokeTwoMoves = new Move[]{moveThree,moveTwo,moveFour,empty};
+        Move[] pokeThreeMoves = new Move[]{empty,empty,empty,empty};
+        Move[] pokeFourMoves = new Move[]{empty,empty,empty,empty};
         
-        // Initiliaze and construct the two Pokemon to battle
+        // Initialize and construct the two Pokemon to battle
         // TODO: Account for double typed Pokemon
         Pokemon pokemonOne = new Pokemon("Charmander", 115, "fire", 6, pokeOneMoves);
         Pokemon pokemonTwo = new Pokemon("Squirtle", 100, "water", 5, pokeTwoMoves);
+        Pokemon pokemonThree = new Pokemon("Bulbasaur", 120,"grass",4, pokeThreeMoves);
+        Pokemon pokemonFour = new Pokemon("Pikachu", 90, "electric",7,pokeFourMoves);
+        
+        ArrayList<Pokemon> trainerOne = new ArrayList<Pokemon>();
+        ArrayList<Pokemon> trainerTwo = new ArrayList<Pokemon>();
+        
+        trainerOne.add(pokemonOne);
+        trainerOne.add(pokemonThree);
+        trainerTwo.add(pokemonOne);
+        trainerTwo.add(pokemonFour);
+        
+        displayPokemon(trainerOne);
+        
+        
         
         // Battle loop
         do{
