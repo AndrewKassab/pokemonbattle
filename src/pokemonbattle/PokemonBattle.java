@@ -450,6 +450,34 @@ public class PokemonBattle
         //De'Anthony TODO: Add code here
     }
     
+    public static Pokemon selectPokemon(ArrayList<Pokemon> trainer) {
+    	
+    	Scanner keyboard = new Scanner(System.in);
+    	boolean cont = false;     
+        String selection;
+        
+        displayPokemon(trainer);
+        System.out.print("Select a Pokemon (by name): ");
+        
+        do {       	
+        	
+            selection = keyboard.next();
+            
+        	for (int i = 0; i < trainer.size(); i++) {
+        		if (trainer.get(i).getName().equalsIgnoreCase(selection)){
+        			return trainer.get(i);
+        		}
+        	}
+        	
+        	System.out.println();
+        	displayPokemon(trainer);
+        	System.out.print("Invalid pokemon selected, please try again: ");
+        	
+        } while (!cont);
+        
+        return null;
+    }
+    
     /**
      * De'Anthony TODO: Implement this method into main
      * @return the truth.
@@ -522,17 +550,23 @@ public class PokemonBattle
         Pokemon pokemonThree = new Pokemon("Bulbasaur", 120,"grass",4, pokeThreeMoves);
         Pokemon pokemonFour = new Pokemon("Pikachu", 90, "electric",7,pokeFourMoves);
         
+        Pokemon activeOne;
+        Pokemon activeTwo;
+        
+        // Trainer's and their party Pokemon
         ArrayList<Pokemon> trainerOne = new ArrayList<Pokemon>();
         ArrayList<Pokemon> trainerTwo = new ArrayList<Pokemon>();
         
         trainerOne.add(pokemonOne);
         trainerOne.add(pokemonThree);
-        trainerTwo.add(pokemonOne);
+        trainerTwo.add(pokemonTwo);
         trainerTwo.add(pokemonFour);
         
-        displayPokemon(trainerOne);
+        // Boolean for try catch blocks / loops
+        boolean cont = false;
         
-        
+        activeOne = selectPokemon(trainerOne);
+        activeTwo = selectPokemon(trainerTwo);
         
         // Battle loop
         do{
@@ -540,7 +574,6 @@ public class PokemonBattle
             // De'Anthony TODO: Implement a while loop and don't allow a move with 0 PP to be selected
             // ALSO - Don't forget to display PP of each Move to the user.
             // Move selection for first pokemon
-            boolean cont;
             do{
                 cont = true;
                 System.out.println("Select a move for " + pokemonOne.getName() + ": (Select by index #)"); 
