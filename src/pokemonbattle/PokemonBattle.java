@@ -1,7 +1,6 @@
 package pokemonbattle;
 
 import java.util.Scanner;
-import java.util.ArrayList;
 
 /**
  * Pokemon battle. This class contains the necessary
@@ -11,10 +10,11 @@ import java.util.ArrayList;
  * @version 1.0 (De'Anthony TODO: Update tag to 1.1 when you finish updating the code)
  * @author Andrew Kassab, ___________
  */
+
 public class PokemonBattle 
 {
 
-    /**
+    /** 
      * Class to create, initialize, and store pokemon moves with their
      * respective varibles. 
      * De'Anthony TODO: Add and implement the accuracy variable, which determines the
@@ -83,6 +83,7 @@ public class PokemonBattle
         private String type;
         private int speed;
         private Move[] moves = new Move[4];
+        private Move activeMove;
         
         public Pokemon(String n, int h, String a, int s, Move[] m){
             name = n;
@@ -118,8 +119,231 @@ public class PokemonBattle
             return speed;
         }   
         
+        public Move[] getMoves() {
+        	return moves;
+        }
+        
+        public Move getActiveMove() {
+        	return activeMove;
+        }
+        
+        /**
+         * Prints the Pokemon's move list and their current 
+         * PP values. 
+         * TODO: Print out the accuracy for each move
+         */
+        public void printMoves() {
+        	System.out.printf("%-20s%-5s%n", "Attack", "PP");
+        	System.out.println("---------------------------");
+        	for (int i = 0; i < moves.length; i++) {
+        		System.out.printf("%-20s%-5s%n", moves[i].getName(), "00/00");
+        	}
+        }   
+        
+        /**
+         * Handles move selection for player 
+         * @param p Pokemon a move is being selected for
+         * @return the move selected
+         */
+        public void selectMove() {
+        	
+        	boolean cont = false;
+        	Scanner keyboard = new Scanner(System.in);
+        	printMoves();
+        	String selection;
+        	System.out.println();
+        	System.out.print("Select a move for " + name + " (by name): ");
+        	
+        	do {
+        		
+        		cont = false;
+        		selection = keyboard.nextLine();
+        		for (int i = 0; i < moves.length; i++) {
+        			if (selection.equalsIgnoreCase(moves[i].getName())) {
+        				System.out.println();
+        				activeMove = moves[i];
+        				cont = true;
+        			}
+        		}
+        		
+        		if (!cont) {
+        			System.out.print("Invalid move, please try again: ");
+        		}
+        		
+        	} while (!cont);
+        	
+        }
     }
     
+    /**
+     * Class to create and initialize the Trainer object. 
+     * A trainer has a party of Pokemon, and an identifier for which
+     * Pokemon is currently active and in battle. 
+     * TODO: 
+     * @author precisemotion
+     *
+     */
+    public static class Trainer{
+    	
+    	private Pokemon activePokemon;
+    	private Pokemon[] party;
+    	private String[] inventory;
+    	private int activeIndex;
+    	
+    	public Trainer(Pokemon[] team) {
+    		party = team;
+    	}
+    	
+    	public Pokemon getActivePokemon() {
+    		return activePokemon;
+    	}
+    	
+    	/**
+    	 * Makes sure the Pokemon in the party is up to date
+    	 * with the activePokemon variable 
+    	 */
+    	public void updateParty() {
+    		party[activeIndex] = activePokemon;
+    	}
+    	
+    	/**
+         * Displays a trainers current party Pokemon
+         * TODO: Add in code to display whether a Pokemon is fainted
+         * and unable to battle.
+         */
+        public void displayPokemon() {
+        	System.out.printf("%-15s%7s%n","POKEMON","HEALTH");
+        	System.out.println("-----------------------");
+        	for (int i = 0; i < party.length; i++) {
+        		System.out.printf("%-15s%-8s%n", party[i].getName(), 
+        				party[i].getHealth() + "/" + party[i].getMaxHealth());
+        	}
+        	System.out.println();
+        }
+    	
+    	/**
+         * Handles active Pokemon selection for a trainer. 
+         * @return the Pokemon selected
+         */
+        public void selectPokemon() {
+        	
+        	Scanner keyboard = new Scanner(System.in);
+        	boolean cont = false;     
+            String selection;
+            
+            displayPokemon();
+            System.out.print("Select a Pokemon (by name): ");
+            
+            do {       	
+            	//
+                selection = keyboard.next();
+                System.out.println();
+                
+            	for (int i = 0; i < party.length; i++) {
+            		if (party[i].getName().equalsIgnoreCase(selection)){
+            			activePokemon = party[i];
+            			cont = true;
+            			activeIndex = i;
+            		}
+            	}
+            	
+            	if (!cont) {
+            		System.out.println();
+            		displayPokemon();
+            		System.out.print("Invalid pokemon selected, please try again: ");
+            	}
+            	
+            } while (!cont);
+     
+        }
+        
+        /**
+         * Carries out an attack during the round and determines the
+         * appropriate damage values by comparing types. Outputs
+         * the results.
+         * Andrew TODO: Implement the attack / defense stats here once the attributes
+         * are added to the Pokemon class.
+         * @param t the trainer being attacked
+         */
+        public void Attack (Trainer t)
+        {    
+            String pokeType = t.getActivePokemon().getType();
+            Move move = activePokemon.getActiveMove();
+            String[] positive = getPosEffects(move);
+            String[] negative = getNegEffects(move);
+            String zero = getZeroEffects(move);
+            int damage = move.getDamage();
+            
+            // Multiply damage by 2 for every positive match
+            for (int i = 0; i < positive.length; i++){
+                if ( positive[i].equals(pokeType) )
+                {      
+                    damage = damage * 2;
+                }
+            }
+            
+            // Divide damage by 2 for every negative match made
+            for (int i = 0; i < negative.length; i++){
+                if ( negative[i].equals(pokeType) )
+                {
+                    damage = damage/2;
+                }
+            }   
+            
+            // If the move type does not work against the pokemon type at all
+            if (pokeType.equals(zero)){
+                damage = 0;
+            }
+            
+            // Check if the attack has landed
+            // TODO: If an attack lands, set PP value for that move down by 1.
+            if (hit()){
+                System.out.println(activePokemon.getName() + " used " + move.getName() + "!");
+                // Super Effective
+                if (damage > move.getDamage()){
+                    System.out.println("It's super effective!");
+                }
+                // Not very effective
+                if (damage < move.getDamage()){
+                    System.out.println("It's not very effective...");
+                }
+                // Not at all effective
+                if (damage == 0){
+                    System.out.println("But it didn't work!");
+                }
+                
+                t.getActivePokemon().setHealth(t.getActivePokemon().getHealth() - damage);
+                
+                // Prevent negative health values
+                if (t.getActivePokemon().getHealth() < 0) {
+                	t.getActivePokemon().setHealth(0);
+                }
+                
+                t.updateParty(); 
+                
+                System.out.println(t.getActivePokemon().getName() + " took " + damage + " damage!\n");
+                        
+                // If the pokemon has fainted
+                if (t.getActivePokemon().getHealth() <= 0)
+                {
+                    System.out.println(t.getActivePokemon().getName() + " has fainted!\n");
+                    /*
+                     *  TODO: Check if the trainer has any pokemon available to battle first
+                     *  and if so then call SelectPokemon and prompt the trainer
+                     */
+                }
+            }
+            else{
+                System.out.println(activePokemon.getName() + " used " + move.getName() + "!");
+                System.out.println("But it missed!\n");
+            }    
+            
+            party[activeIndex] = activePokemon;
+            t.updateParty();
+            
+        }
+    	
+    }
     /**
      * Takes in a move, and then determines what types this move
      * is super effective against.
@@ -322,107 +546,36 @@ public class PokemonBattle
     * @param pb Pokemon B
     * @param ma Move used by Pokemon A
     * @param mb Move used by Pokemon B
-    * @return Pokemon who is going first.
+    * @return value 1 or 2, 1 for Pokemon A, and 2 for Pokemon B
     */
-    public static Pokemon whosFirst(Pokemon pa, Pokemon pb, Move ma, Move mb)
+    public static int whosFirst(Pokemon pa, Pokemon pb, Move ma, Move mb)
     {
         if (ma.hasPriority()){
             if (mb.hasPriority()){
                 if (Math.random() >= 0.5){
-                    return pa;
+                    return 1;
                 }
-                else return pb;
+                else return 2;
             }
-            else return pa;
+            else return 1;
         }
         else if (mb.hasPriority()){
-            return pb;
+            return 2;
         }
         else if (pa.getSpeed() > pb.getSpeed()){
-            return pa;
+            return 1;
         }
         else if (pb.getSpeed() > pa.getSpeed()){
-            return pb;
+            return 2;
         }
         
         // Randomize in the event of a matching speed case.
         else {
             if (Math.random() >= 0.5){
-                    return pa;
+                    return 1;
                 }
-                else return pb;
+                else return 2;
         }     
-    }
-    
-    /**
-     * Carries out an attack during the round and determines the
-     * appropriate damage values by comparing types. Outputs
-     * the results.
-     * Andrew TODO: Implement the attack / defense stats here once the attributes
-     * are added to the Pokemon class.
-     * @param m Move being used.
-     * @param defender Pokemon being attacked.
-     * @param attacker Pokemon attacking. 
-     */
-    public static void Attack (Move m, Pokemon attacker, Pokemon defender)
-    {    
-        String pokeType = defender.getType();
-        String[] positive = getPosEffects(m);
-        String[] negative = getNegEffects(m);
-        String zero = getZeroEffects(m);
-        int damage = m.getDamage();
-        
-        // Multiply damage by 2 for every positive match
-        for (int i = 0; i < positive.length; i++){
-            if ( positive[i].equals(pokeType) )
-            {      
-                damage = damage * 2;
-            }
-        }
-        
-        // Divide damage by 2 for every negative match made
-        for (int i = 0; i < negative.length; i++){
-            if ( negative[i].equals(pokeType) )
-            {
-                damage = damage/2;
-            }
-        }   
-        
-        // If the move type does not work against the pokemon type at all
-        if (pokeType.equals(zero)){
-            damage = 0;
-        }
-        
-        // Check if the attack has landed
-        if (hit()){
-            System.out.println(attacker.getName() + " used " + m.getName() + "!");
-            // Super Effective
-            if (damage > m.getDamage()){
-                System.out.println("It's super effective!");
-            }
-            // Not very effective
-            if (damage < m.getDamage()){
-                System.out.println("It's not very effective...");
-            }
-            // Not at all effective
-            if (damage == 0){
-                System.out.println("But it didn't work!");
-            }
-            defender.setHealth(defender.getHealth() - damage);
-            System.out.println(defender.getName() + " took " + damage + " damage!\n");
-                    
-            if (defender.getHealth() <= 0)
-            {
-                System.out.println(defender.getName() + " has fainted!\n");
-                        
-                //De'Anthony TODO: Method is incomplete
-                battleEnded(defender, attacker); 
-            }
-        }
-        else{
-            System.out.println(attacker.getName() + " used " + m.getName() + "!");
-            System.out.println("But it missed!\n");
-        }    
     }
     
     /**
@@ -450,55 +603,12 @@ public class PokemonBattle
         //De'Anthony TODO: Add code here
     }
     
-    public static Pokemon selectPokemon(ArrayList<Pokemon> trainer) {
-    	
-    	Scanner keyboard = new Scanner(System.in);
-    	boolean cont = false;     
-        String selection;
-        
-        displayPokemon(trainer);
-        System.out.print("Select a Pokemon (by name): ");
-        
-        do {       	
-        	
-            selection = keyboard.next();
-            
-        	for (int i = 0; i < trainer.size(); i++) {
-        		if (trainer.get(i).getName().equalsIgnoreCase(selection)){
-        			return trainer.get(i);
-        		}
-        	}
-        	
-        	System.out.println();
-        	displayPokemon(trainer);
-        	System.out.print("Invalid pokemon selected, please try again: ");
-        	
-        } while (!cont);
-        
-        return null;
-    }
-    
     /**
      * De'Anthony TODO: Implement this method into main
      * @return the truth.
      */
     public boolean isDeAnthonyGay(){
         return true;
-    }
-    
-    /**
-     * Displays a trainers current party Pokemon
-     * TODO: Add in code to display whether a Pokemon is fainted
-     * and unable to battle.
-     */
-    public static void displayPokemon(ArrayList<Pokemon> trainer) {
-    	System.out.printf("%-15s%7s%n","POKEMON","HEALTH");
-    	System.out.println("-----------------------");
-    	for (int i = 0; i < trainer.size(); i++) {
-    		System.out.printf("%-15s%-8s%n", trainer.get(i).getName(), 
-    				trainer.get(i).getHealth() + "/" + trainer.get(i).getMaxHealth());
-    	}
-    	System.out.println();
     }
     
     /**
@@ -524,138 +634,63 @@ public class PokemonBattle
         
         //De'Anthony TODO: Make 4th move for testing purposes
         // Make sure it gives me a good laugh (then get rid of filler)
-        Move moveFive = new Move("","",0,false,true,true);
-        
-        // Variables used for move selection
-        int pokeOneNumber;
-        int pokeTwoNumber;        
-        Move pokeOneChoice = null;
-        Move pokeTwoChoice = null;
-         
-        // Variables used later for attack order
-        Move firstChoice;
-        Move secondChoice;
-        Pokemon first;
-        Pokemon second;
+        Move moveFive = new Move("","",0,false,true,true);    
         
         Move[] pokeOneMoves = new Move[]{moveOne,moveTwo,moveFour,empty};
         Move[] pokeTwoMoves = new Move[]{moveThree,moveTwo,moveFour,empty};
         Move[] pokeThreeMoves = new Move[]{empty,empty,empty,empty};
         Move[] pokeFourMoves = new Move[]{empty,empty,empty,empty};
         
-        // Initialize and construct the two Pokemon to battle
+        // Initialize and construct the Pokemon to battle
         // TODO: Account for double typed Pokemon
         Pokemon pokemonOne = new Pokemon("Charmander", 115, "fire", 6, pokeOneMoves);
         Pokemon pokemonTwo = new Pokemon("Squirtle", 100, "water", 5, pokeTwoMoves);
         Pokemon pokemonThree = new Pokemon("Bulbasaur", 120,"grass",4, pokeThreeMoves);
         Pokemon pokemonFour = new Pokemon("Pikachu", 90, "electric",7,pokeFourMoves);
         
-        Pokemon activeOne;
-        Pokemon activeTwo;
+        // Creating the parties for each trainer
+        Pokemon[] partyOne = new Pokemon[] {pokemonOne,pokemonThree};
+        Pokemon[] partyTwo = new Pokemon[] {pokemonTwo,pokemonFour};
         
         // Trainer's and their party Pokemon
-        ArrayList<Pokemon> trainerOne = new ArrayList<Pokemon>();
-        ArrayList<Pokemon> trainerTwo = new ArrayList<Pokemon>();
+        Trainer trainerOne = new Trainer(partyOne);
+        Trainer trainerTwo = new Trainer(partyTwo);
         
-        trainerOne.add(pokemonOne);
-        trainerOne.add(pokemonThree);
-        trainerTwo.add(pokemonTwo);
-        trainerTwo.add(pokemonFour);
-        
-        // Boolean for try catch blocks / loops
-        boolean cont = false;
-        
-        activeOne = selectPokemon(trainerOne);
-        activeTwo = selectPokemon(trainerTwo);
+        // Select the active Pokemon for each trainer
+        trainerOne.selectPokemon();
+        trainerTwo.selectPokemon();
         
         // Battle loop
         do{
             
-            // De'Anthony TODO: Implement a while loop and don't allow a move with 0 PP to be selected
-            // ALSO - Don't forget to display PP of each Move to the user.
-            // Move selection for first pokemon
-            do{
-                cont = true;
-                System.out.println("Select a move for " + pokemonOne.getName() + ": (Select by index #)"); 
-                for (int i = 0; i < 4; i++){
-                    System.out.println((i+1) + ": " + pokeOneMoves[i].getName()); 
-                }
-                System.out.print("Selection: ");
-                try{
-                    pokeOneNumber = keyboard.nextInt() - 1;
-                    pokeOneChoice = pokeOneMoves[pokeOneNumber];
-                    System.out.println();
-                }
-                catch (IndexOutOfBoundsException e){
-                    System.out.println("Invalid index number, please try again\n");
-                    cont = false;
-                }
-            } while (!cont); // Loop continues until a valid index is selected
-        
-            // Move selection for second pokemon
-            do{
-                cont = true;
-                System.out.println("Select a move for " + pokemonTwo.getName() + ": (Select by index #)");
-                for (int i = 0; i < 4; i++){
-                    System.out.println((i+1) + ": " + pokeTwoMoves[i].getName());
-                }
-                System.out.print("Selection: ");
-                try{
-                    pokeTwoNumber = keyboard.nextInt() - 1;
-                    pokeTwoChoice = pokeTwoMoves[pokeTwoNumber];
-                    System.out.println();
-                }
-                catch (IndexOutOfBoundsException e){
-                    System.out.println("Invalid index number, please try again\n");
-                    cont = false;
-                }
-            } while (!cont);
+            trainerOne.getActivePokemon().selectMove();
+            trainerTwo.getActivePokemon().selectMove();
  
             // Decide attacking order
-            first = whosFirst(pokemonOne,pokemonTwo,pokeOneChoice,pokeTwoChoice);
-            if (first.getName().equals(pokemonOne.getName())){
-                second = pokemonTwo;
-                firstChoice = pokeOneChoice;
-                secondChoice = pokeTwoChoice;
-            }
-            else{
-                second = pokemonOne;
-                firstChoice = pokeTwoChoice;
-                secondChoice = pokeOneChoice;
-            }
-            
+            int result = whosFirst(trainerOne.getActivePokemon(),trainerTwo.getActivePokemon(),
+            		trainerOne.getActivePokemon().getActiveMove(), 
+            		trainerTwo.getActivePokemon().getActiveMove());
+           
             // Attack turns begin
-            Attack(firstChoice, first, second);
-            Thread.sleep(3000);
-            Attack(secondChoice, second, first);
-            Thread.sleep(3000);
-            
-            // Make sure initial variables are updated
-            if (first.getName().equals(pokemonOne.getName())){
-                pokemonOne = first;
-                pokemonTwo = second;
+            if (result == 1) { // If trainer one attacks first
+            	trainerOne.Attack(trainerTwo);
+            	Thread.sleep(3000);
+            	trainerTwo.Attack(trainerOne);
             }
-            else{
-                pokemonTwo = first;
-                pokemonOne = second;
+            else { // If trainer two attacks first
+            	trainerTwo.Attack(trainerOne);
+            	Thread.sleep(3000);
+            	trainerOne.Attack(trainerTwo);
             }
             
             // Print out health status
-            displayHealth(pokemonOne,pokemonTwo);
+            displayHealth(trainerOne.getActivePokemon(),trainerTwo.getActivePokemon());
             
             // Loop continues as long as both Pokemon are still alive
-        } while (pokemonOne.getHealth() > 0 && pokemonTwo.getHealth() > 0);
+            // TODO: Make loop continue as long as the trainers have Pokemon available
+        } while (trainerOne.getActivePokemon().getHealth() > 0 && 
+        		trainerTwo.getActivePokemon().getHealth() > 0);
         
     }
     
-    // De'Anthony TODO: GIT GUD
-    // De'Anthony TODO: Any other small edits and bug fixes you see necessary. 
-    
 }
-
-/**
- * De'Anthony TODO: After completing all changes, create a new main method
- * and import all necessary classes into it. Copy over the current main code
- * but create 2 different pokemon and movesets in that main method instead.
- */
-// 8=======D
