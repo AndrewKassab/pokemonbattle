@@ -8,7 +8,7 @@ import java.util.Scanner;
  * There will be two Pokemon in the battle and the user will take control
  * of selecting what moves each Pokemon will use during a turn.
  * @version 1.0 (De'Anthony TODO: Update tag to 1.1 when you finish updating the code)
- * @author Andrew Kassab, ___________
+ * @author Andrew Kassab
  */
 
 public class PokemonBattle 
@@ -154,8 +154,7 @@ public class PokemonBattle
         	System.out.println();
         	System.out.print("Select a move for " + name + " (by name): ");
         	
-        	do {
-        		
+        	do {        		
         		cont = false;
         		selection = keyboard.nextLine();
         		for (int i = 0; i < moves.length; i++) {
@@ -168,10 +167,19 @@ public class PokemonBattle
         		
         		if (!cont) {
         			System.out.print("Invalid move, please try again: ");
-        		}
-        		
+        		}    		
         	} while (!cont);
-        	
+        }
+        
+        /**
+         * Checks if a Pokemon can battle (if it is above 0 health)
+         * @return true if Pokemon can be called to battle
+         */
+        public boolean canBattle() {
+        	if (health > 0) {
+        		return true;
+        	}
+        	else return false;
         }
     }
     
@@ -189,13 +197,29 @@ public class PokemonBattle
     	private Pokemon[] party;
     	private String[] inventory;
     	private int activeIndex;
+    	private boolean canAttack;
     	
     	public Trainer(Pokemon[] team) {
     		party = team;
+    		canAttack = true;
     	}
     	
     	public Pokemon getActivePokemon() {
     		return activePokemon;
+    	}
+    	
+    	public void setCanAttack(boolean b) {
+    		canAttack = b;
+    	}
+    	
+    	/**
+    	 * Checks if the trainer can continue their attack turn. If
+    	 * their Pokemon has just fainted, canAttack will be false and
+    	 * the battle moves onto the next turn.
+    	 * @return if the turn can continue
+    	 */
+    	public boolean canAttack() {
+    		return canAttack;
     	}
     	
     	/**
@@ -223,37 +247,39 @@ public class PokemonBattle
     	
     	/**
          * Handles active Pokemon selection for a trainer. 
-         * @return the Pokemon selected
          */
         public void selectPokemon() {
         	
         	Scanner keyboard = new Scanner(System.in);
-        	boolean cont = false;     
             String selection;
+            boolean cont = false;
             
             displayPokemon();
             System.out.print("Select a Pokemon (by name): ");
             
-            do {       	
-            	//
-                selection = keyboard.next();
-                System.out.println();
-                
-            	for (int i = 0; i < party.length; i++) {
-            		if (party[i].getName().equalsIgnoreCase(selection)){
-            			activePokemon = party[i];
-            			cont = true;
-            			activeIndex = i;
-            		}
-            	}
-            	
-            	if (!cont) {
-            		System.out.println();
-            		displayPokemon();
-            		System.out.print("Invalid pokemon selected, please try again: ");
-            	}
-            	
-            } while (!cont);
+            selection = keyboard.next();
+        	System.out.println();
+            
+        	for (int i = 0; i < party.length; i++) {
+        		if (party[i].getName().equalsIgnoreCase(selection)){
+        			if (party[i].canBattle()) { 
+        				activePokemon = party[i];
+        				activeIndex = i;
+        				cont = true;
+        			}
+        			else {
+        				System.out.println(party[i].getName() + " is unable to battle, please try again.");
+        				System.out.println();
+        				selectPokemon();
+        			}
+        		}
+        	}
+        	
+        	if (!cont) {
+        		System.out.println("Invalid pokemon selected, please try again.");
+        		System.out.println();
+        		selectPokemon();
+        	} 
      
         }
         
@@ -327,10 +353,14 @@ public class PokemonBattle
                 if (t.getActivePokemon().getHealth() <= 0)
                 {
                     System.out.println(t.getActivePokemon().getName() + " has fainted!\n");
-                    /*
-                     *  TODO: Check if the trainer has any pokemon available to battle first
-                     *  and if so then call SelectPokemon and prompt the trainer
-                     */
+                    if (t.canContinue()) {
+                    	System.out.println("Select another Pokemon from your party");
+                    	t.selectPokemon();
+                    	t.setCanAttack(false);
+                    }
+                    else {
+                    	// TODO: Call battle ended method
+                    }
                 }
             }
             else{
@@ -341,6 +371,19 @@ public class PokemonBattle
             party[activeIndex] = activePokemon;
             t.updateParty();
             
+        }
+        
+        /**
+         * Checks if the trainer has Pokemon in their party that can still battle
+         * @return true if the trainer can switch out another Pokemon
+         */
+        public boolean canContinue() {
+        	for (int i = 0; i < party.length; i++) {
+        		if (party[i].getHealth() > 0) {
+        			return true;
+        		}
+        	}
+        	return false;
         }
     	
     }
@@ -546,7 +589,7 @@ public class PokemonBattle
     * @param pb Pokemon B
     * @param ma Move used by Pokemon A
     * @param mb Move used by Pokemon B
-    * @return value 1 or 2, 1 for Pokemon A, and 2 for Pokemon B
+    * @return value 1 or 2, 1 for Pokemon A going first, and 2 for Pokemon B
     */
     public static int whosFirst(Pokemon pa, Pokemon pb, Move ma, Move mb)
     {
@@ -630,7 +673,7 @@ public class PokemonBattle
         Move moveFour = new Move("Tackle","normal",20,false,true,false);
         
         // Temporary filler Move
-        Move empty = new Move("TEMPORARY FILLER","normal",0,false,true,true); 
+        Move empty = new Move("TEMPORARY FILLER","normal",200,false,true,true); 
         
         //De'Anthony TODO: Make 4th move for testing purposes
         // Make sure it gives me a good laugh (then get rid of filler)
@@ -675,12 +718,18 @@ public class PokemonBattle
             if (result == 1) { // If trainer one attacks first
             	trainerOne.Attack(trainerTwo);
             	Thread.sleep(3000);
-            	trainerTwo.Attack(trainerOne);
+            	if (trainerTwo.canAttack()) {
+            		trainerTwo.Attack(trainerOne);
+            	}
+            	trainerTwo.setCanAttack(true);
             }
             else { // If trainer two attacks first
             	trainerTwo.Attack(trainerOne);
             	Thread.sleep(3000);
-            	trainerOne.Attack(trainerTwo);
+            	if (trainerOne.canAttack()) {
+            		trainerOne.Attack(trainerTwo);
+            	}
+            	trainerOne.setCanAttack(true);
             }
             
             // Print out health status
