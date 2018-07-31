@@ -5,21 +5,22 @@ import java.util.Scanner;
 /**
  * Pokemon battle. This class contains the necessary
  * object classes and the methods to simulate the battle.
- * There will be two Pokemon in the battle and the user will take control
- * of selecting what moves each Pokemon will use during a turn.
- * @version 1.0 (De'Anthony TODO: Update tag to 1.1 when you finish updating the code)
+ * There will be two trainers in the battle and the user will take control
+ * of both trainer's partys / pokemon. 
+ * @version 2.1 
  * @author Andrew Kassab
  */
 
+// TODO: Change constructor values to be more easily readable.
 public class PokemonBattle 
 {
 
     /** 
      * Class to create, initialize, and store pokemon moves with their
      * respective varibles. 
-     * De'Anthony TODO: Add and implement the accuracy variable, which determines the
+     * TODO: implement the accuracy variable, which determines the
      * hit chance for a specific move (see hit() method).
-     * De'Anthony TODO: ALSO - add and implement a PP variable, determining how many times
+     * TODO: implement the PP variable, determining how many times
      * a move can be used during a battle.
      */
     public static class Move
@@ -27,14 +28,20 @@ public class PokemonBattle
         private String name;
         private String type;
         private int damage;
+        private double accuracy;
+        private int powerPoints;
+        private int maxPowerPoints;
         private boolean priority;
         private boolean physical;
         private boolean special;
           
-        public Move(String n, String a, int d, boolean p, boolean ph, boolean sp){
+        public Move(String n, String a, int d, double h, int pp, boolean p, boolean ph, boolean sp){
             name = n;
             type = a;
             damage = d;
+            accuracy = h;
+            powerPoints = pp;
+            maxPowerPoints = pp;
             priority = p;
             physical = ph;
             special = sp;
@@ -52,6 +59,33 @@ public class PokemonBattle
             return damage;
         }
         
+        public double getAccuracy() {
+        	return accuracy;
+        }
+        public void setAccuracy(int a) {
+        	accuracy = a;
+        }
+        
+        public int getPP() {
+        	return powerPoints;
+        }
+        public int getMaxPP() {
+        	return maxPowerPoints;
+        }
+        public void setPP(int pp) {
+        	powerPoints = pp;
+        }
+        
+        /**
+         * Checks if a move can be used (if it has any power points left)
+         * @return true if a move can be used.
+         */
+        public boolean hasPP() {
+        	if (powerPoints >= 1) {
+        		return true;
+        	}
+        	else return false;
+        }
         /**
          * Determines whether a move has priority over speed attributes
          * @return true if a move has priority
@@ -59,16 +93,30 @@ public class PokemonBattle
         public boolean hasPriority(){
             return priority;
         }
+             
+        /**
+         * Determines if a move hits in its attack turn by
+         * generating a random number and checking the accurary value
+         * @return whether the attack landed or not.
+         */
+        public boolean hit() 
+        {
+        	double randy = Math.random();
+        	if (randy <= accuracy/100){
+               return true;
+        	} 
+        	else return false;
+        }
           
     }
     
     /**
      * Class to create, initialize, and store a Pokemon and their moves. 
-     * De'Anthony TODO: Add (BUT DON'T IMPLEMENT) the defense attribute, attack attribute, and 
+     * TODO: Add and implement the defense attribute, attack attribute, and 
      * their respective getters and setters. 
-     * De'Anthony TODO: Change health to a double and update all methods and code accordingly, 
+     * TODO: Change health to a double and update all methods and code accordingly, 
      * make a decimal formatter for getHealth that rounds to 2 decimals
-     * De'Anthony TODO: Make 'type' an array of size 2, so that we can have Pokemon with two types 
+     * TODO: Make 'type' an array of size 2, so that we can have Pokemon with two types 
      * (Pokemon with 1 type will have a 2nd type of "", alternatively, an ArrayList could be used 
      * so that size 1 and 2 would both be possible.
      * Andrew TODO: Implement the Attack and Defense variables, add and implement Special Attack 
@@ -136,7 +184,8 @@ public class PokemonBattle
         	System.out.printf("%-20s%-5s%n", "Attack", "PP");
         	System.out.println("---------------------------");
         	for (int i = 0; i < moves.length; i++) {
-        		System.out.printf("%-20s%-5s%n", moves[i].getName(), "00/00");
+        		System.out.printf("%-20s%-5s%n", moves[i].getName(), moves[i].getPP() + 
+        				"/" + moves[i].getMaxPP());
         	}
         }   
         
@@ -147,28 +196,30 @@ public class PokemonBattle
          */
         public void selectMove() {
         	
-        	boolean cont = false;
         	Scanner keyboard = new Scanner(System.in);
         	printMoves();
         	String selection;
         	System.out.println();
         	System.out.print("Select a move for " + name + " (by name): ");
-        	
-        	do {        		
-        		cont = false;
-        		selection = keyboard.nextLine();
-        		for (int i = 0; i < moves.length; i++) {
-        			if (selection.equalsIgnoreCase(moves[i].getName())) {
-        				System.out.println();
-        				activeMove = moves[i];
-        				cont = true;
-        			}
-        		}
-        		
-        		if (!cont) {
-        			System.out.print("Invalid move, please try again: ");
-        		}    		
-        	} while (!cont);
+        	     		
+    		selection = keyboard.nextLine();
+    		for (int i = 0; i < moves.length; i++) {
+    			if (selection.equalsIgnoreCase(moves[i].getName())) {
+    				if (moves[i].hasPP()) {
+    					System.out.println();
+    					activeMove = moves[i];
+    					return;
+    				}
+    				else {
+    					System.out.println("Out of power points, please try again.");
+    					System.out.println();
+    					selectMove();
+    				}
+    			}
+    		}
+    		
+    	    System.out.print("Invalid move, please try again.");    
+    	    selectMove();
         }
         
         /**
@@ -252,8 +303,6 @@ public class PokemonBattle
         	
         	Scanner keyboard = new Scanner(System.in);
             String selection;
-            boolean cont = false;
-            
             displayPokemon();
             System.out.print("Select a Pokemon (by name): ");
             
@@ -264,22 +313,20 @@ public class PokemonBattle
         		if (party[i].getName().equalsIgnoreCase(selection)){
         			if (party[i].canBattle()) { 
         				activePokemon = party[i];
-        				activeIndex = i;
-        				cont = true;
+        				activeIndex = i;       				
+        				return;
         			}
         			else {
         				System.out.println(party[i].getName() + " is unable to battle, please try again.");
-        				System.out.println();
+        				System.out.println();       				
         				selectPokemon();
         			}
         		}
         	}
         	
-        	if (!cont) {
-        		System.out.println("Invalid pokemon selected, please try again.");
-        		System.out.println();
-        		selectPokemon();
-        	} 
+        	System.out.println("Invalid pokemon selected, please try again.");
+        	System.out.println();
+        	selectPokemon(); 
      
         }
         
@@ -299,6 +346,7 @@ public class PokemonBattle
             String[] negative = getNegEffects(move);
             String zero = getZeroEffects(move);
             int damage = move.getDamage();
+            move.setPP(move.getPP() - 1);
             
             // Multiply damage by 2 for every positive match
             for (int i = 0; i < positive.length; i++){
@@ -323,7 +371,7 @@ public class PokemonBattle
             
             // Check if the attack has landed
             // TODO: If an attack lands, set PP value for that move down by 1.
-            if (hit()){
+            if (move.hit()){
                 System.out.println(activePokemon.getName() + " used " + move.getName() + "!");
                 // Super Effective
                 if (damage > move.getDamage()){
@@ -352,14 +400,15 @@ public class PokemonBattle
                 // If the pokemon has fainted
                 if (t.getActivePokemon().getHealth() <= 0)
                 {
-                    System.out.println(t.getActivePokemon().getName() + " has fainted!\n");
+                    System.out.println(t.getActivePokemon().getName() + " has fainted!");
                     if (t.canContinue()) {
-                    	System.out.println("Select another Pokemon from your party");
+                    	System.out.println("Select another Pokemon from your party.");
+                    	System.out.println();
                     	t.selectPokemon();
                     	t.setCanAttack(false);
                     }
                     else {
-                    	// TODO: Call battle ended method
+                    	battleEnded();
                     }
                 }
             }
@@ -566,22 +615,6 @@ public class PokemonBattle
     }
     
     /**
-     * For now, generates a number to simulate %10 chance of dodge
-     * with every attack. 
-     * De'Anthony TODO: Add 'accuracy' to Move class, adjust moves and 
-     * method accordingly (just for the sake of testing, give water gun 
-     * and flamethrower 70% hit accuracy, and quick attack 100%.
-     * @return whether the attack landed or not.
-     */
-    public static boolean hit() 
-    { 
-       if (Math.random() > 0.1){
-           return true;
-       } 
-       else return false;
-    }
-    
-    /**
     * Checks to see which Pokemon will be attacking first in the battle. 
     * If neither move has a priority factor, then it is decided by
     * comparing the two Pokemon's speed stats.
@@ -622,7 +655,7 @@ public class PokemonBattle
     }
     
     /**
-     * Displays current health status for both Pokemon
+     * Displays current health status for both Pokemon in battle
      * @param a First Pokemon.
      * @param b Second Pokemon.
      */
@@ -638,12 +671,13 @@ public class PokemonBattle
     }
     
     /**
-     * Handles an event where a pokemon has fainted and the battle has ended
-     * De'Anthony TODO: Complete this method
-     * Call when a Pokemon's health goes below or equal to zero.
+     * Handles an event where a trainer is unable to continue battling
+     * and the battle must end.
     */
-    public static void battleEnded(Pokemon loser, Pokemon winner){
-        //De'Anthony TODO: Add code here
+    public static void battleEnded(){
+    	// TODO: Add names for trainers??
+        System.out.println("The battle has ended!");
+        System.exit(0);
     }
     
     /**
@@ -664,20 +698,22 @@ public class PokemonBattle
         
         Scanner keyboard = new Scanner(System.in);
         
+        /* **CONSTRUCTOR VALUES**
+         * Move(name, type, base damage, accuracy, power points, priority, physical, special)
+         * Pokemon(name, health, type, speed, moves[])
+         * Trainer(party[])
+         */
+        
         //De'Anthony TODO make sure to update with accuracy and PP
-        Move moveOne = new Move("Flamethrower","fire",20,false,false,true);
+        Move moveOne = new Move("Flamethrower","fire",20,80,10,false,false,true);
         
         // Move to test priority system
-        Move moveTwo = new Move("Quick Attack","normal",15,true,true,false); 
-        Move moveThree = new Move("Water gun","water",20,false,false,true);
-        Move moveFour = new Move("Tackle","normal",20,false,true,false);
+        Move moveTwo = new Move("Quick Attack","normal",15, 100, 15,true,true,false); 
+        Move moveThree = new Move("Water gun","water",20,80,10,false,false,true);
+        Move moveFour = new Move("Tackle","normal",20,100,15,false,true,false);
         
         // Temporary filler Move
-        Move empty = new Move("TEMPORARY FILLER","normal",200,false,true,true); 
-        
-        //De'Anthony TODO: Make 4th move for testing purposes
-        // Make sure it gives me a good laugh (then get rid of filler)
-        Move moveFive = new Move("","",0,false,true,true);    
+        Move empty = new Move("TEMPORARY FILLER","normal",200,100,99,false,true,true);  
         
         Move[] pokeOneMoves = new Move[]{moveOne,moveTwo,moveFour,empty};
         Move[] pokeTwoMoves = new Move[]{moveThree,moveTwo,moveFour,empty};
