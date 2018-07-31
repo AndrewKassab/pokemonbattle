@@ -18,10 +18,7 @@ public class PokemonBattle
     /** 
      * Class to create, initialize, and store pokemon moves with their
      * respective varibles. 
-     * TODO: implement the accuracy variable, which determines the
-     * hit chance for a specific move (see hit() method).
-     * TODO: implement the PP variable, determining how many times
-     * a move can be used during a battle.
+     * TODO: Implement physical and special labels for moves
      */
     public static class Move
     {
