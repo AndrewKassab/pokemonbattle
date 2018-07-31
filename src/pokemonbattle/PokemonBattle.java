@@ -7,7 +7,7 @@ import java.util.Scanner;
  * object classes and the methods to simulate the battle.
  * There will be two trainers in the battle and the user will take control
  * of both trainer's partys / pokemon. 
- * @version 2.1 
+ * @version 2.2
  * @author Andrew Kassab
  */
 
@@ -681,16 +681,8 @@ public class PokemonBattle
     }
     
     /**
-     * De'Anthony TODO: Implement this method into main
-     * @return the truth.
-     */
-    public boolean isDeAnthonyGay(){
-        return true;
-    }
-    
-    /**
-     * Main method, creates two Pokemon and their respective Moves and
-     * begins the battle
+     * Main method, creates two trainers, their party pokemon, with their
+     * respective Moves and begins the battle
      * @param args.
      * @throws InterruptedException Thread sleeps for user to process results
      */
@@ -704,7 +696,6 @@ public class PokemonBattle
          * Trainer(party[])
          */
         
-        //De'Anthony TODO make sure to update with accuracy and PP
         Move moveOne = new Move("Flamethrower","fire",20,80,10,false,false,true);
         
         // Move to test priority system
