@@ -235,7 +235,6 @@ public class PokemonBattle
      * Class to create and initialize the Trainer object. 
      * A trainer has a party of Pokemon, and an identifier for which
      * Pokemon is currently active and in battle. 
-     * TODO: 
      * @author precisemotion
      *
      */
