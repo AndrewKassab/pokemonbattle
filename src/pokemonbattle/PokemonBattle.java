@@ -7,7 +7,7 @@ import java.util.Scanner;
  * object classes and the methods to simulate the battle.
  * There will be two trainers in the battle and the user will take control
  * of both trainer's partys / pokemon. 
- * @version 2.2
+ * @version 2.3
  * @author Andrew Kassab
  */
 
@@ -28,9 +28,9 @@ public class PokemonBattle
         private double accuracy;
         private int powerPoints;
         private int maxPowerPoints;
-        private boolean priority;
-        private boolean physical;
-        private boolean special;
+        private boolean priority; // label for speed priority
+        private boolean physical; // physical label
+        private boolean special; // special label
           
         public Move(String n, String a, int d, double h, int pp, boolean p, boolean ph, boolean sp){
             name = n;
@@ -74,6 +74,22 @@ public class PokemonBattle
         }
         
         /**
+         * Checks if a move is a physical move.
+         * @return true if the move is a physical move.
+         */
+        public boolean isPhysical() {
+        	return physical;
+        }
+        
+        /**
+         * Checks if a move is a special move.
+         * @return true if the move is a special move.
+         */
+        public boolean isSpecial() {
+        	return special;
+        }
+        
+        /**
          * Checks if a move can be used (if it has any power points left)
          * @return true if a move can be used.
          */
@@ -104,6 +120,7 @@ public class PokemonBattle
         	} 
         	else return false;
         }
+        
           
     }
     
@@ -155,7 +172,7 @@ public class PokemonBattle
             health = h;
         }
         
-        // TODO: Make into String[] for 2 typed Pokemon
+        // TODO: Make into String[] for 2 typed Pokemon.
         public String getType(){
             return type;
         }
@@ -175,20 +192,18 @@ public class PokemonBattle
         /**
          * Prints the Pokemon's move list and their current 
          * PP values. 
-         * TODO: Print out the accuracy for each move
          */
         public void printMoves() {
-        	System.out.printf("%-20s%-5s%n", "Attack", "PP");
-        	System.out.println("---------------------------");
+        	System.out.printf("%-20s%-8s%-8s%n", "Attack", "PP","Accuracy");
+        	System.out.println("-------------------------------------");
         	for (int i = 0; i < moves.length; i++) {
-        		System.out.printf("%-20s%-5s%n", moves[i].getName(), moves[i].getPP() + 
-        				"/" + moves[i].getMaxPP());
+        		System.out.printf("%-20s%-8s%-8s%n", moves[i].getName(), moves[i].getPP() + 
+        				"/" + moves[i].getMaxPP(), (int) moves[i].getAccuracy() + "%");
         	}
         }   
         
         /**
-         * Handles move selection for player 
-         * @param p Pokemon a move is being selected for
+         * Handles move selection for trainer.
          * @return the move selected
          */
         public void selectMove() {
@@ -236,7 +251,6 @@ public class PokemonBattle
      * A trainer has a party of Pokemon, and an identifier for which
      * Pokemon is currently active and in battle. 
      * @author precisemotion
-     *
      */
     public static class Trainer{
     	
@@ -278,9 +292,7 @@ public class PokemonBattle
     	}
     	
     	/**
-         * Displays a trainers current party Pokemon
-         * TODO: Add in code to display whether a Pokemon is fainted
-         * and unable to battle.
+         * Displays a trainers current party Pokemon and their status.
          */
         public void displayPokemon() {
         	System.out.printf("%-15s%7s%n","POKEMON","HEALTH");
@@ -293,7 +305,8 @@ public class PokemonBattle
         }
     	
     	/**
-         * Handles active Pokemon selection for a trainer. 
+         * Handles Pokemon selection for a trainer. 
+         * activePokemon variable is set to the choice made.
          */
         public void selectPokemon() {
         	
@@ -366,7 +379,6 @@ public class PokemonBattle
             }
             
             // Check if the attack has landed
-            // TODO: If an attack lands, set PP value for that move down by 1.
             if (move.hit()){
                 System.out.println(activePokemon.getName() + " used " + move.getName() + "!");
                 // Super Effective
