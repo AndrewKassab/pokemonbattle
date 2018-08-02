@@ -189,6 +189,12 @@ public class PokemonBattle
         }
         
         /**
+         * Sets activeMove to null before next turn.
+         */
+        public void resetMove() {
+        	activeMove = null;
+        }
+        /**
          * Prints the Pokemon's move list and their current 
          * PP values. 
          */
@@ -205,13 +211,13 @@ public class PokemonBattle
          * Handles move selection for trainer.
          * @return the move selected
          */
-        public void selectMove() {
+        public void selectMove(Trainer t) {
         	
         	Scanner keyboard = new Scanner(System.in);
         	printMoves();
         	String selection;
         	System.out.println();
-        	System.out.print("Select a move for " + name + " (by name): ");
+        	System.out.print("Select a move for " + name + " (by name), or enter swap to switch Pokemon: ");
         	     		
     		selection = keyboard.nextLine();
     		for (int i = 0; i < moves.length; i++) {
@@ -224,13 +230,19 @@ public class PokemonBattle
     				else {
     					System.out.println("Out of power points, please try again.");
     					System.out.println();
-    					selectMove();
+    					selectMove(t);
     				}
     			}
+    				// Chooses to switch out Pokemon
+    			if (selection.equalsIgnoreCase("swap")) {
+    				System.out.println();
+					t.selectPokemon();
+					return;
+				}
     		}
     		
-    	    System.out.print("Invalid move, please try again.");    
-    	    selectMove();
+    	    System.out.println("Invalid move, please try again.");    
+    	    selectMove(t);
         }
         
         /**
@@ -320,6 +332,10 @@ public class PokemonBattle
         	for (int i = 0; i < party.length; i++) {
         		if (party[i].getName().equalsIgnoreCase(selection)){
         			if (party[i].canBattle()) { 
+        				if (party[i] == activePokemon) {
+        					System.out.println("That Pokemon is already in battle!\n");
+        					selectPokemon();
+        				}
         				activePokemon = party[i];
         				activeIndex = i;       				
         				return;
@@ -348,8 +364,16 @@ public class PokemonBattle
          */
         public void Attack (Trainer t)
         {    
+        	
             String[] pokeType = t.getActivePokemon().getType();
             Move move = activePokemon.getActiveMove();
+            
+            // If the trainer chose to swap Pokemon rather than attack.
+            if (move == null) {
+            	System.out.println("The trainer has swapped to " + activePokemon.getName() + "!\n");
+            	return;
+            }
+            
             String[] positive = getPosEffects(move);
             String[] negative = getNegEffects(move);
             String zero = getZeroEffects(move);
@@ -374,7 +398,7 @@ public class PokemonBattle
                 }        
                 
                 // Same type attack bonus (STAB)
-                if (pokeType[j] == move.getType()) {
+                if (activePokemon.getType()[j] == move.getType()) {
                 	damage = damage * 1.5;
                 }
                 
@@ -431,6 +455,7 @@ public class PokemonBattle
                 System.out.println("But it missed!\n");
             }    
             
+            activePokemon.resetMove();
             party[activeIndex] = activePokemon;
             
             
@@ -647,8 +672,14 @@ public class PokemonBattle
     */
     public static int whosFirst(Pokemon pa, Pokemon pb, Move ma, Move mb)
     {
-        if (ma.hasPriority()){
-            if (mb.hasPriority()){
+    	if ( ma == null ) {
+    		return 1;
+    	}
+    	else if (mb == null ) {
+    		return 2;
+    	}
+    	else if ( ma.hasPriority()){
+            if ( mb.hasPriority()){
                 if (Math.random() >= 0.5){
                     return 1;
                 }
@@ -656,7 +687,7 @@ public class PokemonBattle
             }
             else return 1;
         }
-        else if (mb.hasPriority()){
+        else if ( mb.hasPriority()){
             return 2;
         }
         else if (pa.getSpeed() > pb.getSpeed()){
@@ -724,25 +755,40 @@ public class PokemonBattle
         Move moveThree = new Move("Water gun","water",20,80,10,false,false,true);
         Move moveFour = new Move("Tackle","normal",20,100,15,false,true,false);
         
+        // Charizard's Moves
+        Move fireBlast = new Move("Fire Blast","fire",60,70,10,false,false,true);
+        Move earthquake = new Move("Earthquake","ground",50,80,10,false,false,true);
+        Move solarBeam = new Move("Solar Beam", "grass", 60,70,10,false,false,true);
+        
+        // Blastoise's Moves
+        Move hydroPump = new Move("Hydro Pump","water",60,70,10,false,false,true);
+        Move iceBeam = new Move("Ice Beam","ice",50,80,10,false,false,true);
+        Move darkPulse = new Move("Dark Pulse", "dark", 50,80,10,false,false,true);
+        
+        // Lucario Moves
+        Move closeCombat = new Move("Close Combat","fighting",60,70,10,false,true,false);
+        Move bulletPunch = new Move("Bullet Punch","bug", 50,80,10,false,true,false);
+        Move meteorMash = new Move("Meteor Mash", "steel", 50,80,10,false,true,false);
+        
+        // Metagross Moves
+        Move thunderPunch = new Move("Thunder Punch","electric",50,80,10,false,true,false);
+        
         // Temporary filler Move
-        Move empty = new Move("TEMPORARY FILLER","ground",200,100,99,false,true,true);  
+        Move filler = new Move("TEMPORARY FILLER","ground",200,100,99,false,true,true);  
         
-        Move[] pokeOneMoves = new Move[]{moveOne,moveTwo,moveFour,empty};
-        Move[] pokeTwoMoves = new Move[]{moveThree,moveTwo,moveFour,empty};
-        Move[] pokeThreeMoves = new Move[]{empty,empty,empty,empty};
-        Move[] pokeFourMoves = new Move[]{empty,empty,empty,empty};
+        Move[] charMoves = new Move[]{fireBlast,earthquake,solarBeam,filler};
+        Move[] blasMoves = new Move[]{hydroPump,iceBeam,darkPulse,filler};
+        Move[] lucMoves = new Move[]{closeCombat,bulletPunch,meteorMash,filler};
+        Move[] metaMoves = new Move[]{meteorMash,bulletPunch,thunderPunch,filler};
         
-        // Initialize and construct the Pokemon to battle
-        // TODO: Account for double typed Pokemon
-        Pokemon pokemonOne = new Pokemon("Charmander", 115,new String[]{"fire"}, 6, pokeOneMoves);
-        Pokemon pokemonTwo = new Pokemon("Squirtle", 100, new String[]{"water"}, 5, pokeTwoMoves);
-        Pokemon pokemonThree = new Pokemon("Bulbasaur", 120,new String[] {"grass"},4, pokeThreeMoves);
-        Pokemon pokemonFour = new Pokemon("Pikachu", 90, new String[] {"electric"},7,pokeFourMoves);
-        Pokemon pokemonFive = new Pokemon("Charizard",250,new String[]{"fire","fly"},20,pokeFourMoves);
+        Pokemon charizard = new Pokemon("Charizard",250,new String[]{"fire","flying"},20,charMoves);
+        Pokemon blastoise = new Pokemon("Blastoise",300,new String[] {"water",""},15,blasMoves);
+        Pokemon lucario = new Pokemon("Lucario",250,new String[] {"fighting","steel"},25,lucMoves);
+        Pokemon metagross = new Pokemon("Metagross",320,new String[] {"psychic","steel"},12, metaMoves);
         
         // Creating the parties for each trainer
-        Pokemon[] partyOne = new Pokemon[] {pokemonOne,pokemonThree};
-        Pokemon[] partyTwo = new Pokemon[] {pokemonTwo,pokemonFour};
+        Pokemon[] partyOne = new Pokemon[] {charizard,lucario};
+        Pokemon[] partyTwo = new Pokemon[] {blastoise,metagross};
         
         // Trainer's and their party Pokemon
         Trainer trainerOne = new Trainer(partyOne);
@@ -755,8 +801,8 @@ public class PokemonBattle
         // Battle loop
         do{
             
-            trainerOne.getActivePokemon().selectMove();
-            trainerTwo.getActivePokemon().selectMove();
+            trainerOne.getActivePokemon().selectMove(trainerOne);
+            trainerTwo.getActivePokemon().selectMove(trainerTwo);
  
             // Decide attacking order
             int result = whosFirst(trainerOne.getActivePokemon(),trainerTwo.getActivePokemon(),
