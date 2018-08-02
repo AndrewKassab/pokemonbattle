@@ -7,7 +7,7 @@ import java.util.Scanner;
  * object classes and the methods to simulate the battle.
  * There will be two trainers in the battle and the user will take control
  * of both trainer's partys / pokemon. 
- * @version 2.3
+ * @version 2.4
  * @author Andrew Kassab
  */
 
@@ -140,14 +140,14 @@ public class PokemonBattle
     {
         
         private String name;
-        private int health;
-        private int maxHealth;
-        private String type;
+        private double health;
+        private double maxHealth;
+        private String[] type;
         private int speed;
         private Move[] moves = new Move[4];
         private Move activeMove;
         
-        public Pokemon(String n, int h, String a, int s, Move[] m){
+        public Pokemon(String n, int h, String[] a, int s, Move[] m){
             name = n;
             health = h;
             type = a;
@@ -160,20 +160,19 @@ public class PokemonBattle
             return name;
         }
         
-        public int getHealth(){
+        public double getHealth(){
             return health;
         }
         
-        public int getMaxHealth() {
+        public double getMaxHealth() {
         	return maxHealth;
         }
         
-        public void setHealth(int h){
+        public void setHealth(double h){
             health = h;
         }
         
-        // TODO: Make into String[] for 2 typed Pokemon.
-        public String getType(){
+        public String[] getType(){
             return type;
         }
         
@@ -349,33 +348,40 @@ public class PokemonBattle
          */
         public void Attack (Trainer t)
         {    
-            String pokeType = t.getActivePokemon().getType();
+            String[] pokeType = t.getActivePokemon().getType();
             Move move = activePokemon.getActiveMove();
             String[] positive = getPosEffects(move);
             String[] negative = getNegEffects(move);
             String zero = getZeroEffects(move);
-            int damage = move.getDamage();
+            double damage = move.getDamage();
             move.setPP(move.getPP() - 1);
             
-            // Multiply damage by 2 for every positive match
-            for (int i = 0; i < positive.length; i++){
-                if ( positive[i].equals(pokeType) )
-                {      
-                    damage = damage * 2;
+            for (int j = 0; j < pokeType.length; j++) {
+            	 // Multiply damage by 2 for every positive match
+                for (int i = 0; i < positive.length; i++){
+                    if ( positive[i].equals(pokeType[j]) )
+                    {      
+                        damage = damage * 2;
+                    }
                 }
-            }
-            
-            // Divide damage by 2 for every negative match made
-            for (int i = 0; i < negative.length; i++){
-                if ( negative[i].equals(pokeType) )
-                {
-                    damage = damage/2;
+                
+                // Divide damage by 2 for every negative match made
+                for (int i = 0; i < negative.length; i++){
+                    if ( negative[i].equals(pokeType[j]) )
+                    {
+                        damage = damage/2;
+                    }
+                }        
+                
+                // Same type attack bonus (STAB)
+                if (pokeType[j] == move.getType()) {
+                	damage = damage * 1.5;
                 }
-            }   
-            
-            // If the move type does not work against the pokemon type at all
-            if (pokeType.equals(zero)){
-                damage = 0;
+                
+                // If the move type does not work against the pokemon type at all
+                if (pokeType[j].equals(zero)){
+                    damage = 0;
+                }
             }
             
             // Check if the attack has landed
@@ -426,7 +432,7 @@ public class PokemonBattle
             }    
             
             party[activeIndex] = activePokemon;
-            t.updateParty();
+            
             
         }
         
@@ -605,18 +611,25 @@ public class PokemonBattle
         switch (m.getType()){
             case "normal": 
                 result = "ghost";
+                return result;
             case "electric": 
                 result = "ground";
+                return result;
             case "fighting": 
                 result = "ghost";
+                return result;
             case "poison": 
                 result = "steel";
+                return result;
             case "ground": 
                 result = "fly";
+                return result;
             case "psychic": 
                 result = "dark";
+                return result;
             case "ghost": 
-                result = "normal";        
+                result = "normal";      
+                return result;
         }
   
         return result;   
@@ -712,7 +725,7 @@ public class PokemonBattle
         Move moveFour = new Move("Tackle","normal",20,100,15,false,true,false);
         
         // Temporary filler Move
-        Move empty = new Move("TEMPORARY FILLER","normal",200,100,99,false,true,true);  
+        Move empty = new Move("TEMPORARY FILLER","ground",200,100,99,false,true,true);  
         
         Move[] pokeOneMoves = new Move[]{moveOne,moveTwo,moveFour,empty};
         Move[] pokeTwoMoves = new Move[]{moveThree,moveTwo,moveFour,empty};
@@ -721,10 +734,11 @@ public class PokemonBattle
         
         // Initialize and construct the Pokemon to battle
         // TODO: Account for double typed Pokemon
-        Pokemon pokemonOne = new Pokemon("Charmander", 115, "fire", 6, pokeOneMoves);
-        Pokemon pokemonTwo = new Pokemon("Squirtle", 100, "water", 5, pokeTwoMoves);
-        Pokemon pokemonThree = new Pokemon("Bulbasaur", 120,"grass",4, pokeThreeMoves);
-        Pokemon pokemonFour = new Pokemon("Pikachu", 90, "electric",7,pokeFourMoves);
+        Pokemon pokemonOne = new Pokemon("Charmander", 115,new String[]{"fire"}, 6, pokeOneMoves);
+        Pokemon pokemonTwo = new Pokemon("Squirtle", 100, new String[]{"water"}, 5, pokeTwoMoves);
+        Pokemon pokemonThree = new Pokemon("Bulbasaur", 120,new String[] {"grass"},4, pokeThreeMoves);
+        Pokemon pokemonFour = new Pokemon("Pikachu", 90, new String[] {"electric"},7,pokeFourMoves);
+        Pokemon pokemonFive = new Pokemon("Charizard",250,new String[]{"fire","fly"},20,pokeFourMoves);
         
         // Creating the parties for each trainer
         Pokemon[] partyOne = new Pokemon[] {pokemonOne,pokemonThree};
