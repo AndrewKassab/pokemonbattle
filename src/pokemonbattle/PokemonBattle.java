@@ -7,7 +7,7 @@ import java.util.Scanner;
  * object classes and the methods to simulate the battle.
  * There will be two trainers in the battle and the user will take control
  * of both trainer's partys / pokemon. 
- * @version 2.4
+ * @version 2.5
  * @author Andrew Kassab
  */
 
@@ -336,6 +336,9 @@ public class PokemonBattle
         					System.out.println("That Pokemon is already in battle!\n");
         					selectPokemon();
         				}
+        				if (activePokemon == null) {
+        					System.out.println("Let's go, " + party[i].getName() + "!\n");
+        				}
         				activePokemon = party[i];
         				activeIndex = i;       				
         				return;
@@ -412,18 +415,23 @@ public class PokemonBattle
             if (move.hit()){
                 System.out.println(activePokemon.getName() + " used " + move.getName() + "!");
                 // Super Effective
-                if (damage > move.getDamage()){
+                if (damage >= 2 * move.getDamage()){
                     System.out.println("It's super effective!");
-                }
-                // Not very effective
-                if (damage < move.getDamage()){
-                    System.out.println("It's not very effective...");
+                    System.out.println(t.getActivePokemon().getName() + " took " + damage + " damage!\n");
                 }
                 // Not at all effective
-                if (damage == 0){
+                else if (damage == 0){
                     System.out.println("But it didn't work!");
                 }
-                
+                // Not very effective
+                else if (damage < move.getDamage()){
+                    System.out.println("It's not very effective...");
+                    System.out.println(t.getActivePokemon().getName() + " took " + damage + " damage!\n");
+                }
+                else {
+                	System.out.println(t.getActivePokemon().getName() + " took " + damage + " damage!\n");
+                }
+                  
                 t.getActivePokemon().setHealth(t.getActivePokemon().getHealth() - damage);
                 
                 // Prevent negative health values
@@ -432,8 +440,6 @@ public class PokemonBattle
                 }
                 
                 t.updateParty(); 
-                
-                System.out.println(t.getActivePokemon().getName() + " took " + damage + " damage!\n");
                         
                 // If the pokemon has fainted
                 if (t.getActivePokemon().getHealth() <= 0)
@@ -630,7 +636,7 @@ public class PokemonBattle
      */
     public static String getZeroEffects(Move m)
     {
-        String result = "";
+        String result = "empty";
         
         // Check type of move
         switch (m.getType()){
@@ -807,7 +813,7 @@ public class PokemonBattle
             // Decide attacking order
             int result = whosFirst(trainerOne.getActivePokemon(),trainerTwo.getActivePokemon(),
             		trainerOne.getActivePokemon().getActiveMove(), 
-            		trainerTwo.getActivePokemon().getActiveMove());
+            		trainerTwo.getActivePokemon().getActiveMove());  
            
             // Attack turns begin
             if (result == 1) { // If trainer one attacks first
