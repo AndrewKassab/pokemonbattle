@@ -7,7 +7,9 @@ import java.util.Scanner;
  * object classes and the methods to simulate the battle.
  * There will be two trainers in the battle and the user will take control
  * of both trainer's partys / pokemon. 
- * @version 2.52
+ * TODO: Fix identifiers so that move's variables are not shared 
+ * across different Pokemon
+ * @version 3.0
  * @author Andrew Kassab
  */
 
@@ -19,6 +21,9 @@ public class PokemonBattle
      * Class to create, initialize, and store pokemon moves with their
      * respective varibles. 
      * TODO: Implement physical and special labels for moves
+     * TODO: Make priority an integer and adjust accordingly.
+     * TODO: Add in move abilities, for ex: Solar Beam takes an extra turn to charge
+     * and Close Combat reduces the user's stats.
      */
     public static class Move
     {
@@ -143,14 +148,18 @@ public class PokemonBattle
         private double health;
         private double maxHealth;
         private String[] type;
+        private int attack;
+        private int defense;
         private int speed;
         private Move[] moves = new Move[4];
         private Move activeMove;
         
-        public Pokemon(String n, int h, String[] a, int s, Move[] m){
+        public Pokemon(String n, int h, String[] a, int att, int def, int s, Move[] m){
             name = n;
             health = h;
             type = a;
+            attack = att;
+            defense = def;
             speed = s;
             moves = m;
             maxHealth = h;
@@ -186,6 +195,20 @@ public class PokemonBattle
         
         public Move getActiveMove() {
         	return activeMove;
+        }
+        
+        public int getAttack() {
+        	return attack;
+        }
+        public void setAttack(int a) {
+        	attack = a;
+        }
+        
+        public int getDefense() {
+        	return defense;
+        }
+        public void setDefense(int d) {
+        	defense = d;
         }
         
         /**
@@ -363,8 +386,7 @@ public class PokemonBattle
          * Carries out an attack during the round and determines the
          * appropriate damage values by comparing types. Outputs
          * the results.
-         * Andrew TODO: Implement the attack / defense stats here once the attributes
-         * are added to the Pokemon class.
+         * TODO: Implement critical hits, and special vs physical separation. 
          * @param t the trainer being attacked
          */
         public void Attack (Trainer t)
@@ -372,6 +394,8 @@ public class PokemonBattle
         	
             String[] pokeType = t.getActivePokemon().getType();
             Move move = activePokemon.getActiveMove();
+            int attack = activePokemon.getAttack();
+            int defense = t.getActivePokemon().getDefense();
             
             // If the trainer chose to swap Pokemon rather than attack.
             if (move == null) {
@@ -379,10 +403,14 @@ public class PokemonBattle
             	return;
             }
             
+            int base = move.getDamage();
             String[] positive = getPosEffects(move);
             String[] negative = getNegEffects(move);
             String zero = getZeroEffects(move);
-            double damage = move.getDamage();
+            
+            // Calculate damage (before type effectiveness)
+            double damage = ((22 * base * (attack/defense))/50 + 2);
+            
             move.setPP(move.getPP() - 1);
             
             for (int j = 0; j < pokeType.length; j++) {
@@ -417,7 +445,7 @@ public class PokemonBattle
             if (move.hit()){
                 System.out.println(activePokemon.getName() + " used " + move.getName() + "!");
                 // Super Effective
-                if (damage >= 2 * move.getDamage()){
+                if (damage >= 2 * ((22 * base * (attack/defense))/50 + 2)){
                     System.out.println("It's super effective!");
                     System.out.println(t.getActivePokemon().getName() + " took " + damage + " damage!\n");
                 }
@@ -426,7 +454,7 @@ public class PokemonBattle
                     System.out.println("But it didn't work!");
                 }
                 // Not very effective
-                else if (damage < move.getDamage()){
+                else if (damage < ((22 * base * (attack/defense))/50 + 2)){
                     System.out.println("It's not very effective...");
                     System.out.println(t.getActivePokemon().getName() + " took " + damage + " damage!\n");
                 }
@@ -756,30 +784,24 @@ public class PokemonBattle
          * Trainer(party[])
          */
         
-        Move moveOne = new Move("Flamethrower","fire",20,80,10,false,false,true);
-        
-        // Move to test priority system
-        Move moveTwo = new Move("Quick Attack","normal",15, 100, 15,true,true,false); 
-        Move moveThree = new Move("Water gun","water",20,80,10,false,false,true);
-        Move moveFour = new Move("Tackle","normal",20,100,15,false,true,false);
-        
         // Charizard's Moves
-        Move fireBlast = new Move("Fire Blast","fire",60,70,10,false,false,true);
-        Move earthquake = new Move("Earthquake","ground",50,80,10,false,false,true);
-        Move solarBeam = new Move("Solar Beam", "grass", 60,70,10,false,false,true);
+        Move fireBlast = new Move("Fire Blast","fire",110,85,5,false,false,true);
+        Move earthquake = new Move("Earthquake","ground",100,100,10,false,false,true);
+        Move solarBeam = new Move("Solar Beam", "grass", 120,100,10,false,false,true);
         
         // Blastoise's Moves
-        Move hydroPump = new Move("Hydro Pump","water",60,70,10,false,false,true);
-        Move iceBeam = new Move("Ice Beam","ice",50,80,10,false,false,true);
-        Move darkPulse = new Move("Dark Pulse", "dark", 50,80,10,false,false,true);
+        Move hydroPump = new Move("Hydro Pump","water",110,80,5,false,false,true);
+        Move iceBeam = new Move("Ice Beam","ice",90,100,10,false,false,true);
+        Move darkPulse = new Move("Dark Pulse", "dark", 80,100,15,false,false,true);
         
         // Lucario Moves
-        Move closeCombat = new Move("Close Combat","fighting",60,70,10,false,true,false);
-        Move bulletPunch = new Move("Bullet Punch","bug", 50,80,10,false,true,false);
-        Move meteorMash = new Move("Meteor Mash", "steel", 50,80,10,false,true,false);
+        Move closeCombat = new Move("Close Combat","fighting",120,100,5,false,true,false);
+        Move bulletPunch = new Move("Bullet Punch","bug", 40,100,30,true,true,false); // Test Priority
+        Move meteorMash = new Move("Meteor Mash", "steel", 90,90,10,false,true,false);
         
         // Metagross Moves
-        Move thunderPunch = new Move("Thunder Punch","electric",50,80,10,false,true,false);
+        Move thunderPunch = new Move("Thunder Punch","electric",75,100,15,false,true,false);
+        Move zenHeadbutt = new Move("Zen Headbutt","psychic",80,90,15,false,true,false);
         
         // Temporary filler Move
         Move filler = new Move("TEMPORARY FILLER","ultimate",500,100,99,true,true,true);  
@@ -787,12 +809,13 @@ public class PokemonBattle
         Move[] charMoves = new Move[]{fireBlast,earthquake,solarBeam,filler};
         Move[] blasMoves = new Move[]{hydroPump,iceBeam,darkPulse,filler};
         Move[] lucMoves = new Move[]{closeCombat,bulletPunch,meteorMash,filler};
-        Move[] metaMoves = new Move[]{meteorMash,bulletPunch,thunderPunch,filler};
+        Move[] metaMoves = new Move[]{meteorMash,zenHeadbutt,thunderPunch,filler};
         
-        Pokemon charizard = new Pokemon("Charizard",250,new String[]{"fire","flying"},20,charMoves);
-        Pokemon blastoise = new Pokemon("Blastoise",300,new String[] {"water",""},15,blasMoves);
-        Pokemon lucario = new Pokemon("Lucario",250,new String[] {"fighting","steel"},25,lucMoves);
-        Pokemon metagross = new Pokemon("Metagross",320,new String[] {"psychic","steel"},12, metaMoves);
+        Pokemon charizard = new Pokemon("Charizard",360,new String[]{"fire","flying"},348,295,328,charMoves);
+        Pokemon blastoise = new Pokemon("Blastoise",362,new String[] {"water",""},295,339,280,blasMoves);
+        Pokemon lucario = new Pokemon("Lucario",344,new String[] {"fighting","steel"},361,262,306,lucMoves);
+        Pokemon metagross = new Pokemon("Metagross",364,new String[] {"psychic","steel"},405,394,262, metaMoves);
+        
         
         // Creating the parties for each trainer
         Pokemon[] partyOne = new Pokemon[] {charizard,lucario};
