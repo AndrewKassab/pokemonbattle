@@ -7,7 +7,7 @@ import java.util.Scanner;
  * object classes and the methods to simulate the battle.
  * There will be two trainers in the battle and the user will take control
  * of both trainer's partys / pokemon. 
- * @version 2.5
+ * @version 2.52
  * @author Andrew Kassab
  */
 
@@ -194,16 +194,18 @@ public class PokemonBattle
         public void resetMove() {
         	activeMove = null;
         }
+        
         /**
          * Prints the Pokemon's move list and their current 
          * PP values. 
          */
         public void printMoves() {
-        	System.out.printf("%-20s%-8s%-8s%n", "Attack", "PP","Accuracy");
-        	System.out.println("-------------------------------------");
+        	System.out.printf("%-20s%-10s%-8s%-11s%-8s%n","Attack","Type","Power","Accuracy","PP");
+        	System.out.println("-------------------------------------------------------");
         	for (int i = 0; i < moves.length; i++) {
-        		System.out.printf("%-20s%-8s%-8s%n", moves[i].getName(), moves[i].getPP() + 
-        				"/" + moves[i].getMaxPP(), (int) moves[i].getAccuracy() + "%");
+        		System.out.printf("%-20s%-10s%-8s%-11s%-8s%n", moves[i].getName(), moves[i].getType(), 
+        				moves[i].getDamage(), (int) moves[i].getAccuracy() + "%", moves[i].getPP() + "/" 
+        						+ moves[i].getMaxPP());
         	}
         }   
         
@@ -780,7 +782,7 @@ public class PokemonBattle
         Move thunderPunch = new Move("Thunder Punch","electric",50,80,10,false,true,false);
         
         // Temporary filler Move
-        Move filler = new Move("TEMPORARY FILLER","ground",200,100,99,false,true,true);  
+        Move filler = new Move("TEMPORARY FILLER","ultimate",500,100,99,true,true,true);  
         
         Move[] charMoves = new Move[]{fireBlast,earthquake,solarBeam,filler};
         Move[] blasMoves = new Move[]{hydroPump,iceBeam,darkPulse,filler};
