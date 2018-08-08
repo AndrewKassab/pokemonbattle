@@ -9,7 +9,7 @@ import java.util.Scanner;
  * of both trainer's partys / pokemon. 
  * TODO: Fix identifiers so that move's variables are not shared 
  * across different Pokemon
- * @version 3.0
+ * @version 3.1
  * @author Andrew Kassab
  */
 
@@ -145,21 +145,25 @@ public class PokemonBattle
     {
         
         private String name;
-        private double health;
-        private double maxHealth;
+        private int health;
+        private int maxHealth;
         private String[] type;
         private int attack;
+        private int spAttack;
         private int defense;
+        private int spDefense;
         private int speed;
         private Move[] moves = new Move[4];
         private Move activeMove;
         
-        public Pokemon(String n, int h, String[] a, int att, int def, int s, Move[] m){
+        public Pokemon(String n, int h, String[] a, int att, int spAtt, int def, int spDef, int s, Move[] m){
             name = n;
             health = h;
             type = a;
             attack = att;
+            spAttack = spAtt;
             defense = def;
+            spDefense = spDef;
             speed = s;
             moves = m;
             maxHealth = h;
@@ -169,15 +173,15 @@ public class PokemonBattle
             return name;
         }
         
-        public double getHealth(){
+        public int getHealth(){
             return health;
         }
         
-        public double getMaxHealth() {
+        public int getMaxHealth() {
         	return maxHealth;
         }
         
-        public void setHealth(double h){
+        public void setHealth(int h){
             health = h;
         }
         
@@ -204,11 +208,25 @@ public class PokemonBattle
         	attack = a;
         }
         
+        public int getSpAttack() {
+        	return spAttack;
+        }
+        public void setSpAttack(int spA) {
+        	spAttack = spA;
+        }
+        
         public int getDefense() {
         	return defense;
         }
         public void setDefense(int d) {
         	defense = d;
+        }
+        
+        public int getSpDefense() {
+        	return spDefense;
+        }
+        public void setSpDefense(int spD) {
+        	spDefense = spD;
         }
         
         /**
@@ -386,21 +404,30 @@ public class PokemonBattle
          * Carries out an attack during the round and determines the
          * appropriate damage values by comparing types. Outputs
          * the results.
-         * TODO: Implement critical hits, and special vs physical separation. 
+         * TODO: Implement critical hits.
          * @param t the trainer being attacked
          */
         public void Attack (Trainer t)
         {    
         	
+        	double attack;
+        	double defense;
             String[] pokeType = t.getActivePokemon().getType();
-            Move move = activePokemon.getActiveMove();
-            int attack = activePokemon.getAttack();
-            int defense = t.getActivePokemon().getDefense();
+            Move move = activePokemon.getActiveMove();     
             
             // If the trainer chose to swap Pokemon rather than attack.
             if (move == null) {
             	System.out.println("The trainer has swapped to " + activePokemon.getName() + "!\n");
             	return;
+            }
+            
+            if (move.isPhysical()) {
+            	attack = activePokemon.getAttack();
+                defense = t.getActivePokemon().getDefense();
+            }
+            else {
+            	attack = activePokemon.getSpAttack();
+            	defense = t.getActivePokemon().getSpDefense();         			
             }
             
             int base = move.getDamage();
@@ -409,11 +436,12 @@ public class PokemonBattle
             String zero = getZeroEffects(move);
             
             // Calculate damage (before type effectiveness)
-            double damage = ((22 * base * (attack/defense))/50 + 2);
+            double calculation = ((22 * base * (attack/defense))/50 + 2);    
+            int damage = (int) Math.round(calculation);
             
             move.setPP(move.getPP() - 1);
             
-            for (int j = 0; j < pokeType.length; j++) {
+            for (int j = 0; j < 2; j++) {
             	 // Multiply damage by 2 for every positive match
                 for (int i = 0; i < positive.length; i++){
                     if ( positive[i].equals(pokeType[j]) )
@@ -430,16 +458,18 @@ public class PokemonBattle
                     }
                 }        
                 
-                // Same type attack bonus (STAB)
-                if (activePokemon.getType()[j] == move.getType()) {
-                	damage = damage * 1.5;
-                }
-                
                 // If the move type does not work against the pokemon type at all
                 if (pokeType[j].equals(zero)){
                     damage = 0;
                 }
             }
+            
+            for (int i = 0; i < 2; i++) {
+            	// Same type attack bonus (STAB)
+                if (activePokemon.getType()[i] == move.getType()) {
+                	damage = (int) Math.round(damage * 1.5);
+                }
+            }        
             
             // Check if the attack has landed
             if (move.hit()){
@@ -811,10 +841,10 @@ public class PokemonBattle
         Move[] lucMoves = new Move[]{closeCombat,bulletPunch,meteorMash,filler};
         Move[] metaMoves = new Move[]{meteorMash,zenHeadbutt,thunderPunch,filler};
         
-        Pokemon charizard = new Pokemon("Charizard",360,new String[]{"fire","flying"},348,295,328,charMoves);
-        Pokemon blastoise = new Pokemon("Blastoise",362,new String[] {"water",""},295,339,280,blasMoves);
-        Pokemon lucario = new Pokemon("Lucario",344,new String[] {"fighting","steel"},361,262,306,lucMoves);
-        Pokemon metagross = new Pokemon("Metagross",364,new String[] {"psychic","steel"},405,394,262, metaMoves);
+        Pokemon charizard = new Pokemon("Charizard",360,new String[]{"fire","flying"},293,348,295,295,328,charMoves);
+        Pokemon blastoise = new Pokemon("Blastoise",362,new String[] {"water",""},291,295,328,339,280,blasMoves);
+        Pokemon lucario = new Pokemon("Lucario",344,new String[] {"fighting","steel"},350,361,262,262,306,lucMoves);
+        Pokemon metagross = new Pokemon("Metagross",364,new String[] {"psychic","steel"},405,317,394,306,262, metaMoves);
         
         
         // Creating the parties for each trainer
