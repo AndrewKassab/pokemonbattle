@@ -11,9 +11,9 @@ import pokemonbattle.PokemonBattle.Pokemon;
  */
 public class PokemonData {
 
-	class Fire{	
+	public static class Fire{	
 		
-		public Pokemon Charizard(Move[] moves) {
+		public static Pokemon Charizard(Move[] moves) {
 			Pokemon charizard = new Pokemon("Charizard",new String[]{"fire","flying"},360,348,293,295,295,328,moves);
 			return charizard;
 		}	
@@ -24,7 +24,7 @@ public class PokemonData {
 		}
 	}
 	
-	class Water{	
+	public class Water{	
 		
 		public Pokemon Blastoise(Move[] moves) {
 			Pokemon blastoise = new Pokemon("Blastoise",new String[] {"water",""},362,291,328,295,339,280,moves);
@@ -37,7 +37,7 @@ public class PokemonData {
 		}
 	}
 	
-	class Fighting{
+	public class Fighting{
 		
 		public Pokemon Lucario(Move[] moves) {
 			Pokemon lucario = new Pokemon("Lucario",new String[] {"fighting","steel"},344,350,262,361,262,306,moves);
@@ -45,7 +45,7 @@ public class PokemonData {
 		}	
 	}
 	
-	class Steel{
+	public class Steel{
 		
 		public Pokemon Metagross(Move[] moves) {
 			Pokemon metagross = new Pokemon("Metagross",new String[] {"psychic","steel"},364,405,394,317,306,262,moves);
@@ -53,7 +53,7 @@ public class PokemonData {
 		}	
 	}
 	
-	class Grass{
+	public class Grass{
 		
 		public Pokemon Venusaur(Move[] moves) {
 			Pokemon venusaur = new Pokemon("Venusaur",new String[] {"grass",""},364,289,291,328,328,284,moves);
@@ -61,7 +61,7 @@ public class PokemonData {
 		}
 	}
 	
-	class Bug{
+	public class Bug{
 		
 		public Pokemon Scizor(Move[] moves) {
 			Pokemon scizor = new Pokemon("Scizor",new String[] {"grass",""},344,394,328,229,284,251,moves);
@@ -69,7 +69,7 @@ public class PokemonData {
 		}
 	}
 	
-	class Ghost{
+	public class Ghost{
 		
 		public Pokemon Gengar(Move[] moves) {
 			Pokemon gengar = new Pokemon("Gengar",new String[] {"ghost","poison"},324,251,240,294,273,350,moves);
@@ -77,7 +77,7 @@ public class PokemonData {
 		}
 	}
 	
-	class Normal{
+	public class Normal{
 		
 		public Pokemon Snorlax(Move[] moves) {
 			Pokemon snorlax = new Pokemon("Snorlax",new String[] {"normal",""},524,350,251,251,250,174,moves);
@@ -85,7 +85,7 @@ public class PokemonData {
 		}
 	}
 	
-	class Electric{
+	public class Electric{
 		
 		public Pokemon Jolteon(Move[] moves) {
 			Pokemon jolteon = new Pokemon("Jolteon",new String[] {"electric",""},334,251,240,350,317,394,moves);

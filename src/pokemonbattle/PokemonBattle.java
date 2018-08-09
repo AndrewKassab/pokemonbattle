@@ -1,6 +1,9 @@
 package pokemonbattle;
 
 import java.util.Scanner;
+import moves.Moves;
+import moves.Moves.Fire;
+import pokemon.PokemonData;
 
 /**
  * Pokemon battle. This class contains the necessary
@@ -799,48 +802,14 @@ public class PokemonBattle
         
         Scanner keyboard = new Scanner(System.in);
         
-        /* **CONSTRUCTOR VALUES**
-         * Move(name, type, base damage, accuracy, power points, priority, physical, special)
-         * Pokemon(name, health, type, speed, moves[])
-         * Trainer(party[])
-         */
-        
-        // Charizard's Moves
-        Move fireBlast = new Move("Fire Blast","fire",110,85,5,false,false,true);
-        Move earthquake = new Move("Earthquake","ground",100,100,10,false,false,true);
-        Move solarBeam = new Move("Solar Beam", "grass", 120,100,10,false,false,true);
-        
-        // Blastoise's Moves
-        Move hydroPump = new Move("Hydro Pump","water",110,80,5,false,false,true);
-        Move iceBeam = new Move("Ice Beam","ice",90,100,10,false,false,true);
-        Move darkPulse = new Move("Dark Pulse", "dark", 80,100,15,false,false,true);
-        
-        // Lucario Moves
-        Move closeCombat = new Move("Close Combat","fighting",120,100,5,false,true,false);
-        Move bulletPunch = new Move("Bullet Punch","bug", 40,100,30,true,true,false); // Test Priority
-        Move meteorMash = new Move("Meteor Mash", "steel", 90,90,10,false,true,false);
-        
-        // Metagross Moves
-        Move thunderPunch = new Move("Thunder Punch","electric",75,100,15,false,true,false);
-        Move zenHeadbutt = new Move("Zen Headbutt","psychic",80,90,15,false,true,false);
-        
-        // Temporary filler Move
-        Move filler = new Move("TEMPORARY FILLER","ultimate",500,100,99,true,true,true);  
-        
-        Move[] charMoves = new Move[]{fireBlast,earthquake,solarBeam,filler};
-        Move[] blasMoves = new Move[]{hydroPump,iceBeam,darkPulse,filler};
-        Move[] lucMoves = new Move[]{closeCombat,bulletPunch,meteorMash,filler};
-        Move[] metaMoves = new Move[]{meteorMash,zenHeadbutt,thunderPunch,filler};
-        
-        Pokemon charizard = new Pokemon("Charizard",360,new String[]{"fire","flying"},293,348,295,295,328,charMoves);
-        Pokemon blastoise = new Pokemon("Blastoise",362,new String[] {"water",""},291,295,328,339,280,blasMoves);
-        Pokemon lucario = new Pokemon("Lucario",344,new String[] {"fighting","steel"},350,361,262,262,306,lucMoves);
-        Pokemon metagross = new Pokemon("Metagross",364,new String[] {"psychic","steel"},405,317,394,306,262, metaMoves);
+        Move[] charMoves = new Move[] {Moves.Fire.fireBlast,Moves.Grass.solarBeam,
+        		Moves.Fighting.focusBlast,Moves.Ultimate.instantKO};
         
         
+        Pokemon charizard = Charizard(charMoves);
         // Creating the parties for each trainer
-        Pokemon[] partyOne = new Pokemon[] {charizard,lucario};
-        Pokemon[] partyTwo = new Pokemon[] {blastoise,metagross};
+        Pokemon[] partyOne = new Pokemon[] {};
+        Pokemon[] partyTwo = new Pokemon[] {};
         
         // Trainer's and their party Pokemon
         Trainer trainerOne = new Trainer(partyOne);
