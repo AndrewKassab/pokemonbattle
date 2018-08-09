@@ -8,21 +8,19 @@ import java.util.Scanner;
  * There will be two trainers in the battle and the user will take control
  * of both trainer's partys / pokemon. 
  * TODO: Fix identifiers so that move's variables are not shared 
- * across different Pokemon
+ * across different Pokemon.
+ * TODO: Add Ability class to handle Pokemon moves that have specific abilities besides dealing damage. 
  * @version 3.1
  * @author Andrew Kassab
  */
 
-// TODO: Change constructor values to be more easily readable.
 public class PokemonBattle 
 {
 
     /** 
      * Class to create, initialize, and store pokemon moves with their
      * respective varibles. 
-     * TODO: Implement physical and special labels for moves
      * TODO: Make priority an integer and adjust accordingly.
-     * TODO: Add in move abilities, for ex: Solar Beam takes an extra turn to charge
      * and Close Combat reduces the user's stats.
      */
     public static class Move
@@ -131,15 +129,7 @@ public class PokemonBattle
     
     /**
      * Class to create, initialize, and store a Pokemon and their moves. 
-     * TODO: Add and implement the defense attribute, attack attribute, and 
-     * their respective getters and setters. 
-     * TODO: Change health to a double and update all methods and code accordingly, 
-     * make a decimal formatter for getHealth that rounds to 2 decimals
-     * TODO: Make 'type' an array of size 2, so that we can have Pokemon with two types 
-     * (Pokemon with 1 type will have a 2nd type of "", alternatively, an ArrayList could be used 
-     * so that size 1 and 2 would both be possible.
-     * Andrew TODO: Implement the Attack and Defense variables, add and implement Special Attack 
-     * and Special Defense.
+     * TODO: Add status effects. (after adding abilities)
     */
     public static class Pokemon
     {
@@ -156,7 +146,7 @@ public class PokemonBattle
         private Move[] moves = new Move[4];
         private Move activeMove;
         
-        public Pokemon(String n, int h, String[] a, int att, int spAtt, int def, int spDef, int s, Move[] m){
+        public Pokemon(String n, String[] a, int h, int att, int def, int spAtt, int spDef, int s, Move[] m){
             name = n;
             health = h;
             type = a;
@@ -441,6 +431,7 @@ public class PokemonBattle
             
             move.setPP(move.getPP() - 1);
             
+            // TODO: Consolidate to separate method (isEffective())
             for (int j = 0; j < 2; j++) {
             	 // Multiply damage by 2 for every positive match
                 for (int i = 0; i < positive.length; i++){
@@ -475,7 +466,7 @@ public class PokemonBattle
             if (move.hit()){
                 System.out.println(activePokemon.getName() + " used " + move.getName() + "!");
                 // Super Effective
-                if (damage >= 2 * ((22 * base * (attack/defense))/50 + 2)){
+                if (damage >= 1.6 * calculation){
                     System.out.println("It's super effective!");
                     System.out.println(t.getActivePokemon().getName() + " took " + damage + " damage!\n");
                 }
