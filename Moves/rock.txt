@@ -1,0 +1,1 @@
+Move stoneEdge = new Move("Stone Edge","rock",100,80,5,false,true,false);

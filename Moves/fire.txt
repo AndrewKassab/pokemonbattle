@@ -1,0 +1,3 @@
+
+Move fireBlast = new Move("Fire Blast","fire",110,85,5,false,false,true); // May burn
+Move flareBlitz = new Move("Flare Blitz","fire",120,100,15,false,true,false); // Has Recoil.

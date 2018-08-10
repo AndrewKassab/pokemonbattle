@@ -1,0 +1,1 @@
+Move zenHeadbutt = new Move("Zen Headbutt","psychic",80,90,15,false,true,false);

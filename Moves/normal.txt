@@ -1,0 +1,1 @@
+Move bodySlam = new Move("Body Slam","normal",85,100,15,false,true,false); // May Paralyze

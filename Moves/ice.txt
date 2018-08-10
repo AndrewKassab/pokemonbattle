@@ -1,0 +1,1 @@
+Move iceBeam = new Move("Ice Beam","ice",90,100,10,false,false,true); // May Freeze

@@ -1,0 +1,1 @@
+Move sludgeWave = new Move("Sludge Wave","poison",95,100,10,false,false,true); // May poison

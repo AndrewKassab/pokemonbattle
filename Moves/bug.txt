@@ -1,0 +1,1 @@
+Move bulletPunch = new Move("Bullet Punch","bug", 40,100,30,true,true,false); // priority +1

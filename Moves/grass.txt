@@ -1,0 +1,3 @@
+Move solarBeam = new Move("Solar Beam", "grass", 120,100,10,false,false,true); // Charges for 1 turn
+Move woodHammer = new Move("Wood Hammer","grass",120,100,15,false,true,false);
+Move leafBlade = new Move("Leaf Blade","grass",90,100,15,false,true,false);

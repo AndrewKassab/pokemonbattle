@@ -1,0 +1,21 @@
+**Pokemon( NAME, POKEDEX #, TYPE(S), HP, ATTACK, DEFENSE, SP. ATTACK, SP. DEFENSE, SPEED, MOVESET);**
+
+Pokemon venusaur = new Pokemon("Venusaur",3,new String[] {"grass",""},364,289,291,328,328,284,venuMoves);
+Pokemon charizard = new Pokemon("Charizard",6,new String[]{"fire","flying"},360,348,293,295,295,328,charMoves); 
+Pokemon blastoise = new Pokemon("Blastoise",9,new String[] {"water",""},362,291,328,295,339,280,blasMoves);
+Pokemon gengar = new Pokemon("Gengar",94,new String[] {"ghost","poison"},324,251,240,294,273,350,gengMoves);
+Pokemon jolteon = new Pokemon("Jolteon",135,new String[] {"electric",""},334,251,240,350,317,394,joltMoves);
+Pokemon snorlax = new Pokemon("Snorlax",143,new String[] {"normal",""},524,350,251,251,250,174,snorMoves);
+Pokemon scizor = new Pokemon("Scizor",212,new String[] {"grass",""},344,394,328,229,284,251,scizMoves);
+Pokemon tyranitar = new Pokemon("Tyranitar",248,new String[]{"rock","dark"},404,403,350,317,328,243,tyranMoves);
+Pokemon metagross = new Pokemon("Metagross",376,new String[] {"psychic","steel"},364,405,394,317,306,262,metaMoves);
+Pokemon infernape = new Pokemon("Infernape",392,new String[] {"fire","fighting"},356,337,265,337,265,346,inferMoves);
+Pokemon lucario = new Pokemon("Lucario",448,new String[] {"fighting","steel"},344,350,262,361,262,306,lucMoves);
+Pokemon greninja = new Pokemon("Greninja",658,new String[] {"water","dark"},348,317,356,335,265,377,grenMoves);
+
+
+
+
+
+
+	

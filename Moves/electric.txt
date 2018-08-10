@@ -1,0 +1,2 @@
+Move thunderPunch = new Move("Thunder Punch","electric",75,100,15,false,true,false);
+Move thunderbolt = new Move("Thunderbolt","electric",90,100,15,false,false,true);
