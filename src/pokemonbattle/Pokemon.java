@@ -4,8 +4,8 @@ import java.util.Scanner;
 
 /**
  * Class to create, initialize, and store a Pokemon and their moves. 
- * TODO: Add status effects. (after adding move abilities)
- * @version 4.0 
+ * TODO: Add status effects.
+ * @version 5.0 
  * @author Andrew Kassab
 */
 public class Pokemon
@@ -80,7 +80,7 @@ public class Pokemon
         return speed;
     }   
     public void setSpeed() {
-    	speed = baseSpeed * (int) Math.round( (Math.max(2,2+speedStage))/(Math.max(2,2-speedStage)) ) ;
+    	speed = (int) baseSpeed * Math.round( (Math.max(2,2+speedStage))/(Math.max(2,2-speedStage)) ) ;
     }
     
     public Move[] getMoves() {
@@ -95,14 +95,14 @@ public class Pokemon
     	return attack;
     }
     public void setAttack() {
-    	attack = baseAttack * (int) Math.round( (Math.max(2,2+attackStage))/(Math.max(2,2-attackStage)) ) ;
+    	attack = (int) baseAttack * Math.round( (Math.max(2,2+attackStage))/(Math.max(2,2-attackStage)) ) ;
     }
     
     public int getSpAttack() {
     	return spAttack;
     }
     public void setSpAttack() {
-    	spAttack = baseSpAttack * (int) Math.round( (Math.max(2,2+spAttackStage))/(Math.max(2,2-spAttackStage)) ) ;
+    	spAttack = (int) baseSpAttack * Math.round( (Math.max(2,2+spAttackStage))/(Math.max(2,2-spAttackStage)) ) ;
     }
     
     public int getDefense() {
@@ -116,7 +116,7 @@ public class Pokemon
     	return spDefense;
     }
     public void setSpDefense() {
-    	spDefense = (int) baseSpDefense * Math.round( (Math.max(2,2+defenseStage))/(Math.max(2,2-defenseStage)) ) ;
+    	spDefense = (int) baseSpDefense * Math.round( (Math.max(2,2+spDefenseStage))/(Math.max(2,2-spDefenseStage)) ) ;
     }
     
     public int getPokeID() {
@@ -130,56 +130,76 @@ public class Pokemon
      */
     public void incrementStage(String stat, String direction) {
     	switch(stat) {
-    	case("Attack"):
-    		if (direction.equals("+")) {
-    			attackStage++;
-    			setAttack();
-    		}
-    		if (direction.equals("-")) {
-    			attackStage--;
-    			setAttack();
-    		}
-    	break;
-    	case("Defense"):
-    		if (direction.equals("+")) {
-    			defenseStage++;
-    			setDefense();
-    		}
-    		if (direction.equals("-")) {
-    			defenseStage--;
-    			setDefense();
-    		}
-    	break;
-    	case("SpDefense"):
-    		if (direction.equals("+")) {
-    			spDefenseStage++;
-    			setSpDefense();
-    		}
-    		if (direction.equals("-")) {
-    			spDefenseStage--;
-    			setSpDefense();
-    		}
-    	break;
-    	case("SpAttack"):
-    		if (direction.equals("+")) {
-    			spAttackStage++;
-    			setSpAttack();
-    		}
-    		if (direction.equals("-")) {
-    			spAttackStage--;
-    			setSpAttack();
-    		}
-    	break;
-    	case("Speed"):
-    		if (direction.equals("+")) {
-    			speedStage++;
-    			setSpeed();
-    		}
-    		if (direction.equals("-")) {
-    			speedStage--;
-    			setSpeed();
-    		}
-    	break;
+    		case("Attack"):
+    			if (direction.equals("+")) {
+    				if (attackStage < 6){
+    					attackStage++;
+    					setAttack();
+    				}
+    			}
+    			if (direction.equals("-")) {
+    				if (attackStage > -6) {
+    					attackStage--;
+    					setAttack();
+    				}		
+    			}
+    		break;
+    		case("Defense"):
+    			if (direction.equals("+")) {
+    				if (defenseStage < 6) {
+    					defenseStage++;
+    					setDefense();
+    				}
+    			}
+    			if (direction.equals("-")) {
+    				if (defenseStage > -6 ) {
+    					defenseStage--;
+    					setDefense();
+    				}
+    			}
+    		break;
+    		case("SpDefense"):
+    			if (direction.equals("+")) {
+    				if (spDefenseStage < 6) {
+    					spDefenseStage++;
+    					setSpDefense();
+    				}
+    			}
+    			if (direction.equals("-")) {
+    				if (spDefenseStage > -6) {
+    					spDefenseStage--;
+    					setSpDefense();
+    				}
+    			}
+    		break;
+    		case("SpAttack"):
+    			if (direction.equals("+")) {
+    				if (spAttackStage < 6) {
+    					spAttackStage++;
+    					setSpAttack();
+    				}
+    			}
+    			if (direction.equals("-")) {
+    				if (spAttackStage > -6) {
+    					spAttackStage--;
+        				setSpAttack();
+    				}
+    			}
+    		break;
+    		case("Speed"):
+    			if (direction.equals("+")) {
+    				if (speedStage < 6) {
+    					speedStage++;
+    					setSpeed();
+    				}
+    			}
+    			if (direction.equals("-")) {
+    				if (speedStage > -6) {
+    					speedStage--;
+    					setSpeed();
+    				}
+    			}
+    		break;
     	}
     }
     

@@ -6,7 +6,7 @@ import java.util.Scanner;
  * Class to create and initialize the Trainer object. 
  * A trainer has a party of Pokemon, and an identifier for which
  * Pokemon is currently active and in battle. 
- * @version 4.0
+ * @version 5.0
  * @author precisemotion
  */
 public class Trainer{
@@ -99,7 +99,6 @@ public class Trainer{
      * Carries out an attack during the round and determines the
      * appropriate damage values by comparing types. Outputs
      * the results.
-     * TODO: Implement critical hits.
      * @param t the trainer being attacked
      */
     public void Attack (Trainer t)

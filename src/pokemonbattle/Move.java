@@ -3,9 +3,8 @@ package pokemonbattle;
 /** 
  * Class to create, initialize, and store pokemon moves with their
  * respective varibles. 
- * TODO: Make priority an integer and adjust accordingly.
  * and Close Combat reduces the user's stats.
- * @version 4.0
+ * @version 5.0
  * @author Andrew Kassab
  */
 public class Move
@@ -16,20 +15,20 @@ public class Move
     private double accuracy;
     private int powerPoints;
     private int maxPowerPoints;
-    private boolean priority; // label for speed priority
+    private int priority; // label for speed priority
     private boolean physical; // physical label
     private boolean special; // special label
     private boolean effect; // if a move has an effect
     private String effectMessage; 
       
-    public Move(String n, String a, int d, double h, int pp, boolean p, boolean ph, boolean sp, boolean eff){
+    public Move(String n, String a, int d, double h, int pp, int pri, boolean ph, boolean sp, boolean eff){
         name = n;
         type = a;
         damage = d;
         accuracy = h;
         powerPoints = pp;
         maxPowerPoints = pp;
-        priority = p;
+        priority = pri;
         physical = ph;
         special = sp;
         effect= eff;
@@ -91,11 +90,7 @@ public class Move
     	else return false;
     }
     
-    /**
-     * Determines whether a move has priority over speed attributes
-     * @return true if a move has priority
-     */
-    public boolean hasPriority(){
+    public int getPriority(){
         return priority;
     }
     
@@ -327,10 +322,11 @@ public class Move
     }
 
     /**
-     * 
-     * @param trainer
-     * @param enemy
-     * @param damage
+     * Apply's a move's specific effect to the battle
+     * TODO: Account for more moves.
+     * @param attacker Pokemon using the move
+     * @param enemy Pokemon being targeted
+     * @param damage damage being done
      */
     public void applyEffect(Pokemon attacker, Pokemon defender, int damage) {
     	
@@ -342,7 +338,7 @@ public class Move
     				attacker.setHealth( attacker.getHealth() - (int) Math.round( (1.0/3.0) * damage));
     				effectMessage = attacker.getName() + " took recoil!";
     				if (randy <= .1) {
-    					// defender.setStatus("burn");	
+    					// TODO: Status effects - defender.setStatus("burn");	
     					effectMessage += "\n" + defender.getName() + " has been burned!";
     				}
     			}
@@ -357,7 +353,8 @@ public class Move
     			if (name.equals("Close Combat")) {
     				attacker.incrementStage("Defense","-");
     				attacker.incrementStage("SpDefense", "-");
-    				effectMessage = attacker.getName() + "'s Defense and Special Defense have fallen!";
+    				// TODO: Display message for when stat stages are maxed lower or mased higher
+    				effectMessage = attacker.getName() + "'s Defense and Special Defense have decreased!";
     			}
     	}
     		
