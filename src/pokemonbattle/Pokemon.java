@@ -4,25 +4,37 @@ import java.util.Scanner;
 
 /**
  * Class to create, initialize, and store a Pokemon and their moves. 
- * TODO: Add status effects. (after adding abilities)
+ * TODO: Add status effects. (after adding move abilities)
  * @version 4.0 
  * @author Andrew Kassab
 */
 public class Pokemon
 {
     
-    private String name;
-    private int pokeID;
+    private final String name;
+    private final int pokeID;
     private int health;
     private int maxHealth;
     private String[] type;
     private int attack;
+    private int baseAttack;
     private int spAttack;
+    private int baseSpAttack;
     private int defense;
+    private int baseDefense;
     private int spDefense;
+    private int baseSpDefense;
     private int speed;
+    private int baseSpeed;
     private Move[] moves = new Move[4];
     private Move activeMove;
+    private String status; // TODO: Implement Status Effect
+    
+    private int attackStage = 0;
+    private int spAttackStage = 0;
+    private int defenseStage = 0;
+    private int spDefenseStage = 0;
+    private int speedStage = 0;
     
     public Pokemon(String n, int ID, String[] a, int h, int att, int def, int spAtt, int spDef, int s, Move[] m){
         name = n;
@@ -30,10 +42,15 @@ public class Pokemon
         health = h;
         type = a;
         attack = att;
+        baseAttack = att;
         spAttack = spAtt;
+        baseSpAttack = spAtt;
         defense = def;
+        baseDefense = def;
         spDefense = spDef;
+        baseSpDefense = spDef;
         speed = s;
+        baseSpeed = s;
         moves = m;
         maxHealth = h;
     }
@@ -62,6 +79,9 @@ public class Pokemon
     public int getSpeed(){
         return speed;
     }   
+    public void setSpeed() {
+    	speed = baseSpeed * (int) Math.round( (Math.max(2,2+speedStage))/(Math.max(2,2-speedStage)) ) ;
+    }
     
     public Move[] getMoves() {
     	return moves;
@@ -74,34 +94,105 @@ public class Pokemon
     public int getAttack() {
     	return attack;
     }
-    public void setAttack(int a) {
-    	attack = a;
+    public void setAttack() {
+    	attack = baseAttack * (int) Math.round( (Math.max(2,2+attackStage))/(Math.max(2,2-attackStage)) ) ;
     }
     
     public int getSpAttack() {
     	return spAttack;
     }
-    public void setSpAttack(int spA) {
-    	spAttack = spA;
+    public void setSpAttack() {
+    	spAttack = baseSpAttack * (int) Math.round( (Math.max(2,2+spAttackStage))/(Math.max(2,2-spAttackStage)) ) ;
     }
     
     public int getDefense() {
     	return defense;
     }
-    public void setDefense(int d) {
-    	defense = d;
+    public void setDefense() {
+    	defense = (int) Math.round( baseDefense * ( Math.max(2.0,2.0+defenseStage) )/( Math.max(2.0,2.0-defenseStage) ) ) ;
     }
     
     public int getSpDefense() {
     	return spDefense;
     }
-    public void setSpDefense(int spD) {
-    	spDefense = spD;
+    public void setSpDefense() {
+    	spDefense = (int) baseSpDefense * Math.round( (Math.max(2,2+defenseStage))/(Math.max(2,2-defenseStage)) ) ;
     }
     
     public int getPokeID() {
 		return pokeID;
 	}
+    
+    /**
+     * Increments a stat stage for a specific stat either up or down.
+     * @param stat the stat being incremented.
+     * @param direction + or - indicating up or down.
+     */
+    public void incrementStage(String stat, String direction) {
+    	switch(stat) {
+    	case("Attack"):
+    		if (direction.equals("+")) {
+    			attackStage++;
+    			setAttack();
+    		}
+    		if (direction.equals("-")) {
+    			attackStage--;
+    			setAttack();
+    		}
+    	break;
+    	case("Defense"):
+    		if (direction.equals("+")) {
+    			defenseStage++;
+    			setDefense();
+    		}
+    		if (direction.equals("-")) {
+    			defenseStage--;
+    			setDefense();
+    		}
+    	break;
+    	case("SpDefense"):
+    		if (direction.equals("+")) {
+    			spDefenseStage++;
+    			setSpDefense();
+    		}
+    		if (direction.equals("-")) {
+    			spDefenseStage--;
+    			setSpDefense();
+    		}
+    	break;
+    	case("SpAttack"):
+    		if (direction.equals("+")) {
+    			spAttackStage++;
+    			setSpAttack();
+    		}
+    		if (direction.equals("-")) {
+    			spAttackStage--;
+    			setSpAttack();
+    		}
+    	break;
+    	case("Speed"):
+    		if (direction.equals("+")) {
+    			speedStage++;
+    			setSpeed();
+    		}
+    		if (direction.equals("-")) {
+    			speedStage--;
+    			setSpeed();
+    		}
+    	break;
+    	}
+    }
+    
+    /**
+     * Resets all stat stages back to 0
+     */
+    public void resetStages() {
+    	attackStage = 0;
+    	defenseStage = 0;
+    	spAttackStage = 0;
+    	spDefenseStage = 0;
+    	speedStage = 0;
+    }
 
 	/**
      * Sets activeMove to null before next turn.

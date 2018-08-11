@@ -10,8 +10,8 @@ package pokemonbattle;
  */
 public class Move
 {
-    private String name;
-    private String type;
+    private final String name;
+    private final String type;
     private int damage;
     private double accuracy;
     private int powerPoints;
@@ -19,8 +19,10 @@ public class Move
     private boolean priority; // label for speed priority
     private boolean physical; // physical label
     private boolean special; // special label
+    private boolean effect; // if a move has an effect
+    private String effectMessage; 
       
-    public Move(String n, String a, int d, double h, int pp, boolean p, boolean ph, boolean sp){
+    public Move(String n, String a, int d, double h, int pp, boolean p, boolean ph, boolean sp, boolean eff){
         name = n;
         type = a;
         damage = d;
@@ -30,6 +32,7 @@ public class Move
         priority = p;
         physical = ph;
         special = sp;
+        effect= eff;
     }
     
     public String getType(){
@@ -87,6 +90,7 @@ public class Move
     	}
     	else return false;
     }
+    
     /**
      * Determines whether a move has priority over speed attributes
      * @return true if a move has priority
@@ -94,7 +98,22 @@ public class Move
     public boolean hasPriority(){
         return priority;
     }
-         
+    
+    public boolean hasEffect() {
+    	return effect;
+    }
+    
+    public String getMessage() {
+    	return effectMessage;
+    }
+    public void resetMessage() {
+    	effectMessage = null;
+    }
+    
+    public void printMessage() {
+    	System.out.println(effectMessage);
+    }
+        
     /**
      * Determines if a move hits in its attack turn by
      * generating a random number and checking the accurary value
@@ -307,5 +326,42 @@ public class Move
         return result;   
     }
 
-      
+    /**
+     * 
+     * @param trainer
+     * @param enemy
+     * @param damage
+     */
+    public void applyEffect(Pokemon attacker, Pokemon defender, int damage) {
+    	
+    	double randy = Math.random();
+    	
+    	switch(type) {
+    		case "fire":
+    			if (name.equals("Flare Blitz")) {
+    				attacker.setHealth( attacker.getHealth() - (int) Math.round( (1.0/3.0) * damage));
+    				effectMessage = attacker.getName() + " took recoil!";
+    				if (randy <= .1) {
+    					// defender.setStatus("burn");	
+    					effectMessage += "\n" + defender.getName() + " has been burned!";
+    				}
+    			}
+    			if (name.equals("Fire Blast")) {
+    				if (randy <= .1) {
+    					// defender.setStatus("burn");
+    					effectMessage += "\n" + defender.getName() + " has been burned!";
+    				}
+    			}
+    		break;
+    		case "fighting":
+    			if (name.equals("Close Combat")) {
+    				attacker.incrementStage("Defense","-");
+    				attacker.incrementStage("SpDefense", "-");
+    				effectMessage = attacker.getName() + "'s Defense and Special Defense have fallen!";
+    			}
+    	}
+    		
+    }
 }
+
+

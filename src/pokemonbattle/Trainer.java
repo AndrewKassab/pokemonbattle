@@ -41,14 +41,6 @@ public class Trainer{
 	}
 	
 	/**
-	 * Makes sure the Pokemon in the party is up to date
-	 * with the activePokemon variable 
-	 */
-	public void updateParty() {
-		party[activeIndex] = activePokemon;
-	}
-	
-	/**
      * Displays a trainers current party Pokemon and their status.
      */
     public void displayPokemon() {
@@ -183,6 +175,9 @@ public class Trainer{
         // Check if the attack has landed
         if (move.hit()){
             System.out.println(activePokemon.getName() + " used " + move.getName() + "!");
+            if (move.hasEffect()) {
+            	move.applyEffect(activePokemon,t.getActivePokemon(), damage);
+            }
             // Super Effective
             if ((!crit && damage >= 1.6 * calculation) || (crit && damage >= 3.2 * calculation)){
                 System.out.print("It's super effective!");      
@@ -190,7 +185,13 @@ public class Trainer{
                 	System.out.print(" A critical hit!");
                 }
                 System.out.println();
-                System.out.println(t.getActivePokemon().getName() + " took " + damage + " damage!\n");
+                System.out.println(t.getActivePokemon().getName() + " took " + damage + " damage!");
+                if (move.getMessage() != null) {
+                	move.printMessage();
+                	move.resetMessage();
+                }
+                System.out.println();
+                
             }
             // Not at all effective
             else if (damage == 0){
@@ -201,9 +202,19 @@ public class Trainer{
             else if (damage < ((22 * base * (attack/defense))/50 + 2)){
                 System.out.println("It's not very effective...");
                 System.out.println(t.getActivePokemon().getName() + " took " + damage + " damage!\n");
+                if (move.getMessage() != null) {
+                	move.printMessage();
+                	move.resetMessage();
+                }
+                System.out.println();
             }
             else {
             	System.out.println(t.getActivePokemon().getName() + " took " + damage + " damage!\n");
+            	if (move.getMessage() != null) {
+                	move.printMessage();
+                	move.resetMessage();
+                }
+                System.out.println();
             }
               
             t.getActivePokemon().setHealth(t.getActivePokemon().getHealth() - damage);
@@ -212,8 +223,6 @@ public class Trainer{
             if (t.getActivePokemon().getHealth() < 0) {
             	t.getActivePokemon().setHealth(0);
             }
-            
-            t.updateParty(); 
                     
             // If the pokemon has fainted
             if (t.getActivePokemon().getHealth() <= 0)
