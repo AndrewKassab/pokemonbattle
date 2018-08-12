@@ -5,7 +5,7 @@ import java.util.Scanner;
 /**
  * Class to create, initialize, and store a Pokemon and their moves. 
  * TODO: Add status effects.
- * @version 5.0 
+ * @version 5.1
  * @author Andrew Kassab
 */
 public class Pokemon

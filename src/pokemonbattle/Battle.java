@@ -6,8 +6,9 @@ import java.util.Scanner;
  * The main class. This class contains the methods and objects to handle 
  * a battle. There will be two trainers in the battle and the 
  * user will take control of both trainer's partys / pokemon. 
- * TODO: Add extended class to handle Pokemon moves that have specific abilities besides dealing damage. 
- * @version 5.0
+ * TODO: Fix bugs involving stat stages causing negative damage values.
+ * TODO: BUG: Dark pulse did not do anything to Infernape?? 
+ * @version 5.1
  * @author Andrew Kassab
  */
 public class Battle 
@@ -83,57 +84,60 @@ public class Battle
         
         Move ultimate = new Move("InstantKO","fire",10000,100,99,5,true,true,false); // FILLER FOR TESTING
         
-        Move fireBlast = new Move("Fire Blast","fire",110,85,5,0,false,true,false); // May burn
+        Move fireBlast = new Move("Fire Blast","fire",110,85,5,0,false,true,false); // TODO: May burn
         Move flareBlitz = new Move("Flare Blitz","fire",120,100,15,0,true,false,true); // Has Recoil.
         
         Move hydroPump = new Move("Hydro Pump","water",110,80,5,0,false,true,false);	
         Move aquaJet = new Move("Aqua Jet","water",40,100,20,1,true,false,false); // priority +1
         
-        Move solarBeam = new Move("Solar Beam", "grass", 120,100,10,0,false,true,false); // Charges for 1 turn
+        Move solarBeam = new Move("Solar Beam", "grass", 120,100,10,0,false,true,false); // TODO: Charges for 1 turn
         Move woodHammer = new Move("Wood Hammer","grass",120,100,15,0,true,false,false);
         Move leafBlade = new Move("Leaf Blade","grass",90,100,15,0,true,false,false);
         
         Move closeCombat = new Move("Close Combat","fighting",120,100,5,0,true,false,true); // Lowers user's attack
-        Move focusBlast = new Move("Focus Blast","fighting",120,70,5,0,false,true,false); // May lower SpDef
+        Move focusBlast = new Move("Focus Blast","fighting",120,70,5,0,false,true,false); // TODO: May lower SpDef
         
         Move thunderPunch = new Move("Thunder Punch","electric",75,100,15,0,true,false,false);
         Move thunderbolt = new Move("Thunderbolt","electric",90,100,15,0,false,true,false);
-        
-        Move shadowBall = new Move("Shadow Ball","ghost",80,100,15,0,false,true,false); // May lower defense
+        Move voltSwitch = new Move("Volt Switch","electric",70,100,20,0,true,false,true); // Allows user to switch Pokemon
+        Move shadowBall = new Move("Shadow Ball","ghost",80,100,15,0,false,true,false); // TODO: May lower defense
         
         Move bulletPunch = new Move("Bullet Punch","bug", 40,100,30,1,true,false,false); // priority +1
-        Move uTurn = new Move("U-turn","bug",70,100,20,0,true,false,true); // TODO: Allows user to switch Pokemon
+        Move uTurn = new Move("U-turn","bug",70,100,20,0,true,false,true); // Allows user to switch Pokemon
         
         Move darkPulse = new Move("Dark Pulse", "dark", 80,100,15,0,false,true,false); // May cause Flinch.
         Move crunch = new Move("Crunch","dark",80,100,15,0,true,false,false); // May lower defense
         
         Move zenHeadbutt = new Move("Zen Headbutt","psychic",80,90,15,0,true,false,false);
         
-        Move iceBeam = new Move("Ice Beam","ice",90,100,10,0,false,true,false); // May Freeze
+        Move iceBeam = new Move("Ice Beam","ice",90,100,10,0,false,true,false); // TODO: May Freeze
         
-        Move bodySlam = new Move("Body Slam","normal",85,100,15,0,true,false,false); // May Paralyze
+        Move bodySlam = new Move("Body Slam","normal",85,100,15,0,true,false,false); // TODO: May Paralyze
+        Move swordsDance = new Move("Swords Dance","normal",0,100,20,0,false,false,true); // Raises Attack / SpAttack stats
         
         //TODO: Create independent instances for the same move for different pokemon.
         Move earthquake = new Move("Earthquake","ground",100,100,10,0,true,false,false); 
-        Move earthPower = new Move("Earth Power","ground",90,100,10,0,false,true,false); // May lower spDef
+        Move earthPower = new Move("Earth Power","ground",90,100,10,0,false,true,false); // TODO: May lower spDef
         
         Move meteorMash = new Move("Meteor Mash", "steel", 90,90,10,0,true,false,false);
         
-        Move sludgeWave = new Move("Sludge Wave","poison",95,100,10,0,false,true,false); // May poison
+        Move sludgeWave = new Move("Sludge Wave","poison",95,100,10,0,false,true,false); // TODO: May poison
         
         Move stoneEdge = new Move("Stone Edge","rock",100,80,5,0,true,false,false);
         
+        Move roost = new Move("Roost","fly",0,100,10,0,false,false,true); // Heals the user half of max HP
+        
         Move[] venuMoves = new Move[] {earthquake,solarBeam,ultimate,ultimate};
-        Move[] charMoves = new Move[] {flareBlitz,earthquake,ultimate,ultimate};
+        Move[] charMoves = new Move[] {flareBlitz,earthquake,roost,ultimate};
         Move[] blasMoves = new Move[] {hydroPump,iceBeam,darkPulse,ultimate};
         Move[] gengMoves = new Move[] {shadowBall,sludgeWave,focusBlast,ultimate};
-        Move[] joltMoves = new Move[] {thunderbolt,shadowBall,ultimate,ultimate};
+        Move[] joltMoves = new Move[] {thunderbolt,shadowBall,voltSwitch,ultimate};
         Move[] snorMoves = new Move[] {bodySlam,earthquake,thunderPunch,ultimate};
-        Move[] scizMoves = new Move[] {bulletPunch,ultimate,ultimate,ultimate};
+        Move[] scizMoves = new Move[] {bulletPunch,uTurn,swordsDance,roost};
         Move[] tyranMoves = new Move[] {earthquake,stoneEdge,crunch,ultimate};
         Move[] metaMoves = new Move[] {zenHeadbutt,earthquake,meteorMash,ultimate};
-        Move[] inferMoves = new Move[] {flareBlitz,closeCombat,ultimate,ultimate};
-        Move[] lucMoves = new Move[] {closeCombat,meteorMash,ultimate,ultimate};
+        Move[] inferMoves = new Move[] {flareBlitz,closeCombat,swordsDance,ultimate};
+        Move[] lucMoves = new Move[] {closeCombat,meteorMash,swordsDance,ultimate};
         Move[] grenMoves = new Move[] {hydroPump,iceBeam,darkPulse,ultimate};
         
         Pokemon venusaur = new Pokemon("Venusaur",3,new String[] {"grass",""},364,289,291,328,328,284,venuMoves);

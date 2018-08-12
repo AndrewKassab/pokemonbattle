@@ -6,7 +6,7 @@ import java.util.Scanner;
  * Class to create and initialize the Trainer object. 
  * A trainer has a party of Pokemon, and an identifier for which
  * Pokemon is currently active and in battle. 
- * @version 5.0
+ * @version 5.1
  * @author precisemotion
  */
 public class Trainer{
@@ -101,27 +101,33 @@ public class Trainer{
      * the results.
      * @param t the trainer being attacked
      */
-    public void Attack (Trainer t)
-    {    
+    public void Attack (Trainer target)
+    {   
     	
     	double attack;
     	double defense;
-        String[] pokeType = t.getActivePokemon().getType();
+        String[] pokeType = target.getActivePokemon().getType();
         Move move = activePokemon.getActiveMove();     
-        
+           
         // If the trainer chose to swap Pokemon rather than attack.
         if (move == null) {
         	System.out.println("The trainer has swapped to " + activePokemon.getName() + "!\n");
         	return;
         }
         
+        // If the move is not an attack move
+        if (move.getDamage() == 0) {
+        	move.useEffect(this, target);
+        	return;
+        }
+        
         if (move.isPhysical()) {
         	attack = activePokemon.getAttack();
-            defense = t.getActivePokemon().getDefense();
+            defense = target.getActivePokemon().getDefense();
         }
         else {
         	attack = activePokemon.getSpAttack();
-        	defense = t.getActivePokemon().getSpDefense();         			
+        	defense = target.getActivePokemon().getSpDefense();         			
         }
         
         int base = move.getDamage();
@@ -174,9 +180,12 @@ public class Trainer{
         // Check if the attack has landed
         if (move.hit()){
             System.out.println(activePokemon.getName() + " used " + move.getName() + "!");
+            
+            // Applys an attack's effect (if it has one) 
             if (move.hasEffect()) {
-            	move.applyEffect(activePokemon,t.getActivePokemon(), damage);
+            	move.applyEffect(this,target,damage);
             }
+           	
             // Super Effective
             if ((!crit && damage >= 1.6 * calculation) || (crit && damage >= 3.2 * calculation)){
                 System.out.print("It's super effective!");      
@@ -184,7 +193,7 @@ public class Trainer{
                 	System.out.print(" A critical hit!");
                 }
                 System.out.println();
-                System.out.println(t.getActivePokemon().getName() + " took " + damage + " damage!");
+                System.out.println(target.getActivePokemon().getName() + " took " + damage + " damage!");
                 if (move.getMessage() != null) {
                 	move.printMessage();
                 	move.resetMessage();
@@ -200,7 +209,7 @@ public class Trainer{
             // Not very effective
             else if (damage < ((22 * base * (attack/defense))/50 + 2)){
                 System.out.println("It's not very effective...");
-                System.out.println(t.getActivePokemon().getName() + " took " + damage + " damage!\n");
+                System.out.println(target.getActivePokemon().getName() + " took " + damage + " damage!\n");
                 if (move.getMessage() != null) {
                 	move.printMessage();
                 	move.resetMessage();
@@ -208,7 +217,7 @@ public class Trainer{
                 System.out.println();
             }
             else {
-            	System.out.println(t.getActivePokemon().getName() + " took " + damage + " damage!\n");
+            	System.out.println(target.getActivePokemon().getName() + " took " + damage + " damage!\n");
             	if (move.getMessage() != null) {
                 	move.printMessage();
                 	move.resetMessage();
@@ -216,23 +225,23 @@ public class Trainer{
                 System.out.println();
             }
               
-            t.getActivePokemon().setHealth(t.getActivePokemon().getHealth() - damage);
+            target.getActivePokemon().setHealth(target.getActivePokemon().getHealth() - damage);
             
             // Prevent negative health values
-            if (t.getActivePokemon().getHealth() < 0) {
-            	t.getActivePokemon().setHealth(0);
+            if (target.getActivePokemon().getHealth() < 0) {
+            	target.getActivePokemon().setHealth(0);
             }
                     
             // If the pokemon has fainted
-            if (t.getActivePokemon().getHealth() <= 0)
+            if (target.getActivePokemon().getHealth() <= 0)
             {
-                System.out.println(t.getActivePokemon().getName() + " has fainted!");
-                if (t.canContinue()) {
+                System.out.println(target.getActivePokemon().getName() + " has fainted!");
+                if (target.canContinue()) {
                 	System.out.println("Select another Pokemon from your party.");
                 	System.out.println();
-                	t.selectPokemon();
-                	t.setCanAttack(false);
-                	System.out.println("Let's go, " + t.getActivePokemon().getName() + "!");
+                	target.selectPokemon();
+                	target.setCanAttack(false);
+                	System.out.println("Let's go, " + target.getActivePokemon().getName() + "!");
                 
                 }
                 else {

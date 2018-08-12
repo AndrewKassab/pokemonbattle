@@ -3,8 +3,7 @@ package pokemonbattle;
 /** 
  * Class to create, initialize, and store pokemon moves with their
  * respective varibles. 
- * and Close Combat reduces the user's stats.
- * @version 5.0
+ * @version 5.1
  * @author Andrew Kassab
  */
 public class Move
@@ -21,7 +20,7 @@ public class Move
     private boolean effect; // if a move has an effect
     private String effectMessage; 
       
-    public Move(String n, String a, int d, double h, int pp, int pri, boolean ph, boolean sp, boolean eff){
+    public Move(String n, String a, int d, double h, int pp, int pri, boolean ph, boolean sp, boolean hasEffect){
         name = n;
         type = a;
         damage = d;
@@ -31,7 +30,7 @@ public class Move
         priority = pri;
         physical = ph;
         special = sp;
-        effect= eff;
+        effect = hasEffect;
     }
     
     public String getType(){
@@ -322,42 +321,94 @@ public class Move
     }
 
     /**
-     * Apply's a move's specific effect to the battle
+     * Apply's an ATTACK move's specific effect to the battle
      * TODO: Account for more moves.
      * @param attacker Pokemon using the move
      * @param enemy Pokemon being targeted
      * @param damage damage being done
      */
-    public void applyEffect(Pokemon attacker, Pokemon defender, int damage) {
+    public void applyEffect(Trainer trainer, Trainer enemy,int damage) {
     	
     	double randy = Math.random();
+    	Pokemon attacker = trainer.getActivePokemon();
+    	Pokemon target = enemy.getActivePokemon();
     	
     	switch(type) {
     		case "fire":
+    			// Applys recoil damage to the user and a chance of burning
     			if (name.equals("Flare Blitz")) {
     				attacker.setHealth( attacker.getHealth() - (int) Math.round( (1.0/3.0) * damage));
     				effectMessage = attacker.getName() + " took recoil!";
     				if (randy <= .1) {
-    					// TODO: Status effects - defender.setStatus("burn");	
-    					effectMessage += "\n" + defender.getName() + " has been burned!";
+    					// TODO: Status effects - target.setStatus("burn");	
+    					effectMessage += "\n" + target.getName() + " has been burned!";
     				}
     			}
+    			// Has a chance to burn the targer
     			if (name.equals("Fire Blast")) {
     				if (randy <= .1) {
-    					// defender.setStatus("burn");
-    					effectMessage += "\n" + defender.getName() + " has been burned!";
+    					// target.setStatus("burn");
+    					effectMessage += "\n" + target.getName() + " has been burned!";
     				}
     			}
     		break;
     		case "fighting":
+    			// Lowers user's defense and spDefense after attacking
     			if (name.equals("Close Combat")) {
     				attacker.incrementStage("Defense","-");
     				attacker.incrementStage("SpDefense", "-");
     				// TODO: Display message for when stat stages are maxed lower or mased higher
     				effectMessage = attacker.getName() + "'s Defense and Special Defense have decreased!";
     			}
+    		break;
+    		case "bug":
+    			// Allows a user to swap Pokemon after attacking
+    			if (name.equals("U-turn")) {
+    				effectMessage = attacker.getName() + " went back!"; // add Trainer Names
+    				System.out.println();
+    				trainer.selectPokemon();
+    				effectMessage = effectMessage + "\n" + trainer.getActivePokemon().getName() + " has entered the battle!";
+    			}
+    		break;
+    		case "electric":
+    			// Allows a user to swap Pokemon after attacking
+    			if (name.equals("Volt Switch")) {
+    				effectMessage = attacker.getName() + " went back!"; // add Trainer Names
+    				System.out.println();
+    				trainer.selectPokemon();
+    				effectMessage = effectMessage + "\n" + trainer.getActivePokemon().getName() + " has entered the battle!";
+    			}
+    		break;
     	}
     		
+    }
+    
+    public void useEffect(Trainer trainer, Trainer enemy) {
+    	
+    	Pokemon attacker = trainer.getActivePokemon();
+    	Pokemon target = trainer.getActivePokemon();
+    	
+    	switch(type) {
+    		case "normal":
+    			// Increases user's attack stats
+    			if (name.equals("Swords Dance")) {
+    				attacker.incrementStage("Attack","+");
+    				attacker.incrementStage("spAttack", "+");
+    				System.out.println(attacker.getName() + " used Swords Dance!");
+    				System.out.println(attacker.getName() + "'s Attack and Special Attack have rose sharply!\n");
+    			}
+    		case "fly":
+    			// Heals the user
+    			if (name.equals("Roost")) {
+    				attacker.setHealth(attacker.getHealth() + (int) Math.round(attacker.getMaxHealth()/2));
+    				if (attacker.getHealth() > attacker.getMaxHealth()) {
+    					attacker.setHealth(attacker.getMaxHealth());
+    				}
+    				System.out.println(attacker.getName() + " used Roost!");
+    				System.out.println(attacker.getName() + " restored some HP!");
+    			}
+    	}
+    	
     }
 }
 
