@@ -8,7 +8,7 @@ import java.util.Scanner;
  * user will take control of both trainer's partys / pokemon. 
  * TODO: Fix bugs involving stat stages causing negative damage values.
  * TODO: BUG: Dark pulse did not do anything to Infernape?? 
- * @version 5.1
+ * @version 5.2
  * @author Andrew Kassab
  */
 public class Battle 
@@ -95,12 +95,13 @@ public class Battle
         Move leafBlade = new Move("Leaf Blade","grass",90,100,15,0,true,false,false);
         
         Move closeCombat = new Move("Close Combat","fighting",120,100,5,0,true,false,true); // Lowers user's attack
-        Move focusBlast = new Move("Focus Blast","fighting",120,70,5,0,false,true,false); // TODO: May lower SpDef
+        Move focusBlast = new Move("Focus Blast","fighting",120,70,5,0,false,true,false); // May lower SpDef
         
         Move thunderPunch = new Move("Thunder Punch","electric",75,100,15,0,true,false,false);
         Move thunderbolt = new Move("Thunderbolt","electric",90,100,15,0,false,true,false);
         Move voltSwitch = new Move("Volt Switch","electric",70,100,20,0,true,false,true); // Allows user to switch Pokemon
-        Move shadowBall = new Move("Shadow Ball","ghost",80,100,15,0,false,true,false); // TODO: May lower defense
+       
+        Move shadowBall = new Move("Shadow Ball","ghost",80,100,15,0,false,true,true); // May lower spDefense
         
         Move bulletPunch = new Move("Bullet Punch","bug", 40,100,30,1,true,false,false); // priority +1
         Move uTurn = new Move("U-turn","bug",70,100,20,0,true,false,true); // Allows user to switch Pokemon
@@ -114,10 +115,11 @@ public class Battle
         
         Move bodySlam = new Move("Body Slam","normal",85,100,15,0,true,false,false); // TODO: May Paralyze
         Move swordsDance = new Move("Swords Dance","normal",0,100,20,0,false,false,true); // Raises Attack / SpAttack stats
+        Move recover = new Move("Recover","normal",0,100,20,0,false,false,true); // Heals user by half of max HP
         
         //TODO: Create independent instances for the same move for different pokemon.
         Move earthquake = new Move("Earthquake","ground",100,100,10,0,true,false,false); 
-        Move earthPower = new Move("Earth Power","ground",90,100,10,0,false,true,false); // TODO: May lower spDef
+        Move earthPower = new Move("Earth Power","ground",90,100,10,0,false,true,false); // May lower spDef
         
         Move meteorMash = new Move("Meteor Mash", "steel", 90,90,10,0,true,false,false);
         

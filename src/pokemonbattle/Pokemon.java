@@ -5,7 +5,7 @@ import java.util.Scanner;
 /**
  * Class to create, initialize, and store a Pokemon and their moves. 
  * TODO: Add status effects.
- * @version 5.1
+ * @version 5.2
  * @author Andrew Kassab
 */
 public class Pokemon
@@ -90,6 +90,9 @@ public class Pokemon
     public Move getActiveMove() {
     	return activeMove;
     }
+    public void setActiveMove(Move m) {
+    	activeMove = m;
+    }
     
     public int getAttack() {
     	return attack;
@@ -123,6 +126,22 @@ public class Pokemon
 		return pokeID;
 	}
     
+    public int getStage(String stat) {
+    	switch (stat) {
+    		case "Attack":
+    			return attackStage;
+    		case "Defense":
+    			return defenseStage;
+    		case "spAttack":
+    			return spAttackStage;
+    		case "spDefense":
+    			return spDefenseStage;
+    		case "Speed":
+    			return speedStage;    	
+    	}
+    	return 0;
+    }
+    
     /**
      * Increments a stat stage for a specific stat either up or down.
      * @param stat the stat being incremented.
@@ -137,13 +156,13 @@ public class Pokemon
     					setAttack();
     				}
     			}
-    			if (direction.equals("-")) {
+    			else if (direction.equals("-")) {
     				if (attackStage > -6) {
     					attackStage--;
     					setAttack();
     				}		
     			}
-    		break;
+    		return;
     		case("Defense"):
     			if (direction.equals("+")) {
     				if (defenseStage < 6) {
@@ -151,13 +170,13 @@ public class Pokemon
     					setDefense();
     				}
     			}
-    			if (direction.equals("-")) {
+    			else if (direction.equals("-")) {
     				if (defenseStage > -6 ) {
     					defenseStage--;
     					setDefense();
     				}
     			}
-    		break;
+    		return;
     		case("SpDefense"):
     			if (direction.equals("+")) {
     				if (spDefenseStage < 6) {
@@ -165,13 +184,13 @@ public class Pokemon
     					setSpDefense();
     				}
     			}
-    			if (direction.equals("-")) {
+    			else if (direction.equals("-")) {
     				if (spDefenseStage > -6) {
     					spDefenseStage--;
     					setSpDefense();
     				}
     			}
-    		break;
+    		return;
     		case("SpAttack"):
     			if (direction.equals("+")) {
     				if (spAttackStage < 6) {
@@ -179,13 +198,13 @@ public class Pokemon
     					setSpAttack();
     				}
     			}
-    			if (direction.equals("-")) {
+    			else if (direction.equals("-")) {
     				if (spAttackStage > -6) {
     					spAttackStage--;
         				setSpAttack();
     				}
     			}
-    		break;
+    		return;
     		case("Speed"):
     			if (direction.equals("+")) {
     				if (speedStage < 6) {
@@ -193,13 +212,13 @@ public class Pokemon
     					setSpeed();
     				}
     			}
-    			if (direction.equals("-")) {
+    			else if (direction.equals("-")) {
     				if (speedStage > -6) {
     					speedStage--;
     					setSpeed();
     				}
     			}
-    		break;
+    		return;
     	}
     }
     

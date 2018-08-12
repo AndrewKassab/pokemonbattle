@@ -3,7 +3,8 @@ package pokemonbattle;
 /** 
  * Class to create, initialize, and store pokemon moves with their
  * respective varibles. 
- * @version 5.1
+ * TODO: Fix U-Turn and Volt-Switch Bugs
+ * @version 5.2
  * @author Andrew Kassab
  */
 public class Move
@@ -343,6 +344,7 @@ public class Move
     					// TODO: Status effects - target.setStatus("burn");	
     					effectMessage += "\n" + target.getName() + " has been burned!";
     				}
+    				return;
     			}
     			// Has a chance to burn the targer
     			if (name.equals("Fire Blast")) {
@@ -350,6 +352,7 @@ public class Move
     					// target.setStatus("burn");
     					effectMessage += "\n" + target.getName() + " has been burned!";
     				}
+    				return;
     			}
     		break;
     		case "fighting":
@@ -359,6 +362,15 @@ public class Move
     				attacker.incrementStage("SpDefense", "-");
     				// TODO: Display message for when stat stages are maxed lower or mased higher
     				effectMessage = attacker.getName() + "'s Defense and Special Defense have decreased!";
+    				return;
+    			}
+    			// May lower target's spDefense
+    			if (name.equals("Focus Blast")) {
+    				if (randy <= .1) {
+    					target.incrementStage("spDefense", "-");
+    					effectMessage = target.getName() + "'s Special Defense has decreased!";
+    				}
+    				return;
     			}
     		break;
     		case "bug":
@@ -366,8 +378,10 @@ public class Move
     			if (name.equals("U-turn")) {
     				effectMessage = attacker.getName() + " went back!"; // add Trainer Names
     				System.out.println();
+    				attacker.setActiveMove(null);
     				trainer.selectPokemon();
     				effectMessage = effectMessage + "\n" + trainer.getActivePokemon().getName() + " has entered the battle!";
+    				return;
     			}
     		break;
     		case "electric":
@@ -377,6 +391,28 @@ public class Move
     				System.out.println();
     				trainer.selectPokemon();
     				effectMessage = effectMessage + "\n" + trainer.getActivePokemon().getName() + " has entered the battle!";
+    				return;
+    			}
+    		break;
+    		case "ghost":
+    			// May lower target's spDefense
+    			if (name.equals("Shadow Ball")) {
+    				if (randy <= .2) {
+    					target.incrementStage("spDefense", "-");
+    					effectMessage = target.getName() + "'s Special Defense has decreased!";
+    				}
+    				return;
+    			}
+    			
+    		break;
+    		case "ground":
+    			// May lower target's spDefense
+    			if (name.equals("Earth Power")) {
+    				if (randy <= .1) {
+    					target.incrementStage("spDefense", "-");
+    					effectMessage = target.getName() + "'s Special Defense has decreased!";
+    				}
+    				return;
     			}
     		break;
     	}
@@ -390,13 +426,45 @@ public class Move
     	
     	switch(type) {
     		case "normal":
-    			// Increases user's attack stats
+    			// Increases user's attack stats by 2 stages
     			if (name.equals("Swords Dance")) {
-    				attacker.incrementStage("Attack","+");
-    				attacker.incrementStage("spAttack", "+");
     				System.out.println(attacker.getName() + " used Swords Dance!");
-    				System.out.println(attacker.getName() + "'s Attack and Special Attack have rose sharply!\n");
+    				if (attacker.getStage("Attack") == 6 && attacker.getStage("spAttack") == 6 ) {
+    					System.out.println(attacker.getName() + "'s Attack and Special Attack can't go any higher!");
+    				}
+    				else if (attacker.getStage("Attack") == 6) {
+    					attacker.incrementStage("SpAttack", "+");
+    					attacker.incrementStage("SpAttack", "+");
+    					System.out.println(attacker.getName() + "'s Special Attack rose sharply!");
+    					System.out.println(attacker.getName() + "'s Attack can't go any higher!");
+    					System.out.println();
+    				}
+    				else if (attacker.getStage("SpAttack") == 6) {
+    					attacker.incrementStage("Attack", "+");
+    					attacker.incrementStage("Attack", "+");
+    					System.out.println(attacker.getName() + "'s Attack rose sharply!");
+    					System.out.println(attacker.getName() + "'s Special Attack can't go any higher!");
+    				}
+    				else {
+    					attacker.incrementStage("Attack","+");
+    					attacker.incrementStage("SpAttack", "+");
+    					attacker.incrementStage("Attack","+");
+    					attacker.incrementStage("SpAttack", "+");		
+    					System.out.println(attacker.getName() + "'s Attack and Special Attack have rose sharply!\n");
+    				}
+    				return;
     			}
+    			// Heals the user
+    			if (name.equals("Recover")) {
+    				attacker.setHealth(attacker.getHealth() + (int) Math.round(attacker.getMaxHealth()/2));
+    				if (attacker.getHealth() > attacker.getMaxHealth()) {
+    					attacker.setHealth(attacker.getMaxHealth());
+    				}
+    				System.out.println(attacker.getName() + " used Recover!");
+    				System.out.println(attacker.getName() + " restored some HP!");
+    				return;
+    			}
+    		break;
     		case "fly":
     			// Heals the user
     			if (name.equals("Roost")) {
@@ -406,9 +474,31 @@ public class Move
     				}
     				System.out.println(attacker.getName() + " used Roost!");
     				System.out.println(attacker.getName() + " restored some HP!");
+    				return;
     			}
-    	}
+    		break;
+    		case "psychic":
+    			// Heals user to max and puts them to sleep
+    			if (name.equals("Rest")) {
+    				System.out.println(attacker.getName() + " used Rest!");
+    				//if (attacker.getStatus() != null) {
+    				//	System.out.println(attacker.getName() + "is cured!");
+    				//  attacker.setStatus("null");
+    				//}
+					System.out.println(attacker.getName() + " fell asleep!");
+    				// attacker.setStatus("Sleep");
+    				if (attacker.getHealth() == attacker.getMaxHealth()) {
+    					System.out.println(attacker.getName() + "'s health can't go any higher!");
+    				}
+    				else {
+    					attacker.setHealth(attacker.getMaxHealth());
+    					System.out.println(attacker.getName() + "'s health is restored to max");	
+    				}
+    				return;
+    			}
+    		break;
     	
+    	}
     }
 }
 

@@ -6,7 +6,7 @@ import java.util.Scanner;
  * Class to create and initialize the Trainer object. 
  * A trainer has a party of Pokemon, and an identifier for which
  * Pokemon is currently active and in battle. 
- * @version 5.1
+ * @version 5.2
  * @author precisemotion
  */
 public class Trainer{
