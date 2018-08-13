@@ -4,7 +4,7 @@ package pokemonbattle;
  * Class to create, initialize, and store pokemon moves with their
  * respective varibles. 
  * TODO: Fix U-Turn and Volt-Switch Bugs
- * @version 5.2
+ * @version 5.21
  * @author Andrew Kassab
  */
 public class Move
@@ -415,6 +415,20 @@ public class Move
     				return;
     			}
     		break;
+    		case "dark": 
+    			// May lower target's defense
+    			if (name.equals("Crunch")) {
+    				if (randy <= .2) {
+    					if (target.getStage("Defense") == -6) {
+    						effectMessage = target.getName() + "'s Defense can't go any lower!";
+    					}
+    					else {
+    					target.incrementStage("Defense", "-");
+    						effectMessage = target.getName() + "'s Defense has fallen!";
+    					}
+    				}
+    				return;
+    			}
     	}
     		
     }

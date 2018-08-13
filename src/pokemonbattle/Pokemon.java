@@ -5,7 +5,7 @@ import java.util.Scanner;
 /**
  * Class to create, initialize, and store a Pokemon and their moves. 
  * TODO: Add status effects.
- * @version 5.2
+ * @version 5.21
  * @author Andrew Kassab
 */
 public class Pokemon
@@ -28,7 +28,7 @@ public class Pokemon
     private int baseSpeed;
     private Move[] moves = new Move[4];
     private Move activeMove;
-    private String status; // TODO: Implement Status Effect
+    private String status = ""; // TODO: Implement Status Effect
     
     private int attackStage = 0;
     private int spAttackStage = 0;
@@ -112,7 +112,7 @@ public class Pokemon
     	return defense;
     }
     public void setDefense() {
-    	defense = (int) Math.round( baseDefense * ( Math.max(2.0,2.0+defenseStage) )/( Math.max(2.0,2.0-defenseStage) ) ) ;
+    	defense = (int) baseDefense * Math.round( ( Math.max(2,2+defenseStage) )/( Math.max(2,2-defenseStage)) ) ;
     }
     
     public int getSpDefense() {
@@ -125,6 +125,21 @@ public class Pokemon
     public int getPokeID() {
 		return pokeID;
 	}
+    
+    public String getStatus() {
+    	return status;
+    }
+    public void setStatus(String effect) {
+    	status = effect;
+    }
+    
+    public void applyStatus() {
+    	switch (status) {
+    		case "burn":
+    			
+    	}
+    }
+    
     
     public int getStage(String stat) {
     	switch (stat) {
@@ -231,6 +246,11 @@ public class Pokemon
     	spAttackStage = 0;
     	spDefenseStage = 0;
     	speedStage = 0;
+    	setAttack();
+    	setDefense();
+    	setSpAttack();
+    	setSpDefense();
+    	setSpeed();
     }
 
 	/**

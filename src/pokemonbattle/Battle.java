@@ -6,9 +6,8 @@ import java.util.Scanner;
  * The main class. This class contains the methods and objects to handle 
  * a battle. There will be two trainers in the battle and the 
  * user will take control of both trainer's partys / pokemon. 
- * TODO: Fix bugs involving stat stages causing negative damage values.
  * TODO: BUG: Dark pulse did not do anything to Infernape?? 
- * @version 5.2
+ * @version 5.21
  * @author Andrew Kassab
  */
 public class Battle 
@@ -91,14 +90,13 @@ public class Battle
         Move aquaJet = new Move("Aqua Jet","water",40,100,20,1,true,false,false); // priority +1
         
         Move solarBeam = new Move("Solar Beam", "grass", 120,100,10,0,false,true,false); // TODO: Charges for 1 turn
-        Move woodHammer = new Move("Wood Hammer","grass",120,100,15,0,true,false,false);
         Move leafBlade = new Move("Leaf Blade","grass",90,100,15,0,true,false,false);
         
         Move closeCombat = new Move("Close Combat","fighting",120,100,5,0,true,false,true); // Lowers user's attack
         Move focusBlast = new Move("Focus Blast","fighting",120,70,5,0,false,true,false); // May lower SpDef
         
-        Move thunderPunch = new Move("Thunder Punch","electric",75,100,15,0,true,false,false);
-        Move thunderbolt = new Move("Thunderbolt","electric",90,100,15,0,false,true,false);
+        Move thunderPunch = new Move("Thunder Punch","electric",75,100,15,0,true,false,false); // TODO: May Paralyze
+        Move thunderbolt = new Move("Thunderbolt","electric",90,100,15,0,false,true,false); // TODO: May Paralyze
         Move voltSwitch = new Move("Volt Switch","electric",70,100,20,0,true,false,true); // Allows user to switch Pokemon
        
         Move shadowBall = new Move("Shadow Ball","ghost",80,100,15,0,false,true,true); // May lower spDefense
@@ -106,7 +104,7 @@ public class Battle
         Move bulletPunch = new Move("Bullet Punch","bug", 40,100,30,1,true,false,false); // priority +1
         Move uTurn = new Move("U-turn","bug",70,100,20,0,true,false,true); // Allows user to switch Pokemon
         
-        Move darkPulse = new Move("Dark Pulse", "dark", 80,100,15,0,false,true,false); // May cause Flinch.
+        Move darkPulse = new Move("Dark Pulse", "dark", 80,100,15,0,false,true,false); // TODO: May cause Flinch.
         Move crunch = new Move("Crunch","dark",80,100,15,0,true,false,false); // May lower defense
         
         Move zenHeadbutt = new Move("Zen Headbutt","psychic",80,90,15,0,true,false,false);

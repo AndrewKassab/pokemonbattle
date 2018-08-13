@@ -6,7 +6,7 @@ import java.util.Scanner;
  * Class to create and initialize the Trainer object. 
  * A trainer has a party of Pokemon, and an identifier for which
  * Pokemon is currently active and in battle. 
- * @version 5.2
+ * @version 5.21
  * @author precisemotion
  */
 public class Trainer{
@@ -76,6 +76,9 @@ public class Trainer{
     				}
     				if (activePokemon == null) {
     					System.out.println("Let's go, " + party[i].getName() + "!\n");
+    				}
+    				else {
+    					activePokemon.resetStages();
     				}
     				activePokemon = party[i];
     				activeIndex = i;       				

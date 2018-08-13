@@ -1,0 +1,1 @@
+Move roost = new Move("Roost","fly",0,100,10,0,false,false,true); // Heals the user half of max HP

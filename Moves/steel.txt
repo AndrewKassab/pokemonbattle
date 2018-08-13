@@ -1,1 +1,1 @@
-Move meteorMash = new Move("Meteor Mash", "steel", 90,90,10,false,true,false);
+Move meteorMash = new Move("Meteor Mash", "steel", 90,90,10,0,true,false,false);

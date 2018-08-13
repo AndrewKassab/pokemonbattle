@@ -1,2 +1,2 @@
-Move hydroPump = new Move("Hydro Pump","water",110,80,5,false,false,true);	
-Move aquaJet = new Move("Aqua Jet","water",40,100,20,true,true,false); // priority +1
+Move hydroPump = new Move("Hydro Pump","water",110,80,5,0,false,true,false);	
+Move aquaJet = new Move("Aqua Jet","water",40,100,20,1,true,false,false); // priority +1

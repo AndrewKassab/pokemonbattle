@@ -1,1 +1,2 @@
-Move bulletPunch = new Move("Bullet Punch","bug", 40,100,30,true,true,false); // priority +1
+ Move bulletPunch = new Move("Bullet Punch","bug", 40,100,30,1,true,false,false); // priority +1
+ Move uTurn = new Move("U-turn","bug",70,100,20,0,true,false,true); // Allows user to switch Pokemon

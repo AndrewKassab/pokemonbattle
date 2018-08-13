@@ -1,2 +1,2 @@
-Move earthquake = new Move("Earthquake","ground",100,100,10,false,true,false); 
-Move earthPower = new Move("Earth Power","ground",90,100,10,false,false,true); // May lower spDef
+Move earthquake = new Move("Earthquake","ground",100,100,10,0,true,false,false); 
+Move earthPower = new Move("Earth Power","ground",90,100,10,0,false,true,false); // May lower spDef

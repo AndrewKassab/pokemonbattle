@@ -1,2 +1,2 @@
-Move closeCombat = new Move("Close Combat","fighting",120,100,5,false,true,false); // Lowers user's attack
-Move focusBlast = new Move("Focus Blast","fighting",120,70,5,false,false,true); // May lower SpDef
+Move closeCombat = new Move("Close Combat","fighting",120,100,5,0,true,false,true); // Lowers user's attack
+Move focusBlast = new Move("Focus Blast","fighting",120,70,5,0,false,true,false); // May lower SpDef
