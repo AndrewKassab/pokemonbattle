@@ -4,6 +4,7 @@ package pokemonbattle;
  * Class to create, initialize, and store pokemon moves with their
  * respective varibles. 
  * TODO: Fix U-Turn and Volt-Switch Bugs
+ * TODO: Fix negative damage bug when altering special defense stat stage.
  * @version 5.21
  * @author Andrew Kassab
  */

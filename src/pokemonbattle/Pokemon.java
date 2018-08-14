@@ -29,6 +29,9 @@ public class Pokemon
     private Move[] moves = new Move[4];
     private Move activeMove;
     private String status = ""; // TODO: Implement Status Effect
+    private int statusCounter = 0;
+    private double spDamageModifier = 1;
+    private double physDamageModifier = 1;
     
     private int attackStage = 0;
     private int spAttackStage = 0;
@@ -79,12 +82,22 @@ public class Pokemon
     public int getSpeed(){
         return speed;
     }   
-    public void setSpeed() {
-    	speed = (int) baseSpeed * Math.round( (Math.max(2,2+speedStage))/(Math.max(2,2-speedStage)) ) ;
+    public void setSpeed(int sp) {
+    	speed = sp;
+    }
+    
+    /**
+     * Factors in stat stages to calculate a Pokemon's stat in battle.
+     */
+    public void calculateSpeed() {
+    	speed = (int) (baseSpeed * Math.round( (Math.max(2.0,2.0+speedStage))/(Math.max(2.0,2.0-speedStage)) )) ;
     }
     
     public Move[] getMoves() {
     	return moves;
+    }
+    public void setMoves( Move[] moveset ) {
+    	moves = moveset;
     }
     
     public Move getActiveMove() {
@@ -97,29 +110,57 @@ public class Pokemon
     public int getAttack() {
     	return attack;
     }
-    public void setAttack() {
-    	attack = (int) baseAttack * Math.round( (Math.max(2,2+attackStage))/(Math.max(2,2-attackStage)) ) ;
+    public void setAttack(int att) {
+    	attack = att;
+    }
+    
+    /**
+     * Factors in stat stages to calculate a Pokemon's stat in battle.
+     */
+    public void calculateAttack() {
+    	attack = (int) (baseAttack * Math.round( (Math.max(2.0,2.0+attackStage))/(Math.max(2.0,2.0-attackStage)) )) ;
     }
     
     public int getSpAttack() {
     	return spAttack;
     }
-    public void setSpAttack() {
-    	spAttack = (int) baseSpAttack * Math.round( (Math.max(2,2+spAttackStage))/(Math.max(2,2-spAttackStage)) ) ;
+    public void setSpAttack(int spAtt) {
+    	spAttack = spAtt;
+    }
+    
+    /**
+     * Factors in stat stages to calculate a Pokemon's stat in battle.
+     */
+    public void calculateSpAttack() {
+    	spAttack = (int) (baseSpAttack * Math.round( (Math.max(2.0,2.0+spAttackStage))/(Math.max(2.0,2.0-spAttackStage)) )) ;
     }
     
     public int getDefense() {
     	return defense;
     }
-    public void setDefense() {
-    	defense = (int) baseDefense * Math.round( ( Math.max(2,2+defenseStage) )/( Math.max(2,2-defenseStage)) ) ;
+    public void setDefense(int def) {
+    	defense = def;
+    }
+    
+    /**
+     * Factors in stat stages to calculate a Pokemon's stat in battle.
+     */
+    public void calculateDefense() {
+    	defense = (int) ( baseDefense * Math.round( ( Math.max(2.0,2.0+defenseStage) )/( Math.max(2.0,2.0-defenseStage)) )) ;
     }
     
     public int getSpDefense() {
     	return spDefense;
     }
-    public void setSpDefense() {
-    	spDefense = (int) baseSpDefense * Math.round( (Math.max(2,2+spDefenseStage))/(Math.max(2,2-spDefenseStage)) ) ;
+    public void setSpDefense(int spDef) {
+    	spDefense = spDef;
+    }
+    
+    /**
+     * Factors in stat stages to calculate a Pokemon's stat in battle.
+     */
+    public void calculateSpDefense() {
+    	spDefense = (int) ( baseSpDefense * Math.round( (Math.max(2.0,2.0+spDefenseStage))/(Math.max(2.0,2.0-spDefenseStage)) )) ;
     }
     
     public int getPokeID() {
@@ -133,13 +174,30 @@ public class Pokemon
     	status = effect;
     }
     
-    public void applyStatus() {
-    	switch (status) {
-    		case "burn":
-    			
-    	}
+    public int getStatusCounter() {
+    	return statusCounter;
+    }
+    public void setStatusCounter(int count) {
+    	statusCounter = count;
+    }
+    public void incrementStatusCounter() {
+    	statusCounter++;
     }
     
+    /**
+     * Applys a status effect to the battle.
+     */
+    public void applyStatus(int damage) {
+    	switch (status) {
+    		case "burn":
+    			if (getActiveMove().isPhysical()) {
+    				damage = damage / 2;
+    			}
+    			physDamageModifier = .5;
+    			setHealth()
+    			
+    	}
+    }   
     
     public int getStage(String stat) {
     	switch (stat) {
@@ -168,13 +226,13 @@ public class Pokemon
     			if (direction.equals("+")) {
     				if (attackStage < 6){
     					attackStage++;
-    					setAttack();
+    					calculateAttack();
     				}
     			}
     			else if (direction.equals("-")) {
     				if (attackStage > -6) {
     					attackStage--;
-    					setAttack();
+    					calculateAttack();
     				}		
     			}
     		return;
@@ -182,13 +240,13 @@ public class Pokemon
     			if (direction.equals("+")) {
     				if (defenseStage < 6) {
     					defenseStage++;
-    					setDefense();
+    					calculateDefense();
     				}
     			}
     			else if (direction.equals("-")) {
     				if (defenseStage > -6 ) {
     					defenseStage--;
-    					setDefense();
+    					calculateDefense();
     				}
     			}
     		return;
@@ -196,13 +254,13 @@ public class Pokemon
     			if (direction.equals("+")) {
     				if (spDefenseStage < 6) {
     					spDefenseStage++;
-    					setSpDefense();
+    					calculateSpDefense();
     				}
     			}
     			else if (direction.equals("-")) {
     				if (spDefenseStage > -6) {
     					spDefenseStage--;
-    					setSpDefense();
+    					calculateSpDefense();
     				}
     			}
     		return;
@@ -210,13 +268,13 @@ public class Pokemon
     			if (direction.equals("+")) {
     				if (spAttackStage < 6) {
     					spAttackStage++;
-    					setSpAttack();
+    					calculateSpAttack();
     				}
     			}
     			else if (direction.equals("-")) {
     				if (spAttackStage > -6) {
     					spAttackStage--;
-        				setSpAttack();
+    					calculateSpAttack();
     				}
     			}
     		return;
@@ -224,13 +282,13 @@ public class Pokemon
     			if (direction.equals("+")) {
     				if (speedStage < 6) {
     					speedStage++;
-    					setSpeed();
+    					calculateSpeed();
     				}
     			}
     			else if (direction.equals("-")) {
     				if (speedStage > -6) {
     					speedStage--;
-    					setSpeed();
+    					calculateSpeed();
     				}
     			}
     		return;
@@ -246,11 +304,11 @@ public class Pokemon
     	spAttackStage = 0;
     	spDefenseStage = 0;
     	speedStage = 0;
-    	setAttack();
-    	setDefense();
-    	setSpAttack();
-    	setSpDefense();
-    	setSpeed();
+    	calculateAttack();
+    	calculateDefense();
+    	calculateSpAttack();
+    	calculateSpDefense();
+    	calculateSpeed();
     }
 
 	/**
