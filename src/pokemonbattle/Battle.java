@@ -7,7 +7,8 @@ import java.util.Scanner;
  * a battle. There will be two trainers in the battle and the 
  * user will take control of both trainer's partys / pokemon. 
  * TODO: BUG: Dark pulse did not do anything to Infernape?? 
- * @version 5.21
+ * TODO: BUG: Infernape at 0 health and didn't faint but match ended?
+ * @version 6.0
  * @author Andrew Kassab
  */
 public class Battle 
@@ -25,6 +26,17 @@ public class Battle
     */
     public static int whosFirst(Pokemon pa, Pokemon pb, Move ma, Move mb)
     {
+    	int pokemonOneSpeed = pa.getSpeed();
+    	int pokemonTwoSpeed = pb.getSpeed();
+    	
+    	// Paralysis lowers speed by 1/2
+    	if (pa.getStatus() != null && pa.getStatus().equals("paralysis")) {
+    		pokemonOneSpeed = (int) Math.round(pokemonOneSpeed/2.0);
+    	}
+    	if (pb.getStatus() != null && pb.getStatus().equals("paralysis")) {
+    		pokemonTwoSpeed = (int) Math.round(pokemonTwoSpeed/2.0);
+    	}
+    	
     	if ( ma == null ) {
     		return 1;
     	}
@@ -37,10 +49,10 @@ public class Battle
         else if ( mb.getPriority() > ma.getPriority()){
             return 2;
         }
-        else if (pa.getSpeed() > pb.getSpeed()){
+        else if (pokemonOneSpeed > pokemonTwoSpeed){
             return 1;
         }
-        else if (pb.getSpeed() > pa.getSpeed()){
+        else if (pokemonTwoSpeed > pokemonOneSpeed){
             return 2;
         }
       
@@ -79,8 +91,6 @@ public class Battle
         
         Scanner keyboard = new Scanner(System.in);
         
-        // TODO: ADD SWORDS DANCE AND U-TURN (ability class)
-        
         Move ultimate = new Move("InstantKO","fire",10000,100,99,5,true,true,false); // FILLER FOR TESTING
         
         Move fireBlast = new Move("Fire Blast","fire",110,85,5,0,false,true,false); // TODO: May burn
@@ -98,6 +108,7 @@ public class Battle
         Move thunderPunch = new Move("Thunder Punch","electric",75,100,15,0,true,false,false); // TODO: May Paralyze
         Move thunderbolt = new Move("Thunderbolt","electric",90,100,15,0,false,true,false); // TODO: May Paralyze
         Move voltSwitch = new Move("Volt Switch","electric",70,100,20,0,true,false,true); // Allows user to switch Pokemon
+        Move thunderWave = new Move("Thunder Wave","electric",0,90,20,0,false,true,true); // Paralyzes opponent
        
         Move shadowBall = new Move("Shadow Ball","ghost",80,100,15,0,false,true,true); // May lower spDefense
         
@@ -108,6 +119,7 @@ public class Battle
         Move crunch = new Move("Crunch","dark",80,100,15,0,true,false,false); // May lower defense
         
         Move zenHeadbutt = new Move("Zen Headbutt","psychic",80,90,15,0,true,false,false);
+        Move rest= new Move("Rest","psychic",0,100,10,0,false,false,true); // Heals to max and puts pokemon to sleep
         
         Move iceBeam = new Move("Ice Beam","ice",90,100,10,0,false,true,false); // TODO: May Freeze
         
@@ -131,8 +143,8 @@ public class Battle
         Move[] charMoves = new Move[] {flareBlitz,earthquake,roost,ultimate};
         Move[] blasMoves = new Move[] {hydroPump,iceBeam,darkPulse,ultimate};
         Move[] gengMoves = new Move[] {shadowBall,sludgeWave,focusBlast,ultimate};
-        Move[] joltMoves = new Move[] {thunderbolt,shadowBall,voltSwitch,ultimate};
-        Move[] snorMoves = new Move[] {bodySlam,earthquake,thunderPunch,ultimate};
+        Move[] joltMoves = new Move[] {thunderbolt,shadowBall,voltSwitch,thunderWave};
+        Move[] snorMoves = new Move[] {bodySlam,earthquake,thunderPunch,rest};
         Move[] scizMoves = new Move[] {bulletPunch,uTurn,swordsDance,roost};
         Move[] tyranMoves = new Move[] {earthquake,stoneEdge,crunch,ultimate};
         Move[] metaMoves = new Move[] {zenHeadbutt,earthquake,meteorMash,ultimate};
@@ -178,20 +190,36 @@ public class Battle
            
             // Attack turns begin
             if (result == 1) { // If trainer one attacks first
-            	trainerOne.Attack(trainerTwo);
+            	trainerOne.getActivePokemon().applyPreStatus(trainerOne); 
+            	if (trainerOne.canAttack()) { // If paralysis, sleep, or freeze didn't stop the turn.
+            		trainerOne.Attack(trainerTwo);
+            	}
             	Thread.sleep(3000);
             	if (trainerTwo.canAttack()) {
-            		trainerTwo.Attack(trainerOne);
+            		trainerTwo.getActivePokemon().applyPreStatus(trainerTwo);
+            		if (trainerTwo.canAttack()) { // If paralysis, sleep, or freeze didn't stop the turn.
+            			trainerTwo.Attack(trainerOne);
+            		}
             	}
+            	trainerOne.getActivePokemon().applyEndStatus();
+            	trainerTwo.getActivePokemon().applyEndStatus();
             	trainerTwo.setCanAttack(true);
             	trainerOne.setCanAttack(true);
             }
             else { // If trainer two attacks first
-            	trainerTwo.Attack(trainerOne);
+            	trainerTwo.getActivePokemon().applyPreStatus(trainerTwo); 
+            	if (trainerTwo.canAttack()) { // If paralysis, sleep, or freeze didn't stop the turn.
+            		trainerTwo.Attack(trainerOne);
+            	}
             	Thread.sleep(3000);
             	if (trainerOne.canAttack()) {
-            		trainerOne.Attack(trainerTwo);
+            		trainerOne.getActivePokemon().applyPreStatus(trainerOne);
+            		if (trainerOne.canAttack()) { // If paralysis, sleep, or freeze didn't stop the turn.
+            			trainerOne.Attack(trainerTwo);
+            		}
             	}
+            	trainerOne.getActivePokemon().applyEndStatus();
+            	trainerTwo.getActivePokemon().applyEndStatus();
             	trainerOne.setCanAttack(true);
             	trainerTwo.setCanAttack(true);
             }
@@ -200,7 +228,6 @@ public class Battle
             displayHealth(trainerOne.getActivePokemon(),trainerTwo.getActivePokemon());
             
             // Loop continues as long as both Pokemon are still alive
-            // TODO: Make loop continue as long as the trainers have Pokemon available
         } while (trainerOne.getActivePokemon().getHealth() > 0 && 
         		trainerTwo.getActivePokemon().getHealth() > 0);
         

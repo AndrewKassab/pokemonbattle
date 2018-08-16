@@ -4,8 +4,7 @@ import java.util.Scanner;
 
 /**
  * Class to create, initialize, and store a Pokemon and their moves. 
- * TODO: Add status effects.
- * @version 5.21
+ * @version 6.0
  * @author Andrew Kassab
 */
 public class Pokemon
@@ -28,10 +27,8 @@ public class Pokemon
     private int baseSpeed;
     private Move[] moves = new Move[4];
     private Move activeMove;
-    private String status = ""; // TODO: Implement Status Effect
+    private String status = null; // TODO: Implement Status Effect
     private int statusCounter = 0;
-    private double spDamageModifier = 1;
-    private double physDamageModifier = 1;
     
     private int attackStage = 0;
     private int spAttackStage = 0;
@@ -177,27 +174,80 @@ public class Pokemon
     public int getStatusCounter() {
     	return statusCounter;
     }
-    public void setStatusCounter(int count) {
-    	statusCounter = count;
-    }
-    public void incrementStatusCounter() {
-    	statusCounter++;
-    }
     
     /**
      * Applys a status effect to the battle.
+     * For effects that work at the end of turns.
      */
-    public void applyStatus(int damage) {
+    public void applyEndStatus() {
+    	
+    	if (status == null) {
+    		return;
+    	}
+    	
     	switch (status) {
     		case "burn":
-    			if (getActiveMove().isPhysical()) {
-    				damage = damage / 2;
-    			}
-    			physDamageModifier = .5;
-    			setHealth()
-    			
+    			setHealth(getHealth() - (int) Math.round(getMaxHealth()/16.0));
+    			System.out.println(name + " is hurt by its burn!");
+    			return;
+    		case "poison":
+    			setHealth(getHealth() - (int) Math.round(getMaxHealth()/16.0));
+    			System.out.println(name + " is hurt by its burn!");
+    			return;
+    		case "bad poison":
+    			return;
     	}
     }   
+    
+    /**
+     * Applys a status effect to the battle
+     * For effects that work at the beginning of turns.
+     * TODO: Finish all status'
+     */
+    public void applyPreStatus(Trainer t) {
+    	double random = Math.random();
+    	
+    	if (status == null)
+    	{
+    		return;
+    	}
+    	
+    	switch (status) {
+    		case "paralysis":
+    			System.out.println(name + " is paralyzed! It might be unable to move!");
+    			if (random < .25) {
+    				System.out.println(name + " is paralyzed! It can't move!");
+    				t.setCanAttack(false);
+    			}
+    			return;
+    		case "confusion":
+    			
+    			return;			
+    		case "frozen":
+    			
+    			return;
+    		case "sleep":
+    			if (statusCounter < 3) {
+    				if (Math.random() >= .33) { // 33% chance of waking up.
+    					System.out.println(name + " is fast asleep.");
+    					System.out.println();
+    					statusCounter++;
+    					t.setCanAttack(false);
+    				}
+    				else {
+    					System.out.println(name + " woke up!");
+    					System.out.println();
+    					statusCounter = 0;
+    				}
+    			}
+    			else { // After the 3rd turn, gauranteed wake up.
+    				System.out.println(name + " woke up!");
+					System.out.println();
+					statusCounter = 0;
+    			}
+    			return;
+    	}
+    }
     
     public int getStage(String stat) {
     	switch (stat) {

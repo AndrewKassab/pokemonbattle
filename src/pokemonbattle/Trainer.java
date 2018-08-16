@@ -6,7 +6,7 @@ import java.util.Scanner;
  * Class to create and initialize the Trainer object. 
  * A trainer has a party of Pokemon, and an identifier for which
  * Pokemon is currently active and in battle. 
- * @version 5.21
+ * @version 6.0
  * @author precisemotion
  */
 public class Trainer{
@@ -180,7 +180,13 @@ public class Trainer{
         	damage = damage * 2;
         }
         
+        // Burn reduces physical damage by half
+        if (activePokemon.getStatus() != null && move.isPhysical() && activePokemon.getStatus().equals("burn")) {
+        	damage = (int) Math.round(damage/2.0);
+        }
+        
         // Check if the attack has landed
+        // TODO: Move above damage calculation to save resources if the move misses
         if (move.hit()){
             System.out.println(activePokemon.getName() + " used " + move.getName() + "!");
             

@@ -4,8 +4,7 @@ package pokemonbattle;
  * Class to create, initialize, and store pokemon moves with their
  * respective varibles. 
  * TODO: Fix U-Turn and Volt-Switch Bugs
- * TODO: Fix negative damage bug when altering special defense stat stage.
- * @version 5.21
+ * @version 6.0
  * @author Andrew Kassab
  */
 public class Move
@@ -149,7 +148,7 @@ public class Move
         
         // Checks type of move
         switch (type){ 
-            case "normal": 
+        	case "normal": 
                 return result;
             case "fire": 
                 result = new String[]{"grass","ice","bug","steel"};
@@ -342,16 +341,18 @@ public class Move
     				attacker.setHealth( attacker.getHealth() - (int) Math.round( (1.0/3.0) * damage));
     				effectMessage = attacker.getName() + " took recoil!";
     				if (randy <= .1) {
-    					// TODO: Status effects - target.setStatus("burn");	
+    					target.setStatus("burn");	
     					effectMessage += "\n" + target.getName() + " has been burned!";
     				}
     				return;
     			}
-    			// Has a chance to burn the targer
+    			// Has a chance to burn the target
     			if (name.equals("Fire Blast")) {
     				if (randy <= .1) {
-    					// target.setStatus("burn");
-    					effectMessage += "\n" + target.getName() + " has been burned!";
+    					if (!target.getType()[0].equals("fire") && !target.getType()[1].equals("fire")) {
+    						target.setStatus("burn");
+    						effectMessage += "\n" + target.getName() + " has been burned!";
+    					}
     				}
     				return;
     			}
@@ -437,7 +438,8 @@ public class Move
     public void useEffect(Trainer trainer, Trainer enemy) {
     	
     	Pokemon attacker = trainer.getActivePokemon();
-    	Pokemon target = trainer.getActivePokemon();
+    	Pokemon target = enemy.getActivePokemon();
+    	double random = Math.random();
     	
     	switch(type) {
     		case "normal":
@@ -465,8 +467,9 @@ public class Move
     					attacker.incrementStage("SpAttack", "+");
     					attacker.incrementStage("Attack","+");
     					attacker.incrementStage("SpAttack", "+");		
-    					System.out.println(attacker.getName() + "'s Attack and Special Attack have rose sharply!\n");
+    					System.out.println(attacker.getName() + "'s Attack and Special Attack have rose sharply!");
     				}
+    				System.out.println();
     				return;
     			}
     			// Heals the user
@@ -477,6 +480,7 @@ public class Move
     				}
     				System.out.println(attacker.getName() + " used Recover!");
     				System.out.println(attacker.getName() + " restored some HP!");
+    				System.out.println();
     				return;
     			}
     		break;
@@ -489,29 +493,48 @@ public class Move
     				}
     				System.out.println(attacker.getName() + " used Roost!");
     				System.out.println(attacker.getName() + " restored some HP!");
+    				System.out.println();
     				return;
     			}
     		break;
     		case "psychic":
     			// Heals user to max and puts them to sleep
     			if (name.equals("Rest")) {
+    				
     				System.out.println(attacker.getName() + " used Rest!");
-    				//if (attacker.getStatus() != null) {
-    				//	System.out.println(attacker.getName() + "is cured!");
-    				//  attacker.setStatus("null");
-    				//}
 					System.out.println(attacker.getName() + " fell asleep!");
-    				// attacker.setStatus("Sleep");
+    				
+    				if (attacker.getStatus() != null) { // If there is a pre-existing status effect
+    					System.out.println(attacker.getName() + " is cured!");
+    					attacker.setStatus(null);
+    				}	
+    				attacker.setStatus("sleep"); // Health is already max
     				if (attacker.getHealth() == attacker.getMaxHealth()) {
     					System.out.println(attacker.getName() + "'s health can't go any higher!");
+    					System.out.println();
     				}
     				else {
     					attacker.setHealth(attacker.getMaxHealth());
     					System.out.println(attacker.getName() + "'s health is restored to max");	
+    					System.out.println();
     				}
     				return;
     			}
     		break;
+    		case "electric":
+    			// Paralyzes opponent
+    			if (name.equals("Thunder Wave")) {
+    				System.out.println(attacker.getName() + " used Thunder Wave!");
+    				if (random < .9) { // 90% chance
+    					target.setStatus("paralysis");
+    					System.out.println(target.getName() + " was paralyzed!");
+    					System.out.println();
+    				}
+    				else {
+    					System.out.println("But it missed!");
+    					System.out.println();
+    				}
+    			}
     	
     	}
     }
