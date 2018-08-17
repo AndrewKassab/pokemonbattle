@@ -1,1 +1,2 @@
-Move sludgeWave = new Move("Sludge Wave","poison",95,100,10,0,false,true,false); // TODO: May poison
+Move sludgeWave = new Move("Sludge Wave","poison",95,100,10,0,false,true,true); // May poison
+Move toxic = new Move("Toxic","poison",0,85,10,0,false,true,true); // Badly poisons enemy

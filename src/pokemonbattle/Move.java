@@ -4,7 +4,7 @@ package pokemonbattle;
  * Class to create, initialize, and store pokemon moves with their
  * respective varibles. 
  * TODO: Fix U-Turn and Volt-Switch Bugs
- * @version 6.0
+ * @version 7.0
  * @author Andrew Kassab
  */
 public class Move
@@ -116,8 +116,8 @@ public class Move
      */
     public boolean hit() 
     {
-    	double randy = Math.random();
-    	if (randy <= accuracy/100){
+    	double random = Math.random();
+    	if (random <= accuracy/100){
            return true;
     	} 
     	else return false;
@@ -129,8 +129,8 @@ public class Move
      */
     public boolean isCritical() {
     	
-    	double randy = Math.random();
-    	if(randy <= .0625) {
+    	double random = Math.random();
+    	if(random <= .0625) {
     		return true;
     	}
     	else return false;
@@ -330,9 +330,12 @@ public class Move
      */
     public void applyEffect(Trainer trainer, Trainer enemy,int damage) {
     	
-    	double randy = Math.random();
+    	double random = Math.random();
     	Pokemon attacker = trainer.getActivePokemon();
     	Pokemon target = enemy.getActivePokemon();
+    	String typeOne = target.getType()[0];
+    	String typeTwo = target.getType()[1];
+    	String targStatus = target.getStatus();
     	
     	switch(type) {
     		case "fire":
@@ -340,16 +343,19 @@ public class Move
     			if (name.equals("Flare Blitz")) {
     				attacker.setHealth( attacker.getHealth() - (int) Math.round( (1.0/3.0) * damage));
     				effectMessage = attacker.getName() + " took recoil!";
-    				if (randy <= .1) {
-    					target.setStatus("burn");	
-    					effectMessage += "\n" + target.getName() + " has been burned!";
+    				if (random < .1) {
+    					// Fire cannot be burned
+    					if (!typeOne.equals("fire") && !typeTwo.equals("fire") && !targStatus.equals("burn")) {
+    						target.setStatus("burn");
+    						effectMessage += "\n" + target.getName() + " has been burned!";
+    					}
     				}
-    				return;
     			}
     			// Has a chance to burn the target
     			if (name.equals("Fire Blast")) {
-    				if (randy <= .1) {
-    					if (!target.getType()[0].equals("fire") && !target.getType()[1].equals("fire")) {
+    				if (random < .1) {
+    					// Fire cannot be burned
+    					if (!typeOne.equals("fire") && !typeTwo.equals("fire") && !targStatus.equals("burn")) {
     						target.setStatus("burn");
     						effectMessage += "\n" + target.getName() + " has been burned!";
     					}
@@ -362,13 +368,13 @@ public class Move
     			if (name.equals("Close Combat")) {
     				attacker.incrementStage("Defense","-");
     				attacker.incrementStage("SpDefense", "-");
-    				// TODO: Display message for when stat stages are maxed lower or mased higher
+    				// TODO: Display message for when stat stages are maxed lower
     				effectMessage = attacker.getName() + "'s Defense and Special Defense have decreased!";
     				return;
     			}
     			// May lower target's spDefense
     			if (name.equals("Focus Blast")) {
-    				if (randy <= .1) {
+    				if (random < .1) {
     					target.incrementStage("spDefense", "-");
     					effectMessage = target.getName() + "'s Special Defense has decreased!";
     				}
@@ -388,18 +394,39 @@ public class Move
     		break;
     		case "electric":
     			// Allows a user to swap Pokemon after attacking
+    			// TODO: May Paralyze
     			if (name.equals("Volt Switch")) {
-    				effectMessage = attacker.getName() + " went back!"; // add Trainer Names
+    				effectMessage = attacker.getName() + " went back!"; // TODO: add Trainer Names
     				System.out.println();
     				trainer.selectPokemon();
     				effectMessage = effectMessage + "\n" + trainer.getActivePokemon().getName() + " has entered the battle!";
     				return;
     			}
+    			// 10% Chance to paralyze
+    			if (name.equals("Thunder Punch")) {
+    				// Electric and ground can't be paralyzed
+    				if (random < .1 && !typeOne.equals("electric") && !typeTwo.equals("electric") 
+    						&& !typeOne.equals("ground") && !typeTwo.equals("ground") && !targStatus.equals("paralysis")) {
+    					target.setStatus("paralysis");
+    					effectMessage = target.getName() + " was paralyzed!";
+    				}
+    				return;
+    			}
+    			// 10% Chance to paralyze
+    			if (name.equals("Thunderbolt")) {
+    				// Electric and ground can't be paralyzed
+    				if (random < .1 && !typeOne.equals("electric") && !typeTwo.equals("electric") 
+    						&& !typeOne.equals("ground") && !typeTwo.equals("ground") && !targStatus.equals("paralysis")) {
+    					target.setStatus("paralysis");
+    					effectMessage = target.getName() + " was paralyzed!";
+    				}
+    				return;
+    			}
     		break;
     		case "ghost":
-    			// May lower target's spDefense
+    			// 20% May lower target's spDefense
     			if (name.equals("Shadow Ball")) {
-    				if (randy <= .2) {
+    				if (random < .2) {
     					target.incrementStage("spDefense", "-");
     					effectMessage = target.getName() + "'s Special Defense has decreased!";
     				}
@@ -408,9 +435,9 @@ public class Move
     			
     		break;
     		case "ground":
-    			// May lower target's spDefense
+    			// 10% May lower target's spDefense
     			if (name.equals("Earth Power")) {
-    				if (randy <= .1) {
+    				if (random < .1) {
     					target.incrementStage("spDefense", "-");
     					effectMessage = target.getName() + "'s Special Defense has decreased!";
     				}
@@ -418,9 +445,9 @@ public class Move
     			}
     		break;
     		case "dark": 
-    			// May lower target's defense
+    			// 20% May lower target's defense
     			if (name.equals("Crunch")) {
-    				if (randy <= .2) {
+    				if (random < .2) {
     					if (target.getStage("Defense") == -6) {
     						effectMessage = target.getName() + "'s Defense can't go any lower!";
     					}
@@ -431,8 +458,44 @@ public class Move
     				}
     				return;
     			}
+    		break;
+    		case "ice":
+    			// 10% May freeze
+    			if (name.equals("Ice Beam")) {
+    				// Ice and Fire cannot be frozen
+    				if (random < .1 && !typeOne.equals("fire") && !typeTwo.equals("fire")
+    						&& !typeOne.equals("ice") && !typeTwo.equals("ice") && !targStatus.equals("frozen")) {
+    					effectMessage = target.getName() + " was frozen!";
+    					target.setStatus("frozen");
+    				}
+    				return;
+    			}
+    		break;
+    		case "poison":
+    			// 10% Chance of poisoning
+    			if (name.equals("Sludge Wave")) {
+    				// Poison and Steel cannot be poisoned
+    				if (random < .1 && !typeOne.equals("poison") && !typeTwo.equals("poison") 
+    						&& !typeOne.equals("steel") && !typeTwo.equals("steel") && !targStatus.equals("poison")) {
+    					target.setStatus("poison");
+    					effectMessage = target.getName() + " was poisoned!";
+    				}
+    				return;
+    			}
+    		break;
+    		case "normal":
+    			// 30% Chance to paralyze
+    			if (name.equals("Body Slam")) {
+    				// Electric and ground can't be paralyzed
+    				if (random < .3 && !typeOne.equals("electric") && !typeTwo.equals("electric") && !typeOne.equals("ground") 
+    						&& !typeTwo.equals("ground") && !targStatus.equals("paralysis")) {
+    					target.setStatus("paralysis");
+    					effectMessage = target.getName() + " was paralyzed!";
+    				}
+    				return;
+    			}
+    			
     	}
-    		
     }
     
     public void useEffect(Trainer trainer, Trainer enemy) {
@@ -440,6 +503,14 @@ public class Move
     	Pokemon attacker = trainer.getActivePokemon();
     	Pokemon target = enemy.getActivePokemon();
     	double random = Math.random();
+    	String typeOne = target.getType()[0];
+    	String typeTwo = target.getType()[1];
+    	String targStatus;
+    	
+    	if (target.getStatus() != null){
+    		targStatus = target.getStatus();
+    	}
+    	else targStatus = ""; // Prevent null pointer
     	
     	switch(type) {
     		case "normal":
@@ -474,12 +545,12 @@ public class Move
     			}
     			// Heals the user
     			if (name.equals("Recover")) {
-    				attacker.setHealth(attacker.getHealth() + (int) Math.round(attacker.getMaxHealth()/2));
-    				if (attacker.getHealth() > attacker.getMaxHealth()) {
-    					attacker.setHealth(attacker.getMaxHealth());
-    				}
     				System.out.println(attacker.getName() + " used Recover!");
-    				System.out.println(attacker.getName() + " restored some HP!");
+    				if (attacker.getHealth() != attacker.getMaxHealth()) {
+    					System.out.println(attacker.getName() + " restored some HP!");
+    					attacker.setHealth(attacker.getHealth() + (int) Math.round(attacker.getMaxHealth()/2));
+    				}
+    				else System.out.println(attacker.getName() + "'s health can't go any higher!");
     				System.out.println();
     				return;
     			}
@@ -487,12 +558,12 @@ public class Move
     		case "fly":
     			// Heals the user
     			if (name.equals("Roost")) {
-    				attacker.setHealth(attacker.getHealth() + (int) Math.round(attacker.getMaxHealth()/2));
-    				if (attacker.getHealth() > attacker.getMaxHealth()) {
-    					attacker.setHealth(attacker.getMaxHealth());
-    				}
     				System.out.println(attacker.getName() + " used Roost!");
-    				System.out.println(attacker.getName() + " restored some HP!");
+    				if (attacker.getHealth() != attacker.getMaxHealth()) {
+    					System.out.println(attacker.getName() + " restored some HP!");
+    					attacker.setHealth(attacker.getHealth() + (int) Math.round(attacker.getMaxHealth()/2));
+    				}
+    				else System.out.println(attacker.getName() + "'s health can't go any higher!");
     				System.out.println();
     				return;
     			}
@@ -526,16 +597,90 @@ public class Move
     			if (name.equals("Thunder Wave")) {
     				System.out.println(attacker.getName() + " used Thunder Wave!");
     				if (random < .9) { // 90% chance
-    					target.setStatus("paralysis");
-    					System.out.println(target.getName() + " was paralyzed!");
-    					System.out.println();
+    					// Doesn't work on ground and electric types
+    					if ( typeOne.equals("ground") || typeTwo.equals("ground") || 
+    							typeOne.equals("electric") || typeTwo.equals("electric")) {
+    						System.out.println("But it didn't work!");
+    						System.out.println();
+    						return;
+    					}
+    					if (targStatus.equals("paralysis")) {
+							System.out.println(target.getName() + " is already paralyzed!");
+    						System.out.println();
+						}
+    					else {
+    						target.setStatus("paralysis");
+    						System.out.println(target.getName() + " was paralyzed!");
+    						System.out.println();
+    					}
+    					
     				}
     				else {
     					System.out.println("But it missed!");
     					System.out.println();
     				}
+    				return;
     			}
-    	
+    		break;
+    		case "poison":
+    			// Badly poisons target
+    			if (name.equals("Toxic")) {
+    				System.out.println(attacker.getName() + " used Toxic!");
+    				if (random < .85) {
+        				// Poison and Steel cannot be poisoned
+    					if (!typeOne.equals("poison") && !typeTwo.equals("poison") 
+    							&& !typeOne.equals("steel") && !typeTwo.equals("steel")) {
+    						if (targStatus.equals("badPoison")) {
+    							System.out.println(target.getName() + " is already poisoned!");
+        						System.out.println();
+    						}
+    						else {
+    							System.out.println(target.getName() + " was badly poisoned!");
+    							System.out.println();
+    							target.setStatus("badPoison");
+    						}
+    					}
+    					else {
+    						System.out.println("But it didn't work!");
+    						System.out.println();
+    					}
+    				}
+    				else {
+    					System.out.println("But it missed!");
+    					System.out.println();
+    				}
+    				return;
+    			}
+    		break;
+    		case "fire":
+    			// Badly poisons target
+    			if (name.equals("Will-O-Wisp")) {
+    				System.out.println(attacker.getName() + " used Will-O-Wisp!");
+    				if (random < .85) {
+        				// Fire cannot be burned
+    					if (!typeOne.equals("fire") && !typeTwo.equals("fire")) {
+    						if (targStatus.equals("burn")) {
+    							System.out.println(target.getName() + " is already burned!");
+        						System.out.println();
+    						}
+    						else {
+    							System.out.println(target.getName() + " was burned!");
+    							System.out.println();
+    							target.setStatus("burn");
+    						}
+    					}
+    					else {
+    						System.out.println("But it didn't work!");
+    						System.out.println();
+    					}
+    				}
+    				else {
+    					System.out.println("But it missed!");
+    					System.out.println();
+    				}
+    				return; 		
+    			}
+    		break;
     	}
     }
 }

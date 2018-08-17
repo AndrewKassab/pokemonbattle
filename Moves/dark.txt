@@ -1,2 +1,2 @@
 Move darkPulse = new Move("Dark Pulse", "dark", 80,100,15,0,false,true,false); // TODO: May cause Flinch.
-Move crunch = new Move("Crunch","dark",80,100,15,0,true,false,false); // May lower defense
+Move crunch = new Move("Crunch","dark",80,100,15,0,true,false,true); // May lower defense

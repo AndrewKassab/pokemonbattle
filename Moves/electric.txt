@@ -1,3 +1,4 @@
-Move thunderPunch = new Move("Thunder Punch","electric",75,100,15,0,true,false,false); // TODO: May Paralyze
-Move thunderbolt = new Move("Thunderbolt","electric",90,100,15,0,false,true,false); // TODO: May Paralyze
+Move thunderPunch = new Move("Thunder Punch","electric",75,100,15,0,true,false,true); // May Paralyze
+Move thunderbolt = new Move("Thunderbolt","electric",90,100,15,0,false,true,true); // May Paralyze
 Move voltSwitch = new Move("Volt Switch","electric",70,100,20,0,true,false,true); // Allows user to switch Pokemon
+Move thunderWave = new Move("Thunder Wave","electric",0,90,20,0,false,true,true); // Paralyzes opponent

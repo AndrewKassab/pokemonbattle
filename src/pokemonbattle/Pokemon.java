@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 /**
  * Class to create, initialize, and store a Pokemon and their moves. 
- * @version 6.0
+ * @version 7.0
  * @author Andrew Kassab
 */
 public class Pokemon
@@ -69,7 +69,14 @@ public class Pokemon
     }
     
     public void setHealth(int h){
-        health = h;
+    	// Prevents negative values and values higher than max HP
+        if (h <= 0) {
+        	health = 0;
+        }
+        if (h >= maxHealth) {
+        	health = maxHealth;
+        }
+        else health = h;
     }
     
     public String[] getType(){
@@ -164,6 +171,17 @@ public class Pokemon
 		return pokeID;
 	}
     
+    /**
+     * Checks if the pokemon is fainted.
+     * @return true if the Pokemon's health is zero
+     */
+    public boolean isFainted() {
+    	if (health <= 0) {
+    		return true;
+    	}
+    	else return false;
+    }
+    
     public String getStatus() {
     	return status;
     }
@@ -179,7 +197,7 @@ public class Pokemon
      * Applys a status effect to the battle.
      * For effects that work at the end of turns.
      */
-    public void applyEndStatus() {
+    public void applyPostStatus(Trainer trainer) {
     	
     	if (status == null) {
     		return;
@@ -189,12 +207,31 @@ public class Pokemon
     		case "burn":
     			setHealth(getHealth() - (int) Math.round(getMaxHealth()/16.0));
     			System.out.println(name + " is hurt by its burn!");
+    			if (isFainted()) {
+    				System.out.println(name + " has fainted!");
+    				trainer.selectPokemon();
+    			}
     			return;
     		case "poison":
-    			setHealth(getHealth() - (int) Math.round(getMaxHealth()/16.0));
-    			System.out.println(name + " is hurt by its burn!");
+    			setHealth(getHealth() - (int) Math.round(getMaxHealth()/8.0));
+    			System.out.println(name + " is hurt by poison!");
+    			if (isFainted()) {
+    				System.out.println(name + " has fainted!");
+    				System.out.println();
+    				trainer.selectPokemon();
+    			}
+    			else System.out.println();
     			return;
-    		case "bad poison":
+    		case "badPoison":
+    			setHealth(getHealth() - (int) ( Math.round( getMaxHealth() * ( 1.0/16.0 + (statusCounter * 1.0/16.0) ) ) ) );
+    			statusCounter++;
+    			System.out.println(name + " is hurt by bad poison!");
+    			if (isFainted()) {
+    				System.out.println(name + " has fainted!");
+    				System.out.println();
+    				trainer.selectPokemon();
+    			}
+    			else System.out.println();
     			return;
     	}
     }   
@@ -202,9 +239,9 @@ public class Pokemon
     /**
      * Applys a status effect to the battle
      * For effects that work at the beginning of turns.
-     * TODO: Finish all status'
+     * @throws InterruptedException 
      */
-    public void applyPreStatus(Trainer t) {
+    public void applyPreStatus(Trainer t) throws InterruptedException {
     	double random = Math.random();
     	
     	if (status == null)
@@ -215,8 +252,10 @@ public class Pokemon
     	switch (status) {
     		case "paralysis":
     			System.out.println(name + " is paralyzed! It might be unable to move!");
+    			Thread.sleep(2000);
     			if (random < .25) {
     				System.out.println(name + " is paralyzed! It can't move!");
+    				System.out.println();
     				t.setCanAttack(false);
     			}
     			return;
@@ -224,11 +263,19 @@ public class Pokemon
     			
     			return;			
     		case "frozen":
-    			
+    			if (Math.random() >= .20) {
+    				System.out.println(name + " is frozen solid!");
+    				System.out.println();
+    				t.setCanAttack(false);
+    			}
+    			else {
+    				System.out.println(name + " thawed out!");
+    				System.out.println();
+    			}
     			return;
     		case "sleep":
     			if (statusCounter < 3) {
-    				if (Math.random() >= .33) { // 33% chance of waking up.
+    				if (random >= .33) { // 33% chance of waking up.
     					System.out.println(name + " is fast asleep.");
     					System.out.println();
     					statusCounter++;
@@ -237,12 +284,14 @@ public class Pokemon
     				else {
     					System.out.println(name + " woke up!");
     					System.out.println();
+    					setStatus(null);
     					statusCounter = 0;
     				}
     			}
     			else { // After the 3rd turn, gauranteed wake up.
     				System.out.println(name + " woke up!");
 					System.out.println();
+					setStatus(null);
 					statusCounter = 0;
     			}
     			return;

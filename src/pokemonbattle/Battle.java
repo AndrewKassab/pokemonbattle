@@ -6,9 +6,10 @@ import java.util.Scanner;
  * The main class. This class contains the methods and objects to handle 
  * a battle. There will be two trainers in the battle and the 
  * user will take control of both trainer's partys / pokemon. 
+ * TODO: Consolidate code in main to separate methods ( Game class ).
  * TODO: BUG: Dark pulse did not do anything to Infernape?? 
  * TODO: BUG: Infernape at 0 health and didn't faint but match ended?
- * @version 6.0
+ * @version 7.0
  * @author Andrew Kassab
  */
 public class Battle 
@@ -93,8 +94,9 @@ public class Battle
         
         Move ultimate = new Move("InstantKO","fire",10000,100,99,5,true,true,false); // FILLER FOR TESTING
         
-        Move fireBlast = new Move("Fire Blast","fire",110,85,5,0,false,true,false); // TODO: May burn
+        Move fireBlast = new Move("Fire Blast","fire",110,85,5,0,false,true,true); // May burn
         Move flareBlitz = new Move("Flare Blitz","fire",120,100,15,0,true,false,true); // Has Recoil.
+        Move will_O_Wisp = new Move("Will-O-Wisp","fire",0,85,15,0,false,true,true); // Burns Enemy
         
         Move hydroPump = new Move("Hydro Pump","water",110,80,5,0,false,true,false);	
         Move aquaJet = new Move("Aqua Jet","water",40,100,20,1,true,false,false); // priority +1
@@ -103,10 +105,10 @@ public class Battle
         Move leafBlade = new Move("Leaf Blade","grass",90,100,15,0,true,false,false);
         
         Move closeCombat = new Move("Close Combat","fighting",120,100,5,0,true,false,true); // Lowers user's attack
-        Move focusBlast = new Move("Focus Blast","fighting",120,70,5,0,false,true,false); // May lower SpDef
+        Move focusBlast = new Move("Focus Blast","fighting",120,70,5,0,false,true,true); // May lower SpDef
         
-        Move thunderPunch = new Move("Thunder Punch","electric",75,100,15,0,true,false,false); // TODO: May Paralyze
-        Move thunderbolt = new Move("Thunderbolt","electric",90,100,15,0,false,true,false); // TODO: May Paralyze
+        Move thunderPunch = new Move("Thunder Punch","electric",75,100,15,0,true,false,false); // May Paralyze
+        Move thunderbolt = new Move("Thunderbolt","electric",90,100,15,0,false,true,false); // May Paralyze
         Move voltSwitch = new Move("Volt Switch","electric",70,100,20,0,true,false,true); // Allows user to switch Pokemon
         Move thunderWave = new Move("Thunder Wave","electric",0,90,20,0,false,true,true); // Paralyzes opponent
        
@@ -116,24 +118,25 @@ public class Battle
         Move uTurn = new Move("U-turn","bug",70,100,20,0,true,false,true); // Allows user to switch Pokemon
         
         Move darkPulse = new Move("Dark Pulse", "dark", 80,100,15,0,false,true,false); // TODO: May cause Flinch.
-        Move crunch = new Move("Crunch","dark",80,100,15,0,true,false,false); // May lower defense
+        Move crunch = new Move("Crunch","dark",80,100,15,0,true,false,true); // May lower defense
         
         Move zenHeadbutt = new Move("Zen Headbutt","psychic",80,90,15,0,true,false,false);
         Move rest= new Move("Rest","psychic",0,100,10,0,false,false,true); // Heals to max and puts pokemon to sleep
         
-        Move iceBeam = new Move("Ice Beam","ice",90,100,10,0,false,true,false); // TODO: May Freeze
+        Move iceBeam = new Move("Ice Beam","ice",90,100,10,0,false,true,true); // May Freeze
         
-        Move bodySlam = new Move("Body Slam","normal",85,100,15,0,true,false,false); // TODO: May Paralyze
+        Move bodySlam = new Move("Body Slam","normal",85,100,15,0,true,false,true); // May Paralyze
         Move swordsDance = new Move("Swords Dance","normal",0,100,20,0,false,false,true); // Raises Attack / SpAttack stats
         Move recover = new Move("Recover","normal",0,100,20,0,false,false,true); // Heals user by half of max HP
         
-        //TODO: Create independent instances for the same move for different pokemon.
+        // TODO: Create independent instances for the same move for different pokemon.
         Move earthquake = new Move("Earthquake","ground",100,100,10,0,true,false,false); 
-        Move earthPower = new Move("Earth Power","ground",90,100,10,0,false,true,false); // May lower spDef
+        Move earthPower = new Move("Earth Power","ground",90,100,10,0,false,true,true); // May lower spDef
         
         Move meteorMash = new Move("Meteor Mash", "steel", 90,90,10,0,true,false,false);
         
-        Move sludgeWave = new Move("Sludge Wave","poison",95,100,10,0,false,true,false); // TODO: May poison
+        Move sludgeWave = new Move("Sludge Wave","poison",95,100,10,0,false,true,true); // May poison
+        Move toxic = new Move("Toxic","poison",0,85,10,0,false,true,true); // Badly poisons enemy
         
         Move stoneEdge = new Move("Stone Edge","rock",100,80,5,0,true,false,false);
         
@@ -142,13 +145,13 @@ public class Battle
         Move[] venuMoves = new Move[] {earthquake,solarBeam,ultimate,ultimate};
         Move[] charMoves = new Move[] {flareBlitz,earthquake,roost,ultimate};
         Move[] blasMoves = new Move[] {hydroPump,iceBeam,darkPulse,ultimate};
-        Move[] gengMoves = new Move[] {shadowBall,sludgeWave,focusBlast,ultimate};
+        Move[] gengMoves = new Move[] {shadowBall,sludgeWave,focusBlast,toxic};
         Move[] joltMoves = new Move[] {thunderbolt,shadowBall,voltSwitch,thunderWave};
         Move[] snorMoves = new Move[] {bodySlam,earthquake,thunderPunch,rest};
         Move[] scizMoves = new Move[] {bulletPunch,uTurn,swordsDance,roost};
         Move[] tyranMoves = new Move[] {earthquake,stoneEdge,crunch,ultimate};
         Move[] metaMoves = new Move[] {zenHeadbutt,earthquake,meteorMash,ultimate};
-        Move[] inferMoves = new Move[] {flareBlitz,closeCombat,swordsDance,ultimate};
+        Move[] inferMoves = new Move[] {flareBlitz,closeCombat,swordsDance,will_O_Wisp};
         Move[] lucMoves = new Move[] {closeCombat,meteorMash,swordsDance,ultimate};
         Move[] grenMoves = new Move[] {hydroPump,iceBeam,darkPulse,ultimate};
         
@@ -199,12 +202,8 @@ public class Battle
             		trainerTwo.getActivePokemon().applyPreStatus(trainerTwo);
             		if (trainerTwo.canAttack()) { // If paralysis, sleep, or freeze didn't stop the turn.
             			trainerTwo.Attack(trainerOne);
-            		}
+            		}   	
             	}
-            	trainerOne.getActivePokemon().applyEndStatus();
-            	trainerTwo.getActivePokemon().applyEndStatus();
-            	trainerTwo.setCanAttack(true);
-            	trainerOne.setCanAttack(true);
             }
             else { // If trainer two attacks first
             	trainerTwo.getActivePokemon().applyPreStatus(trainerTwo); 
@@ -218,18 +217,19 @@ public class Battle
             			trainerOne.Attack(trainerTwo);
             		}
             	}
-            	trainerOne.getActivePokemon().applyEndStatus();
-            	trainerTwo.getActivePokemon().applyEndStatus();
-            	trainerOne.setCanAttack(true);
-            	trainerTwo.setCanAttack(true);
             }
             
+            trainerOne.getActivePokemon().applyPostStatus(trainerOne);
+        	trainerTwo.getActivePokemon().applyPostStatus(trainerTwo);
+
+        	trainerTwo.setCanAttack(true);
+        	trainerOne.setCanAttack(true);
+        	
             // Print out health status
             displayHealth(trainerOne.getActivePokemon(),trainerTwo.getActivePokemon());
             
             // Loop continues as long as both Pokemon are still alive
-        } while (trainerOne.getActivePokemon().getHealth() > 0 && 
-        		trainerTwo.getActivePokemon().getHealth() > 0);
+        } while (trainerOne.canContinue() && trainerTwo.canContinue());
         
     }
     

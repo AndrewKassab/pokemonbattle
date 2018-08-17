@@ -1,2 +1,3 @@
-Move fireBlast = new Move("Fire Blast","fire",110,85,5,0,false,true,false); // TODO: May burn
+Move fireBlast = new Move("Fire Blast","fire",110,85,5,0,false,true,true); // May burn
 Move flareBlitz = new Move("Flare Blitz","fire",120,100,15,0,true,false,true); // Has Recoil.
+Move will_O_Wisp = new Move("Will-O-Wisp","fire",0,85,15,0,false,true,true); // Burns Enemy
