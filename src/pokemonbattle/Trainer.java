@@ -23,6 +23,9 @@ public class Trainer{
 		canAttack = true;
 	}
 	
+	/**
+	 * Returns the trainer's current active pokemon in battle
+	 */
 	public Pokemon getActivePokemon() {
 		return activePokemon;
 	}
