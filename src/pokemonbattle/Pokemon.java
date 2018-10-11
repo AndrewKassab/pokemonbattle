@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 /**
  * Class to create, initialize, and store a Pokemon and their moves. 
- * @version 7.0
+ * @version 7.1
  * @author Andrew Kassab
 */
 public class Pokemon

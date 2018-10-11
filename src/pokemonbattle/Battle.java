@@ -3,17 +3,104 @@ package pokemonbattle;
 import java.util.Scanner;
 
 /**
- * The main class. This class contains the methods and objects to handle 
+ * This class contains the methods and objects to handle 
  * a battle. There will be two trainers in the battle and the 
  * user will take control of both trainer's partys / pokemon. 
- * TODO: Consolidate code in main to separate methods ( Game class ).
  * TODO: BUG: Dark pulse did not do anything to Infernape?? 
  * TODO: BUG: Infernape at 0 health and didn't faint but match ended?
- * @version 7.0
+ * @version 7.1
  * @author Andrew Kassab
  */
 public class Battle 
 {   
+    
+	private Move ultimate = new Move("InstantKO","fire",10000,100,99,5,true,true,false); // FILLER FOR TESTING
+  
+	private Move fireBlast = new Move("Fire Blast","fire",110,85,5,0,false,true,true); // May burn
+	private Move flareBlitz = new Move("Flare Blitz","fire",120,100,15,0,true,false,true); // Has Recoil.
+	private Move will_O_Wisp = new Move("Will-O-Wisp","fire",0,85,15,0,false,true,true); // Burns Enemy
+    
+	private Move hydroPump = new Move("Hydro Pump","water",110,80,5,0,false,true,false);	
+	private Move aquaJet = new Move("Aqua Jet","water",40,100,20,1,true,false,false); // priority +1
+    
+	private Move solarBeam = new Move("Solar Beam", "grass", 120,100,10,0,false,true,false); // TODO: Charges for 1 turn
+	private Move leafBlade = new Move("Leaf Blade","grass",90,100,15,0,true,false,false);
+    
+	private Move closeCombat = new Move("Close Combat","fighting",120,100,5,0,true,false,true); // Lowers user's attack
+	private Move focusBlast = new Move("Focus Blast","fighting",120,70,5,0,false,true,true); // May lower SpDef
+    
+	private Move thunderPunch = new Move("Thunder Punch","electric",75,100,15,0,true,false,false); // May Paralyze
+	private Move thunderbolt = new Move("Thunderbolt","electric",90,100,15,0,false,true,false); // May Paralyze
+	private Move voltSwitch = new Move("Volt Switch","electric",70,100,20,0,true,false,true); // Allows user to switch Pokemon
+	private Move thunderWave = new Move("Thunder Wave","electric",0,90,20,0,false,true,true); // Paralyzes opponent
+   
+	private Move shadowBall = new Move("Shadow Ball","ghost",80,100,15,0,false,true,true); // May lower spDefense
+    
+	private Move bulletPunch = new Move("Bullet Punch","bug", 40,100,30,1,true,false,false); // priority +1
+	private Move uTurn = new Move("U-turn","bug",70,100,20,0,true,false,true); // Allows user to switch Pokemon
+    
+	private Move darkPulse = new Move("Dark Pulse", "dark", 80,100,15,0,false,true,false); // TODO: May cause Flinch.
+	private Move crunch = new Move("Crunch","dark",80,100,15,0,true,false,true); // May lower defense
+    
+	private Move zenHeadbutt = new Move("Zen Headbutt","psychic",80,90,15,0,true,false,false);
+	private Move rest= new Move("Rest","psychic",0,100,10,0,false,false,true); // Heals to max and puts pokemon to sleep
+    
+	private  Move iceBeam = new Move("Ice Beam","ice",90,100,10,0,false,true,true); // May Freeze
+    
+	private Move bodySlam = new Move("Body Slam","normal",85,100,15,0,true,false,true); // May Paralyze
+	private Move swordsDance = new Move("Swords Dance","normal",0,100,20,0,false,false,true); // Raises Attack / SpAttack stats
+    private Move recover = new Move("Recover","normal",0,100,20,0,false,false,true); // Heals user by half of max HP
+    
+    // TODO: Create independent instances for the same move for different pokemon.
+    private Move earthquake = new Move("Earthquake","ground",100,100,10,0,true,false,false); 
+    private Move earthPower = new Move("Earth Power","ground",90,100,10,0,false,true,true); // May lower spDef
+    
+    private Move meteorMash = new Move("Meteor Mash", "steel", 90,90,10,0,true,false,false);
+    
+    private Move sludgeWave = new Move("Sludge Wave","poison",95,100,10,0,false,true,true); // May poison
+    private Move toxic = new Move("Toxic","poison",0,85,10,0,false,true,true); // Badly poisons enemy
+    
+    private Move stoneEdge = new Move("Stone Edge","rock",100,80,5,0,true,false,false);
+    
+    private Move roost = new Move("Roost","fly",0,100,10,0,false,false,true); // Heals the user half of max HP
+    
+    private Move[] venuMoves = new Move[] {earthquake,solarBeam,ultimate,ultimate};
+    private Move[] charMoves = new Move[] {flareBlitz,earthquake,roost,ultimate};
+    private Move[] blasMoves = new Move[] {hydroPump,iceBeam,darkPulse,ultimate};
+    private Move[] gengMoves = new Move[] {shadowBall,sludgeWave,focusBlast,toxic};
+    private Move[] joltMoves = new Move[] {thunderbolt,shadowBall,voltSwitch,thunderWave};
+    private Move[] snorMoves = new Move[] {bodySlam,earthquake,thunderPunch,rest};
+    private Move[] scizMoves = new Move[] {bulletPunch,uTurn,swordsDance,roost};
+    private Move[] tyranMoves = new Move[] {earthquake,stoneEdge,crunch,ultimate};
+    private Move[] metaMoves = new Move[] {zenHeadbutt,earthquake,meteorMash,ultimate};
+    private Move[] inferMoves = new Move[] {flareBlitz,closeCombat,swordsDance,will_O_Wisp};
+    private Move[] lucMoves = new Move[] {closeCombat,meteorMash,swordsDance,ultimate};
+    private Move[] grenMoves = new Move[] {hydroPump,iceBeam,darkPulse,ultimate};
+    
+    private Pokemon venusaur = new Pokemon("Venusaur",3,new String[] {"grass",""},364,289,291,328,328,284,venuMoves);
+    private Pokemon charizard = new Pokemon("Charizard",6,new String[]{"fire","fly"},360,348,293,295,295,328,charMoves); 
+    private Pokemon blastoise = new Pokemon("Blastoise",9,new String[] {"water",""},362,291,328,295,339,280,blasMoves);
+    private Pokemon gengar = new Pokemon("Gengar",94,new String[] {"ghost","poison"},324,251,240,294,273,350,gengMoves);
+    private Pokemon jolteon = new Pokemon("Jolteon",135,new String[] {"electric",""},334,251,240,350,317,394,joltMoves);
+    private Pokemon snorlax = new Pokemon("Snorlax",143,new String[] {"normal",""},524,350,251,251,250,174,snorMoves);
+    private Pokemon scizor = new Pokemon("Scizor",212,new String[] {"grass",""},344,394,328,229,284,251,scizMoves);
+    private Pokemon tyranitar = new Pokemon("Tyranitar",248,new String[]{"rock","dark"},404,403,350,317,328,243,tyranMoves);
+    private Pokemon metagross = new Pokemon("Metagross",376,new String[] {"psychic","steel"},364,405,394,317,306,262,metaMoves);
+    private Pokemon infernape = new Pokemon("Infernape",392,new String[] {"fire","fighting"},356,337,265,337,265,346,inferMoves);
+    private Pokemon lucario = new Pokemon("Lucario",448,new String[] {"fighting","steel"},344,350,262,361,262,306,lucMoves);
+    private Pokemon greninja = new Pokemon("Greninja",658,new String[] {"water","dark"},348,317,356,335,265,377,grenMoves);
+  
+    // Creating the parties for each trainer
+    private Pokemon[] partyOne = new Pokemon[] {charizard,greninja,lucario,jolteon,venusaur,snorlax};
+    private Pokemon[] partyTwo = new Pokemon[] {infernape,blastoise,metagross,gengar,scizor,tyranitar};
+    
+    // Trainer's and their party Pokemon
+    private Trainer trainerOne = new Trainer(partyOne);
+    private Trainer trainerTwo = new Trainer(partyTwo);
+    
+    public Battle() throws InterruptedException {
+    	battle();
+    }
     
     /**
     * Checks to see which Pokemon will be attacking first in the battle. 
@@ -71,7 +158,7 @@ public class Battle
      * @param a First Pokemon.
      * @param b Second Pokemon.
      */
-    public static void displayHealth(Pokemon a, Pokemon b){
+    public void displayHealth(Pokemon a, Pokemon b){
         if (a.getHealth() < 0){
             a.setHealth(0);
         }
@@ -83,99 +170,11 @@ public class Battle
     }      
     
     /**
-     * Main method, creates two trainers, their party pokemon, with their
-     * respective Moves and begins the battle
+	 * Handles the instructions and loop for an actual Pokemon battle to commence.
      * @param args.
      * @throws InterruptedException Thread sleeps for user to process results
      */
-    public static void main(String[] args) throws InterruptedException {
-        
-        Scanner keyboard = new Scanner(System.in);
-        
-        Move ultimate = new Move("InstantKO","fire",10000,100,99,5,true,true,false); // FILLER FOR TESTING
-        
-        Move fireBlast = new Move("Fire Blast","fire",110,85,5,0,false,true,true); // May burn
-        Move flareBlitz = new Move("Flare Blitz","fire",120,100,15,0,true,false,true); // Has Recoil.
-        Move will_O_Wisp = new Move("Will-O-Wisp","fire",0,85,15,0,false,true,true); // Burns Enemy
-        
-        Move hydroPump = new Move("Hydro Pump","water",110,80,5,0,false,true,false);	
-        Move aquaJet = new Move("Aqua Jet","water",40,100,20,1,true,false,false); // priority +1
-        
-        Move solarBeam = new Move("Solar Beam", "grass", 120,100,10,0,false,true,false); // TODO: Charges for 1 turn
-        Move leafBlade = new Move("Leaf Blade","grass",90,100,15,0,true,false,false);
-        
-        Move closeCombat = new Move("Close Combat","fighting",120,100,5,0,true,false,true); // Lowers user's attack
-        Move focusBlast = new Move("Focus Blast","fighting",120,70,5,0,false,true,true); // May lower SpDef
-        
-        Move thunderPunch = new Move("Thunder Punch","electric",75,100,15,0,true,false,false); // May Paralyze
-        Move thunderbolt = new Move("Thunderbolt","electric",90,100,15,0,false,true,false); // May Paralyze
-        Move voltSwitch = new Move("Volt Switch","electric",70,100,20,0,true,false,true); // Allows user to switch Pokemon
-        Move thunderWave = new Move("Thunder Wave","electric",0,90,20,0,false,true,true); // Paralyzes opponent
-       
-        Move shadowBall = new Move("Shadow Ball","ghost",80,100,15,0,false,true,true); // May lower spDefense
-        
-        Move bulletPunch = new Move("Bullet Punch","bug", 40,100,30,1,true,false,false); // priority +1
-        Move uTurn = new Move("U-turn","bug",70,100,20,0,true,false,true); // Allows user to switch Pokemon
-        
-        Move darkPulse = new Move("Dark Pulse", "dark", 80,100,15,0,false,true,false); // TODO: May cause Flinch.
-        Move crunch = new Move("Crunch","dark",80,100,15,0,true,false,true); // May lower defense
-        
-        Move zenHeadbutt = new Move("Zen Headbutt","psychic",80,90,15,0,true,false,false);
-        Move rest= new Move("Rest","psychic",0,100,10,0,false,false,true); // Heals to max and puts pokemon to sleep
-        
-        Move iceBeam = new Move("Ice Beam","ice",90,100,10,0,false,true,true); // May Freeze
-        
-        Move bodySlam = new Move("Body Slam","normal",85,100,15,0,true,false,true); // May Paralyze
-        Move swordsDance = new Move("Swords Dance","normal",0,100,20,0,false,false,true); // Raises Attack / SpAttack stats
-        Move recover = new Move("Recover","normal",0,100,20,0,false,false,true); // Heals user by half of max HP
-        
-        // TODO: Create independent instances for the same move for different pokemon.
-        Move earthquake = new Move("Earthquake","ground",100,100,10,0,true,false,false); 
-        Move earthPower = new Move("Earth Power","ground",90,100,10,0,false,true,true); // May lower spDef
-        
-        Move meteorMash = new Move("Meteor Mash", "steel", 90,90,10,0,true,false,false);
-        
-        Move sludgeWave = new Move("Sludge Wave","poison",95,100,10,0,false,true,true); // May poison
-        Move toxic = new Move("Toxic","poison",0,85,10,0,false,true,true); // Badly poisons enemy
-        
-        Move stoneEdge = new Move("Stone Edge","rock",100,80,5,0,true,false,false);
-        
-        Move roost = new Move("Roost","fly",0,100,10,0,false,false,true); // Heals the user half of max HP
-        
-        Move[] venuMoves = new Move[] {earthquake,solarBeam,ultimate,ultimate};
-        Move[] charMoves = new Move[] {flareBlitz,earthquake,roost,ultimate};
-        Move[] blasMoves = new Move[] {hydroPump,iceBeam,darkPulse,ultimate};
-        Move[] gengMoves = new Move[] {shadowBall,sludgeWave,focusBlast,toxic};
-        Move[] joltMoves = new Move[] {thunderbolt,shadowBall,voltSwitch,thunderWave};
-        Move[] snorMoves = new Move[] {bodySlam,earthquake,thunderPunch,rest};
-        Move[] scizMoves = new Move[] {bulletPunch,uTurn,swordsDance,roost};
-        Move[] tyranMoves = new Move[] {earthquake,stoneEdge,crunch,ultimate};
-        Move[] metaMoves = new Move[] {zenHeadbutt,earthquake,meteorMash,ultimate};
-        Move[] inferMoves = new Move[] {flareBlitz,closeCombat,swordsDance,will_O_Wisp};
-        Move[] lucMoves = new Move[] {closeCombat,meteorMash,swordsDance,ultimate};
-        Move[] grenMoves = new Move[] {hydroPump,iceBeam,darkPulse,ultimate};
-        
-        Pokemon venusaur = new Pokemon("Venusaur",3,new String[] {"grass",""},364,289,291,328,328,284,venuMoves);
-        Pokemon charizard = new Pokemon("Charizard",6,new String[]{"fire","fly"},360,348,293,295,295,328,charMoves); 
-        Pokemon blastoise = new Pokemon("Blastoise",9,new String[] {"water",""},362,291,328,295,339,280,blasMoves);
-        Pokemon gengar = new Pokemon("Gengar",94,new String[] {"ghost","poison"},324,251,240,294,273,350,gengMoves);
-        Pokemon jolteon = new Pokemon("Jolteon",135,new String[] {"electric",""},334,251,240,350,317,394,joltMoves);
-        Pokemon snorlax = new Pokemon("Snorlax",143,new String[] {"normal",""},524,350,251,251,250,174,snorMoves);
-        Pokemon scizor = new Pokemon("Scizor",212,new String[] {"grass",""},344,394,328,229,284,251,scizMoves);
-        Pokemon tyranitar = new Pokemon("Tyranitar",248,new String[]{"rock","dark"},404,403,350,317,328,243,tyranMoves);
-        Pokemon metagross = new Pokemon("Metagross",376,new String[] {"psychic","steel"},364,405,394,317,306,262,metaMoves);
-        Pokemon infernape = new Pokemon("Infernape",392,new String[] {"fire","fighting"},356,337,265,337,265,346,inferMoves);
-        Pokemon lucario = new Pokemon("Lucario",448,new String[] {"fighting","steel"},344,350,262,361,262,306,lucMoves);
-        Pokemon greninja = new Pokemon("Greninja",658,new String[] {"water","dark"},348,317,356,335,265,377,grenMoves);
-      
-        // Creating the parties for each trainer
-        Pokemon[] partyOne = new Pokemon[] {charizard,greninja,lucario,jolteon,venusaur,snorlax};
-        Pokemon[] partyTwo = new Pokemon[] {infernape,blastoise,metagross,gengar,scizor,tyranitar};
-        
-        // Trainer's and their party Pokemon
-        Trainer trainerOne = new Trainer(partyOne);
-        Trainer trainerTwo = new Trainer(partyTwo);
-        
+    public void battle() throws InterruptedException {    
         // Select the active Pokemon for each trainer
         trainerOne.selectPokemon();
         trainerTwo.selectPokemon();
@@ -230,7 +229,6 @@ public class Battle
             
             // Loop continues as long as both Pokemon are still alive
         } while (trainerOne.canContinue() && trainerTwo.canContinue());
-        
     }
     
 }

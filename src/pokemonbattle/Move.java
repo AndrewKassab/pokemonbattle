@@ -4,7 +4,7 @@ package pokemonbattle;
  * Class to create, initialize, and store pokemon moves with their
  * respective varibles. 
  * TODO: Fix U-Turn and Volt-Switch Bugs
- * @version 7.0
+ * @version 7.1
  * @author Andrew Kassab
  */
 public class Move

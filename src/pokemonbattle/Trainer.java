@@ -7,7 +7,7 @@ import java.util.Scanner;
  * A trainer has a party of Pokemon, and an identifier for which
  * Pokemon is currently active and in battle. 
  * TODO: Bugs, damage values not consistent with earthquake ? (charizard vs blastoise)
- * @version 7.0
+ * @version 7.1
  * @author precisemotion
  */
 public class Trainer{
