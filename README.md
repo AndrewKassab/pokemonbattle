@@ -6,12 +6,15 @@
   
 # Project Details
   
-  This project 
+  This project is one of my first ambitious / personal undertakings. I'm a big
+  fan of Pokemon and thought it'd be a great learning experience to take on 
+  recreating a complex turn-based-combat system. 
   
 # What I learned
 
   - Create and manage multiple classes and objects in one program
   - Write clean and efficient code with documentation
+  - Setting clear goals for each version of the program 
   - Creating efficient methods with a clear purpose to make more functional code
   - Creating specific behaviors for specific instances of an object
   - Efficiently debugging a program and pinpointing / documenting bugs. 
@@ -32,5 +35,6 @@
 
   - Create A.I for computer player 
   - Add support for more moves 
-  - Possibly add G.U.I
+  - Possibly add G.U.I (?)
+  - Possibly add Pokemon Abilities (?) 
   
