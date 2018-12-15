@@ -1,18 +1,18 @@
 # pokemonbattle
 
-  This project is a simulation of the battle system implemented in the 
+  This is a recreation of the turn-based combat system implemented in the 
   popular video game series Pokemon. It currently allows you to take control
   of two separate trainers and their partys and simulate a pokemon battle.
 
 # Current Version 
 
-  - All Types supported
-  - Type advantages
-  - Same Type Attack Bonus
+  - All types supported
+  - Type advantages and disadvantages
+  - Same type attack bonus implemented (STAB)
   - Multi-type Pokemon 
   - Stat Stages 
   - Status Effects (all but confusion)
-  - Many move abilities (more to be supported later)
+  - Many move abilities (more to be supported later, check Moves folder for supported moves)
 
 # Goals
 
