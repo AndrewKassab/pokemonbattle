@@ -27,8 +27,10 @@ public class Pokemon
     private int baseSpeed;
     private Move[] moves = new Move[4];
     private Move activeMove;
-    private String status = null; // TODO: Implement Status Effect
+    private String status = null;
     private int statusCounter = 0;
+    private String nonLethal = null; // TODO: Implement non-lethal status effects
+    private int nonLethalCounter = 0;
     
     private int attackStage = 0;
     private int spAttackStage = 0;
@@ -94,7 +96,8 @@ public class Pokemon
      * Factors in stat stages to calculate a Pokemon's stat in battle.
      */
     public void calculateSpeed() {
-    	speed = (int) (baseSpeed * Math.round( (Math.max(2.0,2.0+speedStage))/(Math.max(2.0,2.0-speedStage)) )) ;
+    	speed = (int) (baseSpeed * 
+            Math.round( (Math.max(2.0,2.0+speedStage))/(Math.max(2.0,2.0-speedStage)) )) ;
     }
     
     public Move[] getMoves() {
@@ -122,7 +125,8 @@ public class Pokemon
      * Factors in stat stages to calculate a Pokemon's stat in battle.
      */
     public void calculateAttack() {
-    	attack = (int) (baseAttack * Math.round( (Math.max(2.0,2.0+attackStage))/(Math.max(2.0,2.0-attackStage)) )) ;
+    	attack = (int) (baseAttack * 
+            Math.round( (Math.max(2.0,2.0+attackStage))/(Math.max(2.0,2.0-attackStage)) )) ;
     }
     
     public int getSpAttack() {
@@ -136,7 +140,8 @@ public class Pokemon
      * Factors in stat stages to calculate a Pokemon's stat in battle.
      */
     public void calculateSpAttack() {
-    	spAttack = (int) (baseSpAttack * Math.round( (Math.max(2.0,2.0+spAttackStage))/(Math.max(2.0,2.0-spAttackStage)) )) ;
+    	spAttack = (int) (baseSpAttack * 
+            Math.round( (Math.max(2.0,2.0+spAttackStage))/(Math.max(2.0,2.0-spAttackStage)) )) ;
     }
     
     public int getDefense() {
@@ -150,7 +155,8 @@ public class Pokemon
      * Factors in stat stages to calculate a Pokemon's stat in battle.
      */
     public void calculateDefense() {
-    	defense = (int) ( baseDefense * Math.round( ( Math.max(2.0,2.0+defenseStage) )/( Math.max(2.0,2.0-defenseStage)) )) ;
+    	defense = (int) ( baseDefense * 
+            Math.round( ( Math.max(2.0,2.0+defenseStage) )/( Math.max(2.0,2.0-defenseStage)) )) ;
     }
     
     public int getSpDefense() {
@@ -182,15 +188,28 @@ public class Pokemon
     	else return false;
     }
     
+    // For lethal status'
     public String getStatus() {
     	return status;
     }
     public void setStatus(String effect) {
+        statusCounter = 0;
     	status = effect;
-    }
-    
+    }   
     public int getStatusCounter() {
     	return statusCounter;
+    }
+
+    // For non-lethal status'
+    public String getnonLethalStatus() {
+    	return nonLethal;
+    }
+    public void setNonLethalStatus(String effect) {
+        nonLethalCounter = 0;
+    	nonLethal = effect;
+    }
+    public int getnonLethalCounter() {
+    	return nonLethalCounter;
     }
     
     /**
@@ -223,7 +242,8 @@ public class Pokemon
     			else System.out.println();
     			return;
     		case "badPoison":
-    			setHealth(getHealth() - (int) ( Math.round( getMaxHealth() * ( 1.0/16.0 + (statusCounter * 1.0/16.0) ) ) ) );
+    			setHealth(getHealth() - (int) ( Math.round( getMaxHealth() * 
+                    ( 1.0/16.0 + (statusCounter * 1.0/16.0) ) ) ) );
     			statusCounter++;
     			System.out.println(name + " is hurt by bad poison!");
     			if (isFainted()) {
@@ -241,7 +261,7 @@ public class Pokemon
      * For effects that work at the beginning of turns.
      * @throws InterruptedException 
      */
-    public void applyPreStatus(Trainer t) throws InterruptedException {
+    public void applyPreStatus(Trainer trainer) throws InterruptedException {
     	double random = Math.random();
     	
     	if (status == null)
@@ -256,17 +276,14 @@ public class Pokemon
     			if (random < .25) {
     				System.out.println(name + " is paralyzed! It can't move!");
     				System.out.println();
-    				t.setCanAttack(false);
+    				trainer.setCanAttack(false);
     			}
     			return;
-    		case "confusion":
-    			
-    			return;			
     		case "frozen":
     			if (Math.random() >= .20) {
     				System.out.println(name + " is frozen solid!");
     				System.out.println();
-    				t.setCanAttack(false);
+    				trainer.setCanAttack(false);
     			}
     			else {
     				System.out.println(name + " thawed out!");
@@ -279,7 +296,7 @@ public class Pokemon
     					System.out.println(name + " is fast asleep.");
     					System.out.println();
     					statusCounter++;
-    					t.setCanAttack(false);
+    					trainer.setCanAttack(false);
     				}
     				else {
     					System.out.println(name + " woke up!");
@@ -297,6 +314,55 @@ public class Pokemon
     			return;
     	}
     }
+    
+    /**
+     * Applys a non-lethal status effect to the battle
+     */
+    public void applyNonLethal(Trainer trainer){
+        
+        if (nonLethal == null){
+            return;
+        }
+
+    	double random = Math.random();
+    
+        switch( nonLethal ){
+        case "confusion":
+            System.out.println(name + " is confused!");
+            // been less than 4 turns
+            if (nonLethalCounter < 4){
+                // 33% chance of snapping out
+                if (random >= .33){
+                    random = Math.random(); // new random value
+                    // 33% chance of hurting self
+                    if (random < .33){
+                        System.out.println(name + " hurt itself in confusion!");
+                        int damage = (int) Math.round(((22 * 40 * (attack/defense))/50.0 + 2));
+    			        setHealth(getHealth() - damage);
+                        trainer.setCanAttack(false);
+                        nonLethalCounter++;
+                        return;
+                    }
+                    // still confused but didn't attack self
+                    else {
+                    	nonLethalCounter++;
+                        return;
+                    }
+                }
+            }
+          
+            // snaps out of confusion 
+            System.out.println(name + " snapped out of it's confusion!");
+            setNonLethalStatus(null);
+
+            return;
+        case "": // TODO add more non-lethals
+            break;  
+        }
+    }
+                
+
+
     
     public int getStage(String stat) {
     	switch (stat) {
@@ -441,7 +507,8 @@ public class Pokemon
     	printMoves();
     	String selection;
     	System.out.println();
-    	System.out.print("Select a move for " + name + " (by name), or enter swap to switch Pokemon: ");
+    	System.out.print("Select a move for " + name + 
+            " (by name), or enter swap to switch Pokemon: ");
     	     		
 		selection = keyboard.nextLine();
 		for (int i = 0; i < moves.length; i++) {

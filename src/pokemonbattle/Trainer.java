@@ -112,6 +112,7 @@ public class Trainer{
      * Carries out an attack during the round and determines the
      * appropriate calculationTwo values by comparing types. Outputs
      * the results.
+     * TODO: Seperate Method to make cleaner code	
      * @param t the trainer being attacked
      */
     public void Attack (Trainer target)
@@ -264,8 +265,7 @@ public class Trainer{
                 	System.out.println();
                 	target.selectPokemon();
                 	target.setCanAttack(false);
-                	System.out.println("Let's go, " + target.getActivePokemon().getName() + "!");
-                
+                	System.out.println("Let's go, " + target.getActivePokemon().getName() + "!\n");
                 }
                 else {
                 	battleEnded();

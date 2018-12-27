@@ -1,7 +1,5 @@
 package pokemonbattle;
 
-import java.util.Scanner;
-
 /**
  * This class contains the methods and objects to handle 
  * a battle. There will be two trainers in the battle and the 
@@ -35,6 +33,7 @@ public class Battle
 	private Move thunderWave = new Move("Thunder Wave","electric",0,90,20,0,false,true,true); // Paralyzes opponent
    
 	private Move shadowBall = new Move("Shadow Ball","ghost",80,100,15,0,false,true,true); // May lower spDefense
+    private Move confuseRay = new Move("Confuse-Ray", "ghost", 0,100,10,0,false,false,true); // Confuses target
     
 	private Move bulletPunch = new Move("Bullet Punch","bug", 40,100,30,1,true,false,false); // priority +1
 	private Move uTurn = new Move("U-turn","bug",70,100,20,0,true,false,true); // Allows user to switch Pokemon
@@ -72,7 +71,7 @@ public class Battle
     private Move[] snorMoves = new Move[] {bodySlam,earthquake,thunderPunch,rest};
     private Move[] scizMoves = new Move[] {bulletPunch,uTurn,swordsDance,roost};
     private Move[] tyranMoves = new Move[] {earthquake,stoneEdge,crunch,ultimate};
-    private Move[] metaMoves = new Move[] {zenHeadbutt,earthquake,meteorMash,ultimate};
+    private Move[] metaMoves = new Move[] {zenHeadbutt,earthquake,meteorMash,confuseRay};
     private Move[] inferMoves = new Move[] {flareBlitz,closeCombat,swordsDance,will_O_Wisp};
     private Move[] lucMoves = new Move[] {closeCombat,meteorMash,swordsDance,ultimate};
     private Move[] grenMoves = new Move[] {hydroPump,iceBeam,darkPulse,ultimate};
@@ -193,12 +192,14 @@ public class Battle
             // Attack turns begin
             if (result == 1) { // If trainer one attacks first
             	trainerOne.getActivePokemon().applyPreStatus(trainerOne); 
+        		trainerOne.getActivePokemon().applyNonLethal(trainerOne);
             	if (trainerOne.canAttack()) { // If paralysis, sleep, or freeze didn't stop the turn.
             		trainerOne.Attack(trainerTwo);
-            	}
+            	} 
             	Thread.sleep(3000);
             	if (trainerTwo.canAttack()) {
             		trainerTwo.getActivePokemon().applyPreStatus(trainerTwo);
+                	trainerTwo.getActivePokemon().applyNonLethal(trainerTwo);
             		if (trainerTwo.canAttack()) { // If paralysis, sleep, or freeze didn't stop the turn.
             			trainerTwo.Attack(trainerOne);
             		}   	
@@ -206,12 +207,14 @@ public class Battle
             }
             else { // If trainer two attacks first
             	trainerTwo.getActivePokemon().applyPreStatus(trainerTwo); 
+            	trainerTwo.getActivePokemon().applyNonLethal(trainerTwo);
             	if (trainerTwo.canAttack()) { // If paralysis, sleep, or freeze didn't stop the turn.
             		trainerTwo.Attack(trainerOne);
             	}
             	Thread.sleep(3000);
             	if (trainerOne.canAttack()) {
             		trainerOne.getActivePokemon().applyPreStatus(trainerOne);
+            		trainerOne.getActivePokemon().applyNonLethal(trainerOne);
             		if (trainerOne.canAttack()) { // If paralysis, sleep, or freeze didn't stop the turn.
             			trainerOne.Attack(trainerTwo);
             		}
@@ -231,4 +234,5 @@ public class Battle
         } while (trainerOne.canContinue() && trainerTwo.canContinue());
     }
     
+    public static int calculateDamage(int attack, int defense, )
 }
