@@ -4,7 +4,7 @@ package pokemonbattle;
  * Class to create, initialize, and store pokemon moves with their
  * respective varibles. 
  * TODO: Fix U-Turn and Volt-Switch Bugs
- * @version 7.1
+ * @version 7.3
  * @author Andrew Kassab
  */
 public class Move
@@ -19,7 +19,8 @@ public class Move
     private boolean physical; // physical label
     private boolean special; // special label
     private boolean effect; // if a move has an effect
-    private String effectMessage; 
+    private boolean wasCritical; // if a move was a critical hit
+    private String effectMessage;
       
     public Move(String n, String a, int d, double h, int pp, int pri, boolean ph, boolean sp, boolean hasEffect){
         name = n;
@@ -131,6 +132,23 @@ public class Move
     	
     	double random = Math.random();
     	if(random <= .0625) {
+    		wasCritical = true;
+    		return true;
+    	}
+    	else {
+    		wasCritical = false;
+    		return false;
+    	}
+    }
+    
+    /**
+     * Checks if a move was a critical hit in its attack turn.
+     * For message display purposes. 
+     * @return true if the move was critical
+     */
+    public boolean wasCritical() {
+    	if (wasCritical) {
+    		wasCritical = false;
     		return true;
     	}
     	else return false;
@@ -328,7 +346,7 @@ public class Move
      * @param enemy Pokemon being targeted
      * @param damage damage being done
      */
-    public void applyEffect(Trainer trainer, Trainer enemy,int damage) {
+    public void applyEffect(Trainer trainer, Trainer enemy, int damage) {
     	
     	double random = Math.random();
     	Pokemon attacker = trainer.getActivePokemon();

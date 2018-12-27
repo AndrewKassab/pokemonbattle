@@ -1,13 +1,14 @@
 package pokemonbattle;
 
 import java.util.Scanner;
+import pokemonbattle.Battle;
 
 /**
  * Class to create and initialize the Trainer object. 
  * A trainer has a party of Pokemon, and an identifier for which
  * Pokemon is currently active and in battle. 
  * TODO: Bugs, damage values not consistent with earthquake ? (charizard vs blastoise)
- * @version 7.1
+ * @version 7.3
  * @author precisemotion
  */
 public class Trainer{
@@ -115,12 +116,10 @@ public class Trainer{
      * TODO: Seperate Method to make cleaner code	
      * @param t the trainer being attacked
      */
-    public void Attack (Trainer target)
+    public void Attack (Trainer enemy)
     {   
     	
-    	double attack;
-    	double defense;
-        String[] pokeType = target.getActivePokemon().getType();
+        Pokemon target = enemy.getActivePokemon();
         Move move = activePokemon.getActiveMove();     
            
         // If the trainer chose to swap Pokemon rather than attack.
@@ -131,156 +130,57 @@ public class Trainer{
         
         // If the move is not an attack move
         if (move.getDamage() == 0) {
-        	move.useEffect(this, target);
+        	move.useEffect(this, enemy);
         	move.setPP(move.getPP() - 1);
         	return;
         }
-        
-        if (move.isPhysical()) {
-        	attack = activePokemon.getAttack();
-            defense = target.getActivePokemon().getDefense();
-        }
-        else {
-        	attack = activePokemon.getSpAttack();
-        	defense = target.getActivePokemon().getSpDefense();         			
-        }
-        
-        int base = move.getDamage();
-        String[] positive = move.getPosEffects();
-        String[] negative = move.getNegEffects();
-        String zero = move.getZeroEffects();
-        
-        // Calculate calculationTwo (before type effectiveness)
-        int calculationOne = (int) Math.round(((22 * base * (attack/defense))/50.0 + 2));    
-        int calculationTwo = calculationOne;
-        
-        move.setPP(move.getPP() - 1);
-        
-        for (int i = 0; i < 2; i++) {
-        	// Same type attack bonus (STAB)
-            if (activePokemon.getType()[i] == move.getType()) {
-            	calculationTwo = (int) Math.round(calculationTwo * 1.5);
-            }
-        }     
-        
-        // TODO: Consolidate to separate method (isEffective())
-        for (int j = 0; j < 2; j++) {
-        	 // Multiply calculationTwo by 2 for every positive match
-            for (int i = 0; i < positive.length; i++){
-                if ( positive[i].equals(pokeType[j]) )
-                {      
-                    calculationTwo = calculationTwo * 2;
-                }
-            }
+             
+        // Calculate the damage being done
+        int damage = Battle.calculateDamage( move, activePokemon, target );
             
-            // Divide calculationTwo by 2 for every negative match made
-            for (int i = 0; i < negative.length; i++){
-                if ( negative[i].equals(pokeType[j]) )
-                {
-                    calculationTwo = calculationTwo/2;
-                }
-            }        
-            
-            // If the move type does not work against the pokemon type at all
-            if (pokeType[j].equals(zero)){
-                calculationTwo = 0;
-            }
-        }   
-        
-        boolean crit = move.isCritical();
-        if (crit) {
-        	calculationTwo = calculationTwo * 2;
-        }
-        
-        // Burn reduces physical calculationTwo by half
-        if (activePokemon.getStatus() != null && move.isPhysical() && activePokemon.getStatus().equals("burn")) {
-        	calculationTwo = (int) Math.round(calculationTwo/2.0);
-        }
-        
-        int damage = calculationTwo;
-        if (damage > target.getActivePokemon().getHealth()) {
-        	damage = target.getActivePokemon().getHealth();
-        }
-        
         // Check if the attack has landed
-        // TODO: Move above damage calculationTwo to save resources if the move misses
         if (move.hit()){
             System.out.println(activePokemon.getName() + " used " + move.getName() + "!");
             
             // Applys an attack's effect (if it has one) 
             if (move.hasEffect()) {
-            	move.applyEffect(this,target,damage);
+            	move.applyEffect(this,enemy,damage);
             }
-           	
-            // Super Effective
-            if ((!crit && calculationTwo >= (int) Math.round(1.6 * calculationOne)) 
-            		|| (crit && calculationTwo >= (int) Math.round(3.2 * calculationTwo))){
-                System.out.print("It's super effective!");      
-                if (crit) {
-                	System.out.print(" A critical hit!");
-                }
-                System.out.println();
-                System.out.println(target.getActivePokemon().getName() + " took " + damage + " damage!");
-                if (move.getMessage() != null) {
-                	move.printMessage();
-                	move.resetMessage();
-                }
-                System.out.println();
-                
-            }
-            // Not at all effective
-            else if (damage == 0){
-                System.out.println("But it didn't work!");
-                System.out.println();
-            }
-            // Not very effective
-            // TODO: Don't display when pokemon is burned and physical damage is halved
-            else if (calculationTwo < calculationOne){
-                System.out.println("It's not very effective...");
-                System.out.println(target.getActivePokemon().getName() + " took " + damage + " damage!\n");
-                if (move.getMessage() != null) {
-                	move.printMessage();
-                	move.resetMessage();
-                }
-                System.out.println();
-            }
-            // Normal effectiveness
-            else {
-            	System.out.println(target.getActivePokemon().getName() + " took " + damage + " damage!\n");
-            	if (move.getMessage() != null) {
-                	move.printMessage();
-                	move.resetMessage();
-                }
-                System.out.println();
-            }
-              
-            target.getActivePokemon().setHealth(target.getActivePokemon().getHealth() - damage);
+            
+            // Display damage and effect messages
+            Battle.displayMessages(damage, move, target);
+            
+            // Apply damage
+            target.setHealth(target.getHealth() - damage);
                     
             // If the target pokemon has fainted
-            if (target.getActivePokemon().getHealth() <= 0)
+            if (target.getHealth() <= 0)
             {
-                System.out.println(target.getActivePokemon().getName() + " has fainted!");
-                if (target.canContinue()) {
+                System.out.println(target.getName() + " has fainted!");
+                if (enemy.canContinue()) {
                 	System.out.println("Select another Pokemon from your party.");
                 	System.out.println();
-                	target.selectPokemon();
-                	target.setCanAttack(false);
-                	System.out.println("Let's go, " + target.getActivePokemon().getName() + "!\n");
+                	enemy.selectPokemon();
+                	enemy.setCanAttack(false);
+                	target = enemy.getActivePokemon();
+                	System.out.println("Let's go, " + target.getName() + "!\n");
                 }
+                // Battle ends if trainer can't continue
                 else {
                 	battleEnded();
                 }
             }
             
             // When a fire move is used on a frozen opponent
-            if (target.getActivePokemon().getStatus() != null && 
-            		target.getActivePokemon().getStatus().equals("frozen") && move.getType().equals("fire")) {
-            	System.out.println(target.getActivePokemon().getName() + " thawed out!");
+            if (target.getStatus() != null && 
+            		target.getStatus().equals("frozen") && move.getType().equals("fire")) {
+            	System.out.println(target.getName() + " thawed out!");
             	System.out.println();
-            	target.getActivePokemon().setStatus(null);
+            	target.setStatus(null);
             }
             
             // If the attacking Pokemon has fainted from recoil 
+            // TODO: Fix recoil ordering 
             if (getActivePokemon().getHealth() <= 0)
             {
                 System.out.println(getActivePokemon().getName() + " has fainted!");
@@ -292,6 +192,7 @@ public class Trainer{
                 	System.out.println("Let's go, " + getActivePokemon().getName() + "!");
                 
                 }
+                // Battle ends if trainer can't continue
                 else {
                 	battleEnded();
                 }
@@ -302,9 +203,7 @@ public class Trainer{
             System.out.println("But it missed!\n");
         }    
         
-        activePokemon.resetMove();
-        party[activeIndex] = activePokemon;
-        
+        activePokemon.resetMove();        
         
     }
     

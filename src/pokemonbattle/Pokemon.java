@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 /**
  * Class to create, initialize, and store a Pokemon and their moves. 
- * @version 7.1
+ * @version 7.3
  * @author Andrew Kassab
 */
 public class Pokemon
@@ -92,6 +92,16 @@ public class Pokemon
     	speed = sp;
     }
     
+    /**
+     * Checks if a pokemon recives a same type attack bonus from the move they are using.
+     * @param move The move being used
+     * @return true if atleast one of the pokemon's types is equal to the move's type
+     */
+    public boolean hasSTAB( Move move ) {
+    	if (type[0] == move.getType() || type[1] == move.getType()) {
+    		return true;
+    	} else return false;
+    }
     /**
      * Factors in stat stages to calculate a Pokemon's stat in battle.
      */

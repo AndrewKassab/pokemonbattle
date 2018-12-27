@@ -4,7 +4,7 @@ package pokemonbattle;
 /**
  * The main class. Begins a pokemon battle between two trainers.
  * @author PreciseMotion
- * @version 7.1
+ * @version 7.3
  */
 public class Main {
 

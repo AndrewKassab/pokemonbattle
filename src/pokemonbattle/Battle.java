@@ -6,7 +6,7 @@ package pokemonbattle;
  * user will take control of both trainer's partys / pokemon. 
  * TODO: BUG: Dark pulse did not do anything to Infernape?? 
  * TODO: BUG: Infernape at 0 health and didn't faint but match ended?
- * @version 7.1
+ * @version 7.3
  * @author Andrew Kassab
  */
 public class Battle 
@@ -234,5 +234,151 @@ public class Battle
         } while (trainerOne.canContinue() && trainerTwo.canContinue());
     }
     
-    public static int calculateDamage(int attack, int defense, )
+    /**
+     * Calculates the damage to be done in an attacking turn 
+     * @param move The move being used
+     * @param user Pokemon using the move
+     * @param target Pokemon being targeted
+     * @return The calculated damage value
+     */
+    public static int calculateDamage( Move move, Pokemon user, Pokemon target ) {
+    	
+    	int base = move.getDamage();
+    	double attack;
+    	double defense;
+    	
+    	if (move.isPhysical()) {
+        	attack = user.getAttack();
+            defense = target.getDefense();
+        }
+        else {
+        	attack = user.getSpAttack();
+        	defense = target.getSpDefense();         			
+        }
+
+        // Calculate damage (before type effectiveness)
+        int damage = (int) Math.round(((22 * base * (attack/defense))/50.0 + 2));    
+        
+        move.setPP(move.getPP() - 1);
+        
+        // Factor in STAB bonus
+        if ( user.hasSTAB(move) ) {
+        	damage = (int) Math.round(damage * 1.5); 
+        }
+        
+        damage = calculateEffectiveness( damage, move, target);
+        
+        if (move.isCritical()) {
+        	damage = damage * 2;
+        }
+        
+        // Burn reduces physical damage by half
+        if (user.getStatus() != null && user.getStatus().equals("burn") && move.isPhysical()) {
+        	damage = (int) Math.round(damage/2.0);
+        }
+
+        if (damage > target.getHealth()) {
+        	damage = target.getHealth();
+        }
+    	
+    	return damage;
+    }
+    
+    /**
+     * Calculates the effectiveness of a move being used and adjusts damage accordingly
+     * @param damage Current damage calculation
+     * @param move The move being used
+     * @param target Pokemon being targeted
+     * @return Adjusted damage value
+     */
+    public static int calculateEffectiveness( int damage, Move move, Pokemon target) 
+    {
+    	String[] positive = move.getPosEffects();
+        String[] negative = move.getNegEffects();
+        String zero = move.getZeroEffects();
+        String[] pokeType = target.getType();
+  	    
+    	for (int j = 0; j < 2; j++) {
+       	 // Multiply damage by 2 for every positive match
+           for (int i = 0; i < positive.length; i++){
+               if ( positive[i].equals(pokeType[j]) )
+               {      
+                   damage = damage * 2;
+               }
+           }
+           
+           // Divide damage by 2 for every negative match made
+           for (int i = 0; i < negative.length; i++){
+               if ( negative[i].equals(pokeType[j]) )
+               {
+                   damage = damage/2;
+               }
+           }        
+           
+           // If the move type does not work against the pokemon type at all
+           if (pokeType[j].equals(zero)){
+               damage = 0;
+           }
+        }     	
+    	return damage;    	
+    	
+    }
+    
+    /**
+     * Display battle messages related to the attacking turn.
+     * @param damage Damage done
+     * @param move Move being used
+     * @param target Pokemon being attacked
+     */
+    public static void displayMessages( int damage, Move move, Pokemon target ) {
+    	
+    	int base = move.getDamage();
+    	
+    	// Super Effective
+        if (base < calculateEffectiveness(base, move, target)){ 
+            System.out.print("It's super effective!");      
+            if (move.wasCritical()) {
+            	System.out.print(" A critical hit!");
+            }
+            System.out.println();
+            System.out.println(target.getName() + " took " + damage + " damage!");
+            if (move.getMessage() != null) {
+            	move.printMessage();
+            	move.resetMessage();
+            }
+            System.out.println();
+            
+        }
+        // Not at all effective
+        else if (calculateEffectiveness(base, move, target) == 0){
+            System.out.println("But it didn't work!");
+            System.out.println();
+        }
+        // Not very effective
+        else if (base > calculateEffectiveness(base, move, target)){
+            System.out.println("It's not very effective...");
+            if (move.wasCritical()) {
+            	System.out.print(" A critical hit!");
+            }
+            System.out.println(target.getName() + " took " + damage + " damage!\n");
+            if (move.getMessage() != null) {
+            	move.printMessage();
+            	move.resetMessage();
+            }
+            System.out.println();
+        }
+        // Normal effectiveness
+        else {
+            if (move.wasCritical()) {
+            	System.out.print(" A critical hit!");
+            }
+        	System.out.println(target.getName() + " took " + damage + " damage!\n");
+        	if (move.getMessage() != null) {
+            	move.printMessage();
+            	move.resetMessage();
+            }
+            System.out.println();
+        }
+        
+    }
 }
