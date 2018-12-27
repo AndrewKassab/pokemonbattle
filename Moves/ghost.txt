@@ -1,1 +1,4 @@
-Move shadowBall = new Move("Shadow Ball","ghost",80,100,15,0,false,true,true); // May lower spDefense
+// may lower special defense
+Move shadowBall = new Move("Shadow Ball","ghost",80,100,15,0,false,true,true);  
+// confuses target
+Move confuseRay = new Move("Confuse-Ray","ghost",0,100,10,0,false,false,true);
