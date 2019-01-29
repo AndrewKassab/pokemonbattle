@@ -4,7 +4,7 @@
   popular video game series Pokemon. It currently allows you to take control
   of two separate trainers and their partys and simulate a pokemon battle.
 
-# Current Version 
+# Current Version (v7.3)
 
   - All types supported
   - Type advantages and disadvantages
@@ -20,7 +20,6 @@
   - Create A.I for computer player 
   - Add support for more moves 
   - Create database / factory for creating pokemon
-  - Support confusion status effect 
   - Possibly add G.U.I (?)
   - Possibly add Pokemon Abilities (?) 
   
@@ -28,5 +27,6 @@
   
   This project is one of my first ambitious / personal undertakings. I'm a big
   fan of Pokemon and thought it'd be a great learning experience to take on 
-  recreating a complex turn-based-combat system. 
+  recreating a complex turn-based-combat system. If anyone wants to contribute or
+  help to design the A.I for the computer player, they're more than welcome.
  
