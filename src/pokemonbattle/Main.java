@@ -8,10 +8,10 @@ package pokemonbattle;
  */
 public class Main {
 
-	public static void main(String[] args) throws InterruptedException {
+  public static void main(String[] args) throws InterruptedException {
 
-		Battle battle = new Battle();
+    Battle battle = new Battle();
 
-	}
+  }
 
 }
