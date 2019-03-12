@@ -16,7 +16,8 @@
   - Many move abilities (more to be supported later, check Moves folder for supported moves)
 
 # Goals
-
+  - Make status effects into their own class
+  - Make types into their own class 
   - Create A.I for computer player 
   - Add support for more moves 
   - Create database / factory for creating pokemon
@@ -29,4 +30,3 @@
   fan of Pokemon and thought it'd be a great learning experience to take on 
   recreating a complex turn-based-combat system. If anyone wants to contribute or
   help to design the A.I for the computer player, they're more than welcome.
- 
