@@ -191,8 +191,7 @@ public class Battle
   * @param mb Move used by Pokemon B
   * @return value 1 or 2, 1 for Pokemon A going first, and 2 for Pokemon B
   */
-  public static int whosFirst(Pokemon pa, Pokemon pb, Move ma, Move mb)
-  {
+  public static int whosFirst(Pokemon pa, Pokemon pb, Move ma, Move mb) {
     int pokemonOneSpeed = pa.getSpeed();
     int pokemonTwoSpeed = pb.getSpeed();
     
@@ -211,25 +210,25 @@ public class Battle
       return 2;
     }
     else if ( ma.getPriority() > mb.getPriority()){
-          return 1;
-      }
-      else if ( mb.getPriority() > ma.getPriority()){
-          return 2;
-      }
-      else if (pokemonOneSpeed > pokemonTwoSpeed){
-          return 1;
-      }
-      else if (pokemonTwoSpeed > pokemonOneSpeed){
-          return 2;
-      }
+      return 1;
+    }
+    else if ( mb.getPriority() > ma.getPriority()){
+      return 2;
+    }
+    else if (pokemonOneSpeed > pokemonTwoSpeed){
+      return 1;
+    }
+    else if (pokemonTwoSpeed > pokemonOneSpeed){
+      return 2;
+    }
     
-      // Randomize in the event of a matching speed and priority case.
-      else {
-          if (Math.random() >= 0.5){
-                  return 1;
-              }
-              else return 2;
-      }     
+    // Randomize in the event of a matching speed and priority case.
+    else {
+      if (Math.random() >= 0.5){
+        return 1;
+      }
+      else return 2;
+    }     
   }
   
   /**
@@ -238,80 +237,79 @@ public class Battle
    * @param b Second Pokemon.
    */
   public void displayHealth(Pokemon a, Pokemon b){
-      if (a.getHealth() < 0){
-          a.setHealth(0);
-      }
-      if (b.getHealth() < 0){
-          b.setHealth(0);
-      }
-      System.out.println(a.getName() + ": " + a.getHealth() + " health");
-      System.out.println(b.getName() + ": " + b.getHealth() + " health\n");
+    if (a.getHealth() < 0){
+        a.setHealth(0);
+    }
+    if (b.getHealth() < 0){
+        b.setHealth(0);
+    }
+    System.out.println(a.getName() + ": " + a.getHealth() + " health");
+    System.out.println(b.getName() + ": " + b.getHealth() + " health\n");
   }      
   
   /**
- * Handles the instructions and loop for an actual Pokemon battle to commence.
+   * Handles the instructions and loop for an actual Pokemon battle to commence.
    * @param args.
    * @throws InterruptedException Thread sleeps for user to process results
    */
   public void battle() throws InterruptedException {    
-      // Select the active Pokemon for each trainer
-      trainerOne.selectPokemon();
-      trainerTwo.selectPokemon();
-      
-      // Battle loop
-      do{
-          
-          trainerOne.getActivePokemon().selectMove(trainerOne);
-          trainerTwo.getActivePokemon().selectMove(trainerTwo);
-
-          // Decide attacking order
-          int result = whosFirst(trainerOne.getActivePokemon(),trainerTwo.getActivePokemon(),
-              trainerOne.getActivePokemon().getActiveMove(), 
-              trainerTwo.getActivePokemon().getActiveMove());  
-         
-          // Attack turns begin
-          if (result == 1) { // If trainer one attacks first
-            trainerOne.getActivePokemon().applyPreStatus(trainerOne); 
-          trainerOne.getActivePokemon().applyNonLethal(trainerOne);
-            if (trainerOne.canAttack()) { // If paralysis, sleep, or freeze didn't stop the turn.
-              trainerOne.Attack(trainerTwo);
-            } 
-            Thread.sleep(3000);
-            if (trainerTwo.canAttack()) {
-              trainerTwo.getActivePokemon().applyPreStatus(trainerTwo);
-                trainerTwo.getActivePokemon().applyNonLethal(trainerTwo);
-              if (trainerTwo.canAttack()) { // If paralysis, sleep, or freeze didn't stop the turn.
-                trainerTwo.Attack(trainerOne);
-              }     
-            }
-          }
-          else { // If trainer two attacks first
-            trainerTwo.getActivePokemon().applyPreStatus(trainerTwo); 
-            trainerTwo.getActivePokemon().applyNonLethal(trainerTwo);
-            if (trainerTwo.canAttack()) { // If paralysis, sleep, or freeze didn't stop the turn.
-              trainerTwo.Attack(trainerOne);
-            }
-            Thread.sleep(3000);
-            if (trainerOne.canAttack()) {
-              trainerOne.getActivePokemon().applyPreStatus(trainerOne);
-              trainerOne.getActivePokemon().applyNonLethal(trainerOne);
-              if (trainerOne.canAttack()) { // If paralysis, sleep, or freeze didn't stop the turn.
-                trainerOne.Attack(trainerTwo);
-              }
-            }
-          }
-          
-          trainerOne.getActivePokemon().applyPostStatus(trainerOne);
-        trainerTwo.getActivePokemon().applyPostStatus(trainerTwo);
-
-        trainerTwo.setCanAttack(true);
-        trainerOne.setCanAttack(true);
+    // Select the active Pokemon for each trainer
+    trainerOne.selectPokemon();
+    trainerTwo.selectPokemon();
+    
+    // Battle loop
+    do{
         
-          // Print out health status
-          displayHealth(trainerOne.getActivePokemon(),trainerTwo.getActivePokemon());
-          
-          // Loop continues as long as both Pokemon are still alive
-      } while (trainerOne.canContinue() && trainerTwo.canContinue());
+      trainerOne.getActivePokemon().selectMove(trainerOne);
+      trainerTwo.getActivePokemon().selectMove(trainerTwo);
+
+      // Decide attacking order
+      int result = whosFirst(trainerOne.getActivePokemon(),trainerTwo.getActivePokemon(),
+                              trainerOne.getActivePokemon().getActiveMove(), 
+                                trainerTwo.getActivePokemon().getActiveMove());  
+     
+      // Attack turns begin
+      if (result == 1) { // If trainer one attacks first
+        trainerOne.getActivePokemon().applyPreStatus(trainerOne); 
+        trainerOne.getActivePokemon().applyNonLethal(trainerOne);
+        if (trainerOne.canAttack()) { // If paralysis, sleep, or freeze didn't stop the turn.
+          trainerOne.Attack(trainerTwo);
+        } 
+        Thread.sleep(3000);
+        if (trainerTwo.canAttack()) {
+          trainerTwo.getActivePokemon().applyPreStatus(trainerTwo);
+          trainerTwo.getActivePokemon().applyNonLethal(trainerTwo);
+          if (trainerTwo.canAttack()) { // If paralysis, sleep, or freeze didn't stop the turn.
+            trainerTwo.Attack(trainerOne);
+          }     
+        }
+      } else { // If trainer two attacks first
+        trainerTwo.getActivePokemon().applyPreStatus(trainerTwo); 
+        trainerTwo.getActivePokemon().applyNonLethal(trainerTwo);
+        if (trainerTwo.canAttack()) { // If paralysis, sleep, or freeze didn't stop the turn.
+          trainerTwo.Attack(trainerOne);
+        }
+        Thread.sleep(3000);
+        if (trainerOne.canAttack()) {
+          trainerOne.getActivePokemon().applyPreStatus(trainerOne);
+          trainerOne.getActivePokemon().applyNonLethal(trainerOne);
+          if (trainerOne.canAttack()) { // If paralysis, sleep, or freeze didn't stop the turn.
+            trainerOne.Attack(trainerTwo);
+          }
+        }
+      }
+        
+      trainerOne.getActivePokemon().applyPostStatus(trainerOne);
+      trainerTwo.getActivePokemon().applyPostStatus(trainerTwo);
+
+      trainerTwo.setCanAttack(true);
+      trainerOne.setCanAttack(true);
+      
+      // Print out health status
+      displayHealth(trainerOne.getActivePokemon(),trainerTwo.getActivePokemon());
+      
+    } while (trainerOne.canContinue() && trainerTwo.canContinue());
+    // Loop continues as long as both Pokemon are still alive
   }
   
   /**
@@ -328,39 +326,39 @@ public class Battle
     double defense;
     
     if (move.isPhysical()) {
-        attack = user.getAttack();
-          defense = target.getDefense();
-      }
-      else {
-        attack = user.getSpAttack();
-        defense = target.getSpDefense();               
-      }
+      attack = user.getAttack();
+      defense = target.getDefense();
+    }
+    else {
+      attack = user.getSpAttack();
+      defense = target.getSpDefense();               
+    }
 
-      // Calculate damage (before type effectiveness)
-      int damage = (int) Math.round(((22 * base * (attack/defense))/50.0 + 2));    
-      
-      move.setPP(move.getPP() - 1);
-      
-      // Factor in STAB bonus
-      if ( user.hasSTAB(move) ) {
-        damage = (int) Math.round(damage * 1.5); 
-      }
-      
-      damage = calculateEffectiveness( damage, move, target);
-      
-      if (move.isCritical()) {
-        damage = damage * 2;
-      }
-      
-      // Burn reduces physical damage by half
-      if (user.getStatus() != null && user.getStatus().equals("burn") && move.isPhysical()) {
-        damage = (int) Math.round(damage/2.0);
-      }
-
-      if (damage > target.getHealth()) {
-        damage = target.getHealth();
-      }
+    // Calculate damage (before type effectiveness)
+    int damage = (int) Math.round(((22 * base * (attack/defense))/50.0 + 2));    
     
+    move.setPP(move.getPP() - 1);
+    
+    // Factor in STAB bonus
+    if ( user.hasSTAB(move) ) {
+      damage = (int) Math.round(damage * 1.5); 
+    }
+    
+    damage = calculateEffectiveness( damage, move, target);
+    
+    if (move.isCritical()) {
+      damage = damage * 2;
+    }
+    
+    // Burn reduces physical damage by half
+    if (user.getStatus() != null && user.getStatus().equals("burn") && move.isPhysical()) {
+      damage = (int) Math.round(damage/2.0);
+    }
+
+    if (damage > target.getHealth()) {
+      damage = target.getHealth();
+    }
+  
     return damage;
   }
   
@@ -371,35 +369,34 @@ public class Battle
    * @param target Pokemon being targeted
    * @return Adjusted damage value
    */
-  public static int calculateEffectiveness( int damage, Move move, Pokemon target) 
-  {
+  public static int calculateEffectiveness( int damage, Move move, Pokemon target) {
     String[] positive = move.getPosEffects();
-      String[] negative = move.getNegEffects();
-      String zero = move.getZeroEffects();
-      String[] pokeType = target.getType();
+    String[] negative = move.getNegEffects();
+    String zero = move.getZeroEffects();
+    String[] pokeType = target.getType();
       
     for (int j = 0; j < 2; j++) {
-        // Multiply damage by 2 for every positive match
-         for (int i = 0; i < positive.length; i++){
-             if ( positive[i].equals(pokeType[j]) )
-             {      
-                 damage = damage * 2;
-             }
+      // Multiply damage by 2 for every positive match
+      for (int i = 0; i < positive.length; i++){
+         if ( positive[i].equals(pokeType[j]) )
+         {      
+           damage = damage * 2;
          }
-         
-         // Divide damage by 2 for every negative match made
-         for (int i = 0; i < negative.length; i++){
-             if ( negative[i].equals(pokeType[j]) )
-             {
-                 damage = damage/2;
-             }
-         }        
-         
-         // If the move type does not work against the pokemon type at all
-         if (pokeType[j].equals(zero)){
-             damage = 0;
-         }
-      }       
+      }
+       
+      // Divide damage by 2 for every negative match made
+      for (int i = 0; i < negative.length; i++){
+        if ( negative[i].equals(pokeType[j]) ) {
+             damage = damage/2;
+        }
+      }        
+       
+      // If the move type does not work against the pokemon type at all
+      if (pokeType[j].equals(zero)){
+        damage = 0;
+      }
+    }       
+
     return damage;      
     
   }
@@ -415,50 +412,49 @@ public class Battle
     int base = move.getDamage();
     
     // Super Effective
-      if (base < calculateEffectiveness(base, move, target)){ 
-          System.out.print("It's super effective!");      
-          if (move.wasCritical()) {
-            System.out.print(" A critical hit!");
-          }
-          System.out.println();
-          System.out.println(target.getName() + " took " + damage + " damage!");
-          if (move.getMessage() != null) {
-            move.printMessage();
-            move.resetMessage();
-          }
-          System.out.println();
-          
-      }
-      // Not at all effective
-      else if (calculateEffectiveness(base, move, target) == 0){
-          System.out.println("But it didn't work!");
-          System.out.println();
-      }
-      // Not very effective
-      else if (base > calculateEffectiveness(base, move, target)){
-          System.out.println("It's not very effective...");
-          if (move.wasCritical()) {
-            System.out.print(" A critical hit!");
-          }
-          System.out.println(target.getName() + " took " + damage + " damage!\n");
-          if (move.getMessage() != null) {
-            move.printMessage();
-            move.resetMessage();
-          }
-          System.out.println();
-      }
-      // Normal effectiveness
-      else {
-          if (move.wasCritical()) {
-            System.out.print(" A critical hit!");
-          }
-        System.out.println(target.getName() + " took " + damage + " damage!\n");
+    if (base < calculateEffectiveness(base, move, target)){ 
+        System.out.print("It's super effective!");      
+        if (move.wasCritical()) {
+          System.out.print(" A critical hit!");
+        }
+        System.out.println();
+        System.out.println(target.getName() + " took " + damage + " damage!");
         if (move.getMessage() != null) {
-            move.printMessage();
-            move.resetMessage();
-          }
-          System.out.println();
+          move.printMessage();
+          move.resetMessage();
+        }
+        System.out.println();
+    }
+    // Not at all effective
+    else if (calculateEffectiveness(base, move, target) == 0){
+        System.out.println("But it didn't work!");
+        System.out.println();
+    }
+    // Not very effective
+    else if (base > calculateEffectiveness(base, move, target)){
+      System.out.println("It's not very effective...");
+      if (move.wasCritical()) {
+        System.out.print(" A critical hit!");
       }
+      System.out.println(target.getName() + " took " + damage + " damage!\n");
+      if (move.getMessage() != null) {
+        move.printMessage();
+        move.resetMessage();
+      }
+      System.out.println();
+    }
+    // Normal effectiveness
+    else {
+      if (move.wasCritical()) {
+        System.out.print(" A critical hit!");
+      }
+      System.out.println(target.getName() + " took " + damage + " damage!\n");
+      if (move.getMessage() != null) {
+        move.printMessage();
+        move.resetMessage();
+      }
+      System.out.println();
+    }
       
   }
 }
