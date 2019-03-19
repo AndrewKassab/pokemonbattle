@@ -386,8 +386,8 @@ public class Move
     case "fighting":
       // Lowers user's defense and spDefense after attacking
       if (name.equals("Close Combat")) {
-        attacker.incrementStage("Defense","-");
-        attacker.incrementStage("SpDefense", "-");
+        attacker.incrementStage(Stat.DEFENSE , Operator.DECREMENT);
+        attacker.incrementStage(Stat.SPDEFENSE, Operator.DECREMENT);
         // TODO: Display message for when stat stages are maxed lower
         effectMessage = attacker.getName() + "'s Defense and Special Defense have decreased!";
         return;
@@ -395,7 +395,7 @@ public class Move
       // May lower target's spDefense
       if (name.equals("Focus Blast")) {
         if (random < .1) {
-          target.incrementStage("spDefense", "-");
+          target.incrementStage(Stat.SPDEFENSE, Operator.DECREMENT);
           effectMessage = target.getName() + "'s Special Defense has decreased!";
         }
         return;
@@ -453,7 +453,7 @@ public class Move
       // 20% May lower target's spDefense
       if (name.equals("Shadow Ball")) {
         if (random < .2) {
-          target.incrementStage("spDefense", "-");
+          target.incrementStage(Stat.SPDEFENSE,Operator.DECREMENT);
           effectMessage = target.getName() + "'s Special Defense has decreased!";
         }
         return;
@@ -463,7 +463,7 @@ public class Move
       // 10% May lower target's spDefense
       if (name.equals("Earth Power")) {
         if (random < .1) {
-          target.incrementStage("spDefense", "-");
+          target.incrementStage(Stat.SPDEFENSE, Operator.DECREMENT);
           effectMessage = target.getName() + "'s Special Defense has decreased!";
         }
         return;
@@ -473,11 +473,11 @@ public class Move
       // 20% May lower target's defense
       if (name.equals("Crunch")) {
         if (random < .2) {
-          if (target.getStage("Defense") == -6) {
+          if (target.getStage(Stat.DEFENSE) == -6) {
             effectMessage = target.getName() + "'s Defense can't go any lower!";
           }
           else {
-          target.incrementStage("Defense", "-");
+          target.incrementStage(Stat.DEFENSE, Operator.DECREMENT);
             effectMessage = target.getName() + "'s Defense has fallen!";
           }
         }
@@ -553,29 +553,29 @@ public class Move
       // Increases user's attack stats by 2 stages
       if (name.equals("Swords Dance")) {
         System.out.println(attacker.getName() + " used Swords Dance!");
-        if (attacker.getStage("Attack") == 6 && attacker.getStage("spAttack") == 6 ) {
+        if (attacker.getStage(Stat.ATTACK) == 6 && attacker.getStage(Stat.SPATTACK) == 6 ) {
           System.out.println(attacker.getName() + 
                               "'s Attack and Special Attack can't go any higher!");
         }
-        else if (attacker.getStage("Attack") == 6) {
-          attacker.incrementStage("SpAttack", "+");
-          attacker.incrementStage("SpAttack", "+");
+        else if (attacker.getStage(Stat.ATTACK) == 6) {
+          attacker.incrementStage(Stat.SPATTACK, Operator.INCREMENT);
+          attacker.incrementStage(Stat.SPATTACK, Operator.INCREMENT);
           System.out.println(attacker.getName() + "'s Special Attack rose sharply!");
           System.out.println(attacker.getName() + "'s Attack can't go any higher!");
           System.out.println();
         }
-        else if (attacker.getStage("SpAttack") == 6) {
-          attacker.incrementStage("Attack", "+");
-          attacker.incrementStage("Attack", "+");
+        else if (attacker.getStage(Stat.SPATTACK) == 6) {
+          attacker.incrementStage(Stat.ATTACK, Operator.INCREMENT);
+          attacker.incrementStage(Stat.ATTACK, Operator.INCREMENT);
           System.out.println(attacker.getName() + "'s Attack rose sharply!");
           System.out.println(attacker.getName() + 
                               "'s Special Attack can't go any higher!");
         }
         else {
-          attacker.incrementStage("Attack","+");
-          attacker.incrementStage("SpAttack", "+");
-          attacker.incrementStage("Attack","+");
-          attacker.incrementStage("SpAttack", "+");    
+          attacker.incrementStage(Stat.ATTACK,Operator.INCREMENT);
+          attacker.incrementStage(Stat.SPATTACK, Operator.INCREMENT);
+          attacker.incrementStage(Stat.ATTACK,Operator.INCREMENT);
+          attacker.incrementStage(Stat.SPATTACK, Operator.INCREMENT);
           System.out.println(attacker.getName() + 
                               "'s Attack and Special Attack have rose sharply!");
         }

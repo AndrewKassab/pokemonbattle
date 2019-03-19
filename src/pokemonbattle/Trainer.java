@@ -8,6 +8,7 @@ import pokemonbattle.Battle;
  * A trainer has a party of Pokemon, and an identifier for which
  * Pokemon is currently active and in battle. 
  * TODO: Bugs, damage values not consistent with earthquake ? (charizard vs blastoise)
+ * TODO: Add Player and CPU extend Trainer class
  * @version 7.3
  * @author precisemotion
  */
