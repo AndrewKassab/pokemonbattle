@@ -4,8 +4,7 @@ import java.util.Scanner;
 import java.util.ArrayList;
 
 /**
-* Class to create, initialize, and store a Pokemon and their moves. 
-* @TODO: Update status effects to be a class
+* Class to create, initialize, and store a Pokemon 
 * @author Andrew Kassab
 */
 public class Pokemon{
@@ -15,7 +14,8 @@ public class Pokemon{
   private Type[] type; // TODO: Change to ArrayList 
   private Move[] moves = new Move[4];
   private Move activeMove;
-  private Status[] status; // TODO: Combine into an ArrayList
+  // TODO: Combine into an ArrayList 
+  private Status[] status; // ( 0 -> lethal, 1 -> nonlethal )
   private Stats stats;
   
   public Pokemon(String name, int ID, Type[] types, int health, int attack, int defense, 
@@ -123,8 +123,8 @@ public class Pokemon{
   }
   
   // For lethal status'
-  public Status[] getStatus() {
-    return status;
+  public Status getLethalStatus() {
+    return status[0];
   }
 
   public void setStatus(Status effect) {
@@ -137,176 +137,11 @@ public class Pokemon{
     }
   }   
 
-  public int getStatusCounter() {
-    return statusCounter;
-  }
-
   // For non-lethal status'
-  public String getnonLethalStatus() {
-    return nonLethal;
+  public Status getnonLethalStatus() {
+    return status[1];
   }
 
-  public void setNonLethalStatus(String effect) {
-    nonLethalCounter = 0;
-    nonLethal = effect;
-  }
-
-  public int getnonLethalCounter() {
-    return nonLethalCounter;
-  }
-  
-  /**
-   * Applys a status effect to the battle.
-   * For effects that work at the end of turns.
-   */
-  public void applyPostStatus(Trainer trainer) {
-    
-    if (status == null) {
-      return;
-    }
-    
-    switch (status) {
-    case "burn":
-      setHealth(getHealth() - (int) Math.round(getMaxHealth()/16.0));
-      System.out.println(name + " is hurt by its burn!");
-      if (isFainted()) {
-        System.out.println(name + " has fainted!");
-        trainer.selectPokemon();
-      }
-      return;
-    case "poison":
-      setHealth(getHealth() - (int) Math.round(getMaxHealth()/8.0));
-      System.out.println(name + " is hurt by poison!");
-      if (isFainted()) {
-        System.out.println(name + " has fainted!");
-        System.out.println();
-        trainer.selectPokemon();
-      }
-      else System.out.println();
-      return;
-    case "badPoison":
-      setHealth(getHealth() - (int) ( Math.round( getMaxHealth() * 
-                  ( 1.0/16.0 + (statusCounter * 1.0/16.0) ) ) ) );
-      statusCounter++;
-      System.out.println(name + " is hurt by bad poison!");
-      if (isFainted()) {
-        System.out.println(name + " has fainted!");
-        System.out.println();
-        trainer.selectPokemon();
-      }
-      else System.out.println();
-      return;
-    }
-  }   
-  
-  /**
-   * Applys a status effect to the battle
-   * For effects that work at the beginning of turns.
-   * @throws InterruptedException 
-   */
-  public void applyPreStatus(Trainer trainer) throws InterruptedException {
-    double random = Math.random();
-    
-    if (status == null)
-    {
-      return;
-    }
-    
-    switch (status) {
-    case "paralysis":
-      System.out.println(name + " is paralyzed! It might be unable to move!");
-      Thread.sleep(2000);
-      if (random < .25) {
-        System.out.println(name + " is paralyzed! It can't move!");
-        System.out.println();
-        trainer.setCanAttack(false);
-      }
-      return;
-    case "frozen":
-      if (Math.random() >= .20) {
-        System.out.println(name + " is frozen solid!");
-        System.out.println();
-        trainer.setCanAttack(false);
-      }
-      else {
-        System.out.println(name + " thawed out!");
-        System.out.println();
-      }
-      return;
-    case "sleep":
-      if (statusCounter < 3) {
-        if (random >= .33) { // 33% chance of waking up.
-          System.out.println(name + " is fast asleep.");
-          System.out.println();
-          statusCounter++;
-          trainer.setCanAttack(false);
-        }
-        else {
-          System.out.println(name + " woke up!");
-          System.out.println();
-          setStatus(null);
-          statusCounter = 0;
-        }
-      }
-      else { // After the 3rd turn, gauranteed wake up.
-        System.out.println(name + " woke up!");
-      System.out.println();
-      setStatus(null);
-      statusCounter = 0;
-      }
-      return;
-    }
-  }
-  
-  /**
-   * Applys a non-lethal status effect to the battle
-   */
-  public void applyNonLethal(Trainer trainer){
-      
-    if (nonLethal == null){
-      return;
-    }
-
-    double random = Math.random();
-  
-    switch( nonLethal ){
-    case "confusion":
-
-      System.out.println(name + " is confused!");
-      // been less than 4 turns
-      if (nonLethalCounter < 4){
-        // 33% chance of snapping out
-        if (random >= .33){
-          random = Math.random(); 
-          // 33% chance of hurting self
-          if (random < .33){
-            System.out.println(name + " hurt itself in confusion!");
-            // TODO: Fix length 
-            int damage = (int) Math.round(((22 * 40 * (stats.attack/stats.defense))/50.0 + 2));
-            setHealth(getHealth() - damage);
-            trainer.setCanAttack(false);
-            nonLethalCounter++;
-            return;
-          }
-          // still confused but didn't attack self
-          else {
-            nonLethalCounter++;
-            return;
-          }
-        }
-      }
-      
-      // snaps out of confusion 
-      System.out.println(name + " snapped out of it's confusion!");
-      setNonLethalStatus(null);
-      return;
-
-    case "": // TODO add more non-lethals
-      break;  
-    }
-
-  }
-              
   public int getStage(Stat stat) {
     switch (stat) {
     case ATTACK:

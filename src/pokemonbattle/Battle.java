@@ -197,10 +197,10 @@ public class Battle
     int pokemonTwoSpeed = pb.getStat(Stat.SPEED);
     
     // Paralysis lowers speed by 1/2
-    if (pa.getStatus() != null && pa.getStatus().equals("paralysis")) {
+    if (pa.getLethalStatus() != null && pa.getLethalStatus().equals("paralysis")) {
       pokemonOneSpeed = (int) Math.round(pokemonOneSpeed/2.0);
     }
-    if (pb.getStatus() != null && pb.getStatus().equals("paralysis")) {
+    if (pb.getLethalStatus() != null && pb.getLethalStatus().equals("paralysis")) {
       pokemonTwoSpeed = (int) Math.round(pokemonTwoSpeed/2.0);
     }
     
