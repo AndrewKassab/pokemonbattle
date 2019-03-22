@@ -4,7 +4,7 @@
   popular video game series Pokemon. It currently allows you to take control
   of two separate trainers and their partys and simulate a pokemon battle.
 
-# Current Version (v7.3)
+# Current Version (v7.4)
 
   - All types supported
   - Type advantages and disadvantages

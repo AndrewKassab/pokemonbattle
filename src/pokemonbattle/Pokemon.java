@@ -1,26 +1,27 @@
 package pokemonbattle;
 
 import java.util.Scanner;
+import java.util.ArrayList;
 
 /**
 * Class to create, initialize, and store a Pokemon and their moves. 
-* @version 7.3
+* @TODO: Update status effects to be a class
 * @author Andrew Kassab
 */
 public class Pokemon{
   
   private final String name;
   private final int pokeID;
-  private String[] type;
+  private Type[] type; // TODO: Change to arraylist
   private Move[] moves = new Move[4];
   private Move activeMove;
   private String status = null;
   private int statusCounter = 0;
-  private String nonLethal = null; // TODO: Implement non-lethal status effects
+  private String nonLethal = null; 
   private int nonLethalCounter = 0;
   private Stats stats;
   
-  public Pokemon(String name, int ID, String[] types, int health, int attack, int defense, 
+  public Pokemon(String name, int ID, Type[] types, int health, int attack, int defense, 
                   int spAttack, int spDefense, int speed, Move[] moves){
     this.name = name;
     this.pokeID = ID;
@@ -53,7 +54,7 @@ public class Pokemon{
     else stats.health = h;
   }
   
-  public String[] getType(){
+  public Type[] getType(){
     return type;
   }
   
@@ -277,6 +278,7 @@ public class Pokemon{
           // 33% chance of hurting self
           if (random < .33){
             System.out.println(name + " hurt itself in confusion!");
+            // TODO: Fix length 
             int damage = (int) Math.round(((22 * 40 * (stats.attack/stats.defense))/50.0 + 2));
             setHealth(getHealth() - damage);
             trainer.setCanAttack(false);

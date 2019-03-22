@@ -11,7 +11,7 @@ package pokemonbattle;
 public class Move
 {
   private final String name;
-  private final String type;
+  private final Type type;
   private int damage;
   private double accuracy;
   private int powerPoints;
@@ -23,7 +23,7 @@ public class Move
   private boolean wasCritical; // if a move was a critical hit
   private String effectMessage;
     
-  public Move(String name, String type, int damage, double accuracy, int pp, int priority, 
+  public Move(String name, Type type, int damage, double accuracy, int pp, int priority, 
                 boolean isPhysical, boolean isSpecial, boolean hasEffect){
     this.name = name;
     this.type = type;
@@ -37,7 +37,7 @@ public class Move
     this.effect = hasEffect;
   }
   
-  public String getType(){
+  public Type getType(){
     return type;
   }
   
@@ -157,189 +157,6 @@ public class Move
   }
   
   /**
-   * Takes in a move, and then determines what types this move
-   * is super effective against.
-   * @param m Move being used.
-   * @return String array containing all effective types.
-   */
-  public String[] getPosEffects() {
-    String[] result = new String[]{""};
-    
-    // Checks type of move
-    switch (type){ 
-    case "normal": 
-      return result;
-    case "fire": 
-      result = new String[]{"grass","ice","bug","steel"};
-      return result;
-    case "water": 
-      result = new String[]{"fire","ground","rock"};
-      return result;
-    case "electric": 
-      result = new String[]{"water","flying"};
-      return result;
-    case "grass": 
-      result = new String[]{"water","ground","rock"};
-      return result;
-    case "ice": 
-      result = new String[]{"grass","ground","flying","dragon"};
-      return result;
-    case "fighting": 
-      result = new String[]{"normal","ice","rock","dark","steel"};
-      return result;
-    case "poison": 
-      result = new String[]{"grass","fairy"};
-      return result;
-    case "ground": 
-      result = new String[]{"fire","electric","poison","rock","steel"};
-      return result;
-    case "flying": 
-      result = new String[]{"grass","fighting","bug"};
-      return result;
-    case "psychic": 
-      result = new String[]{"fighting","poison"};
-      return result;
-    case "bug": 
-      result = new String[]{"grass","psychic","dark"};
-      return result;
-    case "rock": 
-      result = new String[]{"fire","ice","flying","bug"};
-      return result;
-    case "ghost": 
-      result = new String[]{"psychic","ghost"};
-      return result;
-    case "dragon": 
-      result = new String[]{"dragon"};
-      return result;
-    case "dark": 
-      result = new String[]{"psychic","rock"};
-      return result;
-    case "steel": 
-      result = new String[]{"ice","fairy","rock"};
-      return result;
-    case "fairy": 
-      result = new String[]{"fighting","dragon","dark"};
-      return result;                 
-    }
-    
-    // If the type does not match any case, error displays and program ends.
-    System.err.print("ERROR, NO CASE MATCHED. PLEASE CHECK TYPE NAMES"); 
-    System.exit(0); 
-    return result;        
-  }
-  
-  /**
-   * Takes in a move, and then determines what types this move
-   * is not very effective against.
-   * @param m Move being used.
-   * @return String array containing all resistant types.
-   */
-  public String[] getNegEffects() {
-    String[] result = new String[]{""};
-    
-    // Check type of move
-    switch (type){
-    case "normal": 
-      result = new String[]{"ground","rock","steel"};
-      return result;
-    case "fire": 
-      result = new String[]{"fire","water","rock","dragon"};
-      return result;
-    case "water": 
-      result = new String[]{"water","grass","dragon"};
-      return result;
-    case "electric": 
-      result = new String[]{"ground","electric","grass","dragon"};
-      return result;
-    case "grass": 
-      result = new String[]{"fire","grass","poison","bug","dragon","steel"};
-      return result;
-    case "ice": 
-      result = new String[]{"fire","water","ice","steel"};
-      return result;
-    case "fighting": 
-      result = new String[]{"ghost","poison","flying","psychic","bug","fairy",};
-      return result;
-    case "poison": 
-      result = new String[]{"steel","ground","rock","ghost"};
-      return result;
-    case "ground": 
-      result = new String[]{"fly","grass","bug"};
-      return result;
-    case "flying": 
-      result = new String[]{"electric","rock","steel"};
-      return result;
-    case "psychic": 
-      result = new String[]{"dark","psychic","steel"};
-      return result;
-    case "bug": 
-      result = new String[]{"fire","fighting","poison","flying","ghost","steel","fairy"};
-      return result;
-    case "rock": 
-      result = new String[]{"fighting","ground","steel"};
-      return result;
-    case "ghost": 
-      result = new String[]{"normal","dark"};
-      return result;
-    case "dragon": 
-      result = new String[]{"fairy","steel"};
-      return result;
-    case "dark": 
-      result = new String[]{"fighting","dark","fairy"};
-      return result;
-    case "steel": 
-      result = new String[]{"fire","water","electric","steel"};
-      return result;
-    case "fairy": 
-      result = new String[]{"fire","poison","steel"};
-      return result;                 
-    }
-    
-    // If the type does not match any case, error displays and program ends.
-    System.err.print("ERROR, NO CASE MATCHED. PLEASE CHECK TYPE NAMES");
-    System.exit(0);
-    return result;   
-  }
-  
-  /**
-  * Takes in a move, and then determines what type this move
-  * is not at all effective against.
-  * @param m Move being used.
-  * @return String containing the resistant type (if any exists).
-  */
-  public String getZeroEffects() {
-
-    String result = "empty";
-    
-    // Check type of move
-    switch (type){
-    case "normal": 
-      result = "ghost";
-      return result;
-    case "electric": 
-      result = "ground";
-      return result;
-    case "fighting": 
-      result = "ghost";
-      return result;
-    case "poison": 
-      result = "steel";
-      return result;
-    case "ground": 
-      result = "fly";
-      return result;
-    case "psychic": 
-      result = "dark";
-      return result;
-    case "ghost": 
-      result = "normal";      
-      return result;
-    }
-
-    return result;   
-  }
-
-  /**
    * Apply's an ATTACK move's specific effect to the battle
    * TODO: Account for more moves.
    * @param attacker Pokemon using the move
@@ -351,20 +168,20 @@ public class Move
     double random = Math.random();
     Pokemon attacker = trainer.getActivePokemon();
     Pokemon target = enemy.getActivePokemon();
-    String typeOne = target.getType()[0];
-    String typeTwo = target.getType()[1];
+    Type typeOne = target.getType()[0];
+    Type typeTwo = target.getType()[1];
     String targStatus = target.getStatus();
     
     switch(type) {
-    case "fire":
+    case FIRE:
        // Applys recoil damage to the user and a chance of burning
       if (name.equals("Flare Blitz")) {
         attacker.setHealth( attacker.getHealth() - (int) Math.round( (1.0/3.0) * damage));
         effectMessage = attacker.getName() + " took recoil!";
         if (random < .1) {
           // Fire cannot be burned
-          if (!typeOne.equals("fire") && !typeTwo.equals("fire") && 
-                !targStatus.equals("burn"))
+          if ( ( typeOne != Type.FIRE ) && ( typeTwo != Type.FIRE ) && 
+                !targStatus.equals("burn") )
           {
             target.setStatus("burn");
             effectMessage += "\n" + target.getName() + " has been burned!";
@@ -375,7 +192,7 @@ public class Move
       if (name.equals("Fire Blast")) {
         if (random < .1) {
           // Fire cannot be burned
-          if (!typeOne.equals("fire") && !typeTwo.equals("fire") && !targStatus.equals("burn")) {
+          if ( ( typeOne != Type.FIRE ) && ( typeTwo != Type.FIRE ) && !targStatus.equals("burn")) {
             target.setStatus("burn");
             effectMessage += "\n" + target.getName() + " has been burned!";
           }
@@ -383,7 +200,7 @@ public class Move
         return;
       }
       break;
-    case "fighting":
+    case FIGHTING:
       // Lowers user's defense and spDefense after attacking
       if (name.equals("Close Combat")) {
         attacker.incrementStage(Stat.DEFENSE , Operator.DECREMENT);
@@ -401,7 +218,7 @@ public class Move
         return;
       }
       break;
-    case "bug":
+    case BUG:
       // Allows a user to swap Pokemon after attacking
       if (name.equals("U-turn")) {
         effectMessage = attacker.getName() + " went back!"; // add Trainer Names
@@ -413,7 +230,7 @@ public class Move
         return;
       }
       break;
-    case "electric":
+    case ELECTRIC:
       // Allows a user to swap Pokemon after attacking
       // TODO: May Paralyze
       if (name.equals("Volt Switch")) {
@@ -427,8 +244,8 @@ public class Move
       // 10% Chance to paralyze
       if (name.equals("Thunder Punch")) {
         // Electric and ground can't be paralyzed
-        if (random < .1 && !typeOne.equals("electric") && !typeTwo.equals("electric") 
-              && !typeOne.equals("ground") && !typeTwo.equals("ground") 
+        if ( (random < .1) && ( typeOne != Type.ELECTRIC ) && ( typeTwo != Type.ELECTRIC )
+              && ( typeOne != Type.GROUND ) && ( typeTwo != Type.GROUND )
                 && !targStatus.equals("paralysis")) 
         {
           target.setStatus("paralysis");
@@ -439,8 +256,8 @@ public class Move
       // 10% Chance to paralyze
       if (name.equals("Thunderbolt")) {
         // Electric and ground can't be paralyzed
-        if (random < .1 && !typeOne.equals("electric") && !typeTwo.equals("electric") 
-              && !typeOne.equals("ground") && !typeTwo.equals("ground") 
+        if ( (random < .1) && ( typeOne != Type.ELECTRIC ) && ( typeTwo != Type.ELECTRIC )
+              && ( typeOne != Type.GROUND ) && ( typeTwo != Type.GROUND )
                 && !targStatus.equals("paralysis")) 
         {
           target.setStatus("paralysis");
@@ -449,7 +266,7 @@ public class Move
         return;
       }
       break;
-    case "ghost":
+    case GHOST:
       // 20% May lower target's spDefense
       if (name.equals("Shadow Ball")) {
         if (random < .2) {
@@ -459,7 +276,7 @@ public class Move
         return;
       }
       break;
-    case "ground":
+    case GROUND:
       // 10% May lower target's spDefense
       if (name.equals("Earth Power")) {
         if (random < .1) {
@@ -469,7 +286,7 @@ public class Move
         return;
       }
       break;
-    case "dark": 
+    case DARK:
       // 20% May lower target's defense
       if (name.equals("Crunch")) {
         if (random < .2) {
@@ -484,12 +301,12 @@ public class Move
         return;
       }
       break;
-    case "ice":
+    case ICE:
       // 10% May freeze
       if (name.equals("Ice Beam")) {
         // Ice and Fire cannot be frozen
-        if (random < .1 && !typeOne.equals("fire") && !typeTwo.equals("fire")
-              && !typeOne.equals("ice") && !typeTwo.equals("ice")  
+        if ( (random < .1) && ( typeOne != Type.FIRE ) && ( typeTwo != Type.FIRE )
+              && ( typeOne != Type.ICE ) && ( typeTwo != Type.ICE )
                 && !targStatus.equals("frozen")) 
         {
           effectMessage = target.getName() + " was frozen!";
@@ -498,12 +315,12 @@ public class Move
         return;
       }
       break;
-    case "poison":
+    case POISON:
       // 10% Chance of poisoning
       if (name.equals("Sludge Wave")) {
         // Poison and Steel cannot be poisoned
-        if (random < .1 && !typeOne.equals("poison") && !typeTwo.equals("poison") 
-              && !typeOne.equals("steel") && !typeTwo.equals("steel")  
+        if ( (random < .1) && ( typeOne != Type.POISON ) && ( typeTwo != Type.POISON )
+              && ( typeOne != Type.STEEL ) && ( typeTwo != Type.STEEL )
                 && !targStatus.equals("poison")) 
         {
             target.setStatus("poison");
@@ -512,12 +329,12 @@ public class Move
         return;
       }
       break;
-    case "normal":
+    case NORMAL:
       // 30% Chance to paralyze
       if (name.equals("Body Slam")) {
         // Electric and ground can't be paralyzed
-        if (random < .3 && !typeOne.equals("electric") && !typeTwo.equals("electric") 
-              && !typeOne.equals("ground") && !typeTwo.equals("ground")  
+        if ( (random < .1) && ( typeOne != Type.ELECTRIC ) && ( typeTwo != Type.ELECTRIC )
+              && ( typeOne != Type.GROUND ) && ( typeTwo != Type.GROUND )
                 && !targStatus.equals("paralysis")) 
         {
             target.setStatus("paralysis");
@@ -533,8 +350,8 @@ public class Move
     Pokemon attacker = trainer.getActivePokemon();
     Pokemon target = enemy.getActivePokemon();
     double random = Math.random();
-    String typeOne = target.getType()[0];
-    String typeTwo = target.getType()[1];
+    Type typeOne = target.getType()[0];
+    Type typeTwo = target.getType()[1];
     String targStatus;
     String targNonLethalStatus;
     
@@ -549,7 +366,7 @@ public class Move
     else targNonLethalStatus = ""; // Prevent null pointer
     
     switch(type) {
-    case "normal":
+    case NORMAL:
       // Increases user's attack stats by 2 stages
       if (name.equals("Swords Dance")) {
         System.out.println(attacker.getName() + " used Swords Dance!");
@@ -595,7 +412,7 @@ public class Move
         return;
       }
       break;
-    case "fly":
+    case FLYING:
       // Heals the user
       if (name.equals("Roost")) {
         System.out.println(attacker.getName() + " used Roost!");
@@ -609,7 +426,7 @@ public class Move
         return;
       }
       break;
-    case "psychic":
+    case PSYCHIC:
       // Heals user to max and puts them to sleep
       if (name.equals("Rest")) {
         
@@ -633,7 +450,7 @@ public class Move
         return;
       }
     break;
-    case "electric":
+    case ELECTRIC:
       // Paralyzes opponent
       if (name.equals("Thunder Wave")) {
         System.out.println(attacker.getName() + " used Thunder Wave!");
@@ -661,14 +478,14 @@ public class Move
         return;
     }
       break;
-    case "poison":
+    case POISON:
       // Badly poisons target
       if (name.equals("Toxic")) {
         System.out.println(attacker.getName() + " used Toxic!");
         if (random < .85) {
           // Poison and Steel cannot be poisoned
-          if (!typeOne.equals("poison") && !typeTwo.equals("poison") 
-                && !typeOne.equals("steel") && !typeTwo.equals("steel")) 
+          if ( ( typeOne != Type.POISON ) && ( typeTwo != Type.POISON )
+                && ( typeOne != Type.STEEL ) && ( typeTwo != Type.STEEL ) ) 
           {
             if (targStatus.equals("badPoison")) {
               System.out.println(target.getName() + " is already poisoned!");
@@ -690,13 +507,13 @@ public class Move
         return;
       }
     break;
-    case "fire":
+    case FIRE:
       // Badly poisons target
       if (name.equals("Will-O-Wisp")) {
         System.out.println(attacker.getName() + " used Will-O-Wisp!");
         if (random < .85) {
           // Fire cannot be burned
-          if (!typeOne.equals("fire") && !typeTwo.equals("fire")) {
+          if ( ( typeOne != Type.FIRE ) && ( typeTwo != Type.FIRE ) ){
             if (targStatus.equals("burn")) {
               System.out.println(target.getName() + " is already burned!");
               System.out.println();
@@ -716,7 +533,7 @@ public class Move
         return;     
     }
       break;
-    case "ghost":
+    case GHOST:
       // confuses target
       if (name.equals("Confuse-Ray")){
         System.out.println(attacker.getName() + " used Confuse-Ray!");
