@@ -12,13 +12,10 @@ public class Pokemon{
   
   private final String name;
   private final int pokeID;
-  private Type[] type; // TODO: Change to arraylist
+  private Type[] type; // TODO: Change to ArrayList 
   private Move[] moves = new Move[4];
   private Move activeMove;
-  private String status = null;
-  private int statusCounter = 0;
-  private String nonLethal = null; 
-  private int nonLethalCounter = 0;
+  private Status[] status; // TODO: Combine into an ArrayList
   private Stats stats;
   
   public Pokemon(String name, int ID, Type[] types, int health, int attack, int defense, 
@@ -28,6 +25,7 @@ public class Pokemon{
     this.type = types;
     this.moves = moves;
     stats = new Stats(health,attack,defense,spAttack,spDefense,speed);
+    status = new Status[] {Status.NULLSTATUS, Status.NULLSTATUS};
   }
   
   
@@ -125,13 +123,18 @@ public class Pokemon{
   }
   
   // For lethal status'
-  public String getStatus() {
+  public Status[] getStatus() {
     return status;
   }
 
-  public void setStatus(String effect) {
-    statusCounter = 0;
-    status = effect;
+  public void setStatus(Status effect) {
+    if ( effect.type == StatusType.LETHAL ) {
+      status[0] = effect;
+      status[0].counter = 0;
+    } else {
+      status[1] = effect;
+      status[1].counter = 0;
+    }
   }   
 
   public int getStatusCounter() {
