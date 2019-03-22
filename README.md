@@ -17,7 +17,6 @@
 
 # Goals
   - Make status effects into their own class
-  - Make types into their own class 
   - Create A.I for computer player 
   - Add support for more moves 
   - Create database / factory for creating pokemon
