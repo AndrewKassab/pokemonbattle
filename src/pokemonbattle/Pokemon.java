@@ -127,8 +127,8 @@ public class Pokemon{
     return status[0];
   }
 
-  public void setStatus(Status effect) {
-    if ( effect.type == StatusType.LETHAL ) {
+  public void setStatus(Status effect, StatusType type) {
+    if ( type == StatusType.LETHAL ) {
       status[0] = effect;
       status[0].counter = 0;
     } else {

@@ -84,7 +84,6 @@ public enum Status {
     String name = poke.getName();
     
     //TODO remove status condition
-    // TODO: LEFT OFF HERE! 
     switch (this) {
     case PARALYSIS:
       System.out.printf(messageOne, name);
@@ -106,36 +105,33 @@ public enum Status {
       else {
         System.out.printf(messageTwo,name);
         System.out.println();
-        poke.setStatus(NULLSTATUS); // TODO: LEFT OFF HERE SPECIFICALLY!
+        poke.setStatus(NULLSTATUS, StatusType.LETHAL);
       }
       break;
-    case "sleep":
-      if (statusCounter < 3) {
+    case SLEEP:
+      if (counter < 3) {
         if (random >= .33) { // 33% chance of waking up.
-          System.out.println(name + " is fast asleep.");
+          System.out.printf(messageOne, name);
           System.out.println();
-          statusCounter++;
+          counter++;
           trainer.setCanAttack(false);
         }
         else {
-          System.out.println(name + " woke up!");
+          System.out.printf(messageTwo, name);
           System.out.println();
-          setStatus(null);
-          statusCounter = 0;
+          poke.setStatus(NULLSTATUS, StatusType.LETHAL);
         }
       }
       else { // After the 3rd turn, gauranteed wake up.
-        System.out.println(name + " woke up!");
-      System.out.println();
-      setStatus(null);
-      statusCounter = 0;
+        System.out.printf(messageTwo, name);
+        System.out.println();
+        poke.setStatus(NULLSTATUS, StatusType.LETHAL);
       }
-      return;
-      case "confusion":
-
-        System.out.println(name + " is confused!");
+        break;
+      case CONFUSION:
+        System.out.printf(messageOne,name);
         // been less than 4 turns
-        if (nonLethalCounter < 4){
+        if (counter < 4){
           // 33% chance of snapping out
           if (random >= .33){
             random = Math.random(); 
@@ -143,30 +139,28 @@ public enum Status {
             if (random < .33){
               System.out.println(name + " hurt itself in confusion!");
               // TODO: Fix length 
-              int damage = (int) Math.round(((22 * 40 * (stats.attack/stats.defense))/50.0 + 2));
-              setHealth(getHealth() - damage);
+              int damage = (int) Math.round(((22 * 40 * (poke.getStat(Stat.ATTACK)/
+                                              poke.getStat(Stat.DEFENSE)))/50.0 + 2));
+              poke.setHealth(poke.getHealth() - damage);
               trainer.setCanAttack(false);
-              nonLethalCounter++;
+              counter++;
               return;
             }
             // still confused but didn't attack self
             else {
-              nonLethalCounter++;
+              counter++;
               return;
             }
           }
         }
-        
         // snaps out of confusion 
         System.out.println(name + " snapped out of it's confusion!");
-        setNonLethalStatus(null);
-        return;
-
-      case "": // TODO add more non-lethals
+        poke.setStatus(NULLSTATUS,StatusType.NONLETHAL);
+        break;
+      default:// TODO add more non-lethals
         break;  
       }
   }
-  
 }
 
 /**
