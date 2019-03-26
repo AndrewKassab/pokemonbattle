@@ -6,14 +6,30 @@ package pokemonbattle;
  */
 public class Stat {
   
-  int value;
-  int base;
-  int stage;
+  private int value;
+  private int base;
+  private int stage;
 
   public Stat( int value ) {
     this.value = value;
     this.base = value;
     stage = 0;
+  }
+  
+  public int getValue() {
+    return value;
+  }
+  
+  public void setValue( int v ) {
+    value = v;
+  }
+
+  public int getBase() {
+    return base;
+  }
+
+  public int getStage() {
+    return stage;
   }
 
   /**
@@ -24,7 +40,7 @@ public class Stat {
                                            ( Math.max( 2.0, 2.0 - stage) ) ) );
   }
 
-  public void incrementStat( Operator op ) {
+  public void incrementStage( Operator op ) {
     switch(op) {
     case INCREMENT:
       if (stage < 6){

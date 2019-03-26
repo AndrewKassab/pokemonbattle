@@ -33,45 +33,67 @@ public class Pokemon{
     return name;
   }
   
-  public int getHealth(){
-    return stats.health.value;
+  /**
+   * Returns a Stat. Use the stat object's getters for 
+   * actual values.  
+   */
+  public Stat getHealth(){
+    return stats.health;
   }
   
   public int getMaxHealth() {
-    return stats.health.base;
+    return stats.health.getBase();
   }
   
-  public int getAttack() {
-    return stats.attack.value;
+  /**
+   * Returns a Stat. Use the stat object's getters for 
+   * actual values.  
+   */
+  public Stat getAttack() {
+    return stats.attack;
   }
 
-  public int getSpAttack() {
-    return stats.spAttack.value;
+  /**
+   * Returns a Stat. Use the stat object's getters for 
+   * actual values.  
+   */
+  public Stat getSpAttack() {
+    return stats.spAttack;
   }
 
-  public int getDefense() {
-    return stats.defense.value;
+  /**
+   * Returns a Stat. Use the stat object's getters for 
+   * actual values.  
+   */
+  public Stat getDefense() {
+    return stats.defense;
   }
 
-  public int getSpDefense() {
-    return stats.spDefense.value;
+  /**
+   * Returns a Stat. Use the stat object's getters for 
+   * actual values.  
+   */
+  public Stat getSpDefense() {
+    return stats.spDefense;
   }
 
-  public int getSpeed() {
-    return stats.spDefense.value;
+  /**
+   * Returns a Stat. Use the stat object's getters for 
+   * actual values.  
+   */
+  public Stat getSpeed() {
+    return stats.spDefense;
   }
-  
-  
-  
+
   public void setHealth(int health){
     // Prevents negative values and values higher than max HP
     if (health <= 0) {
-      stats.health.value = 0;
+      stats.health.setValue(0);
     }
-    if (health >= stats.health.base) {
-      stats.health.value = stats.health.base;
+    if (health >= stats.health.getBase()) {
+      stats.health.setValue(stats.health.getBase());
     }
-    else stats.health.value = health;
+    else stats.health.setValue(health);
   }
   
   public Type[] getType(){
@@ -114,7 +136,7 @@ public class Pokemon{
    * @return true if the Pokemon's health is zero
    */
   public boolean isFainted() {
-    if (stats.health.value <= 0) {
+    if (stats.health.getValue() <= 0) {
       return true;
     }
     else return false;
@@ -217,7 +239,7 @@ public class Pokemon{
    * @return true if Pokemon can be called to battle
    */
   public boolean canBattle() {
-    if (stats.health.value > 0) {
+    if (stats.health.getValue() > 0) {
       return true;
     }
     else return false;

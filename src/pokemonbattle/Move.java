@@ -16,11 +16,11 @@ public class Move
   private double accuracy;
   private int powerPoints;
   private int maxPowerPoints;
-  private int priority; // label for speed priority
-  private boolean physical; // physical label
-  private boolean special; // special label
-  private boolean effect; // if a move has an effect
-  private boolean wasCritical; // if a move was a critical hit
+  private int priority; // -7 -> 7 
+  private boolean physical;
+  private boolean special;  
+  private boolean effect; // if a move has an effect // TODO: change to extended classes 
+  private boolean wasCritical; 
   private String effectMessage;
     
   public Move(String name, Type type, int damage, double accuracy, int pp, int priority, 
@@ -176,7 +176,8 @@ public class Move
     case FIRE:
        // Applys recoil damage to the user and a chance of burning
       if (name.equals("Flare Blitz")) {
-        attacker.setHealth( attacker.getHealth() - (int) Math.round( (1.0/3.0) * damage));
+        attacker.setHealth( attacker.getHealth().getValue() - 
+                            (int) Math.round( (1.0/3.0) * damage));
         effectMessage = attacker.getName() + " took recoil!";
         if (random < .1) {
           // Fire cannot be burned
@@ -203,8 +204,8 @@ public class Move
     case FIGHTING:
       // Lowers user's defense and spDefense after attacking
       if (name.equals("Close Combat")) {
-        attacker.incrementStage(Stat.DEFENSE , Operator.DECREMENT);
-        attacker.incrementStage(Stat.SPDEFENSE, Operator.DECREMENT);
+        attacker.getDefense().incrementStage(Operator.DECREMENT);
+        attacker.getSpDefense().incrementStage(Operator.DECREMENT);
         // TODO: Display message for when stat stages are maxed lower
         effectMessage = attacker.getName() + "'s Defense and Special Defense have decreased!";
         return;
@@ -212,7 +213,7 @@ public class Move
       // May lower target's spDefense
       if (name.equals("Focus Blast")) {
         if (random < .1) {
-          target.incrementStage(Stat.SPDEFENSE, Operator.DECREMENT);
+          target.getSpDefense().incrementStage(Operator.DECREMENT);
           effectMessage = target.getName() + "'s Special Defense has decreased!";
         }
         return;
@@ -258,7 +259,7 @@ public class Move
         // Electric and ground can't be paralyzed
         if ( (random < .1) && ( typeOne != Type.ELECTRIC ) && ( typeTwo != Type.ELECTRIC )
               && ( typeOne != Type.GROUND ) && ( typeTwo != Type.GROUND )
-                && !targStatus.equals("paralysis")) 
+                && targStatus != Status.PARALYSIS )
         {
           target.setStatus(Status.PARALYSIS, StatusType.LETHAL);
           effectMessage = target.getName() + " was paralyzed!";
@@ -270,7 +271,7 @@ public class Move
       // 20% May lower target's spDefense
       if (name.equals("Shadow Ball")) {
         if (random < .2) {
-          target.incrementStage(Stat.SPDEFENSE,Operator.DECREMENT); // TODO: Left off here (3/25)
+          target.getSpDefense().incrementStage(Operator.DECREMENT); 
           effectMessage = target.getName() + "'s Special Defense has decreased!";
         }
         return;
@@ -280,7 +281,7 @@ public class Move
       // 10% May lower target's spDefense
       if (name.equals("Earth Power")) {
         if (random < .1) {
-          target.incrementStage(Stat.SPDEFENSE, Operator.DECREMENT);
+          target.getSpDefense().incrementStage(Operator.DECREMENT);
           effectMessage = target.getName() + "'s Special Defense has decreased!";
         }
         return;
@@ -290,11 +291,11 @@ public class Move
       // 20% May lower target's defense
       if (name.equals("Crunch")) {
         if (random < .2) {
-          if (target.getStage(Stat.DEFENSE) == -6) {
+          if (target.getDefense().getStage() == -6) {
             effectMessage = target.getName() + "'s Defense can't go any lower!";
           }
           else {
-          target.incrementStage(Stat.DEFENSE, Operator.DECREMENT);
+            target.getDefense().incrementStage(Operator.DECREMENT);
             effectMessage = target.getName() + "'s Defense has fallen!";
           }
         }
@@ -342,6 +343,9 @@ public class Move
         }
         return;
       }
+      break;
+    default:
+      break;
     }
   }
   
@@ -364,31 +368,28 @@ public class Move
       // Increases user's attack stats by 2 stages
       if (name.equals("Swords Dance")) {
         System.out.println(attacker.getName() + " used Swords Dance!");
-        if (attacker.getStage(Stat.ATTACK) == 6 && attacker.getStage(Stat.SPATTACK) == 6 ) {
-          System.out.println(attacker.getName() + 
-                              "'s Attack and Special Attack can't go any higher!");
+        if (attacker.getAttack().getStage() == 6 && attacker.getSpAttack().getStage() == 6 ) {
+          System.out.printf(Messages.ATT_SPATT_CANT, attacker.getName());
         }
-        else if (attacker.getStage(Stat.ATTACK) == 6) {
-          attacker.incrementStage(Stat.SPATTACK, Operator.INCREMENT);
-          attacker.incrementStage(Stat.SPATTACK, Operator.INCREMENT);
-          System.out.println(attacker.getName() + "'s Special Attack rose sharply!");
-          System.out.println(attacker.getName() + "'s Attack can't go any higher!");
+        else if (attacker.getAttack().getStage() == 6) {
+          attacker.getSpAttack().incrementStage(Operator.INCREMENT);
+          attacker.getSpAttack().incrementStage(Operator.INCREMENT);
+          System.out.printf(Messages.SPATT_SHARP, attacker.getName());
+          System.out.printf(Messages.ATT_CANT, attacker.getName() );
           System.out.println();
         }
-        else if (attacker.getStage(Stat.SPATTACK) == 6) {
-          attacker.incrementStage(Stat.ATTACK, Operator.INCREMENT);
-          attacker.incrementStage(Stat.ATTACK, Operator.INCREMENT);
-          System.out.println(attacker.getName() + "'s Attack rose sharply!");
-          System.out.println(attacker.getName() + 
-                              "'s Special Attack can't go any higher!");
+        else if (attacker.getSpAttack().getStage() == 6) {
+          attacker.getAttack().incrementStage(Operator.INCREMENT);
+          attacker.getAttack().incrementStage(Operator.INCREMENT);
+          System.out.printf(Messages.ATT_SHARP, attacker.getName() ); 
+          System.out.printf(Messages.SPATT_CANT, attacker.getName() );
         }
         else {
-          attacker.incrementStage(Stat.ATTACK,Operator.INCREMENT);
-          attacker.incrementStage(Stat.SPATTACK, Operator.INCREMENT);
-          attacker.incrementStage(Stat.ATTACK,Operator.INCREMENT);
-          attacker.incrementStage(Stat.SPATTACK, Operator.INCREMENT);
-          System.out.println(attacker.getName() + 
-                              "'s Attack and Special Attack have rose sharply!");
+          attacker.getAttack().incrementStage(Operator.INCREMENT);
+          attacker.getSpAttack().incrementStage(Operator.INCREMENT);
+          attacker.getAttack().incrementStage(Operator.INCREMENT);
+          attacker.getSpAttack().incrementStage(Operator.INCREMENT);
+          System.out.printf(Messages.ATT_SPATT_SHARP, attacker.getName());
         }
         System.out.println();
         return;
@@ -396,9 +397,9 @@ public class Move
       // Heals the user
       if (name.equals("Recover")) {
         System.out.println(attacker.getName() + " used Recover!");
-        if (attacker.getHealth() != attacker.getMaxHealth()) {
+        if (attacker.getHealth().getValue() != attacker.getMaxHealth()) {
           System.out.println(attacker.getName() + " restored some HP!");
-          attacker.setHealth(attacker.getHealth() + 
+          attacker.setHealth(attacker.getHealth().getValue() + 
                               (int) Math.round(attacker.getMaxHealth()/2));
         }
         else System.out.println(attacker.getName() + "'s health can't go any higher!");
@@ -410,9 +411,9 @@ public class Move
       // Heals the user
       if (name.equals("Roost")) {
         System.out.println(attacker.getName() + " used Roost!");
-        if (attacker.getHealth() != attacker.getMaxHealth()) {
+        if (attacker.getHealth().getValue() != attacker.getMaxHealth()) {
           System.out.println(attacker.getName() + " restored some HP!");
-          attacker.setHealth(attacker.getHealth() + 
+          attacker.setHealth(attacker.getHealth().getValue() + 
                               (int) Math.round(attacker.getMaxHealth()/2));
         }
         else System.out.println(attacker.getName() + "'s health can't go any higher!");
@@ -432,7 +433,7 @@ public class Move
           attacker.setStatus(Status.NULLSTATUS, StatusType.LETHAL);
         }  
         attacker.setStatus(Status.SLEEP, StatusType.LETHAL);
-        if (attacker.getHealth() == attacker.getMaxHealth()) {
+        if (attacker.getHealth().getValue() == attacker.getMaxHealth()) {
           System.out.println(attacker.getName() + "'s health can't go any higher!");
           System.out.println();
         }
@@ -450,8 +451,8 @@ public class Move
         System.out.println(attacker.getName() + " used Thunder Wave!");
         if (random < .9) { // 90% chance
           // Doesn't work on ground and electric types
-          if ( typeOne.equals("ground") || typeTwo.equals("ground") || 
-                typeOne.equals("electric") || typeTwo.equals("electric")) 
+          if ( typeOne == Type.GROUND || typeTwo == Type.GROUND || 
+                typeOne == Type.ELECTRIC || typeTwo == Type.ELECTRIC )
           {
               System.out.println("But it didn't work!");
             System.out.println();
@@ -540,6 +541,8 @@ public class Move
         }
         return;
       }
+      break;
+    default:
       break;
     }
   }

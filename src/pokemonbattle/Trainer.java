@@ -17,7 +17,6 @@ public class Trainer{
   private Pokemon activePokemon;
   private Pokemon[] party;
   private String[] inventory;
-  private int activeIndex;
   private boolean canAttack;
   
   public Trainer(Pokemon[] team) {
@@ -54,7 +53,7 @@ public class Trainer{
     System.out.println("-----------------------");
     for (int i = 0; i < party.length; i++) {
       System.out.printf("%-15s%-8s%n", party[i].getName(), 
-                          party[i].getHealth() + "/" + party[i].getMaxHealth());
+                          party[i].getHealth().getValue() + "/" + party[i].getMaxHealth());
     }
     System.out.println();
   }
@@ -74,7 +73,7 @@ public class Trainer{
     Scanner keyboard = new Scanner(System.in);
     String selection;
     displayPokemon();
-    System.out.print("Select a Pokemon (by name): ");
+    System.out.print(Messages.SEL_POKE);
       
     selection = keyboard.next();
     System.out.println();
@@ -84,21 +83,20 @@ public class Trainer{
       if (party[i].getName().equalsIgnoreCase(selection)){
         if (party[i].canBattle()) { 
           if (party[i] == activePokemon) {
-            System.out.println("That Pokemon is already in battle!\n");
+            System.out.println(Messages.ALREADY_IN);
             selectPokemon();
           }
           if (activePokemon == null) {
-            System.out.println("Let's go, " + party[i].getName() + "!\n");
+            System.out.printf(Messages.POKE_SUMMON, party[i].getName());
           }
           else {
             activePokemon.resetStats();
           }
           activePokemon = party[i];
-          activeIndex = i;               
           return;
         }
         else {
-          System.out.println(party[i].getName() + " is unable to battle, please try again.");
+          System.out.printf(Messages.POKE_UNABLE, party[i].getName() );
           System.out.println();               
           selectPokemon();
         }
@@ -106,7 +104,8 @@ public class Trainer{
 
     }
     
-    System.out.println("Invalid pokemon selected, please try again.");
+    // Invalid pokemon selected, restart method
+    System.out.println(Messages.INVALID_POKE);
     System.out.println();
     selectPokemon(); 
 
@@ -127,7 +126,7 @@ public class Trainer{
        
     // If the trainer chose to swap Pokemon rather than attack.
     if (move == null) {
-      System.out.println("The trainer has swapped to " + activePokemon.getName() + "!\n");
+      System.out.printf(Messages.POKE_SWAP, activePokemon.getName());
       return;
     }
     
@@ -143,8 +142,7 @@ public class Trainer{
         
     // Check if the attack has landed
     if (move.hit()){
-      System.out.println(activePokemon.getName() + " used " + move.getName() + "!");
-      
+      System.out.printf(Messages.MOVE_USE, activePokemon.getName() , move.getName()); 
       // Applys an attack's effect (if it has one) 
       if (move.hasEffect()) {
         move.applyEffect(this,enemy,damage);
@@ -154,19 +152,19 @@ public class Trainer{
       Battle.displayMessages(damage, move, target);
       
       // Apply damage
-      target.setHealth(target.getHealth() - damage);
+      target.setHealth(target.getHealth().getValue() - damage);
               
       // If the target pokemon has fainted
-      if (target.getHealth() <= 0)
+      if (target.isFainted())
       {
-        System.out.println(target.getName() + " has fainted!");
+        System.out.printf(Messages.HAS_FAINTED, target.getName());
         if (enemy.canContinue()) {
-          System.out.println("Select another Pokemon from your party.");
+          System.out.println(Messages.SEL_NEW_POKE);
           System.out.println();
           enemy.selectPokemon();
           enemy.setCanAttack(false);
           target = enemy.getActivePokemon();
-          System.out.println("Let's go, " + target.getName() + "!\n");
+          System.out.printf(Messages.POKE_SUMMON, target.getName());
         }
         // Battle ends if trainer can't continue
         else {
@@ -183,14 +181,14 @@ public class Trainer{
       
       // If the attacking Pokemon has fainted from recoil 
       // TODO: Fix recoil ordering 
-      if (getActivePokemon().getHealth() <= 0) {
-        System.out.println(getActivePokemon().getName() + " has fainted!");
+      if (activePokemon.getHealth().getValue() <= 0) {
+        System.out.printf(Messages.HAS_FAINTED ,activePokemon.getName());
         if (canContinue()) {
-          System.out.println("Select another Pokemon from your party.");
+          System.out.println(Messages.SEL_NEW_POKE);
           System.out.println();
           selectPokemon();
           setCanAttack(false);
-          System.out.println("Let's go, " + getActivePokemon().getName() + "!");
+          System.out.printf(Messages.POKE_SUMMON, activePokemon.getName());
         
         }
         // Battle ends if trainer can't continue
@@ -200,8 +198,8 @@ public class Trainer{
       }
     }
     else{
-      System.out.println(activePokemon.getName() + " used " + move.getName() + "!");
-      System.out.println("But it missed!\n");
+      System.out.printf(Messages.MOVE_USE, activePokemon.getName(), move.getName()); 
+      System.out.println(Messages.MISSED_EFF);
     }    
     
     activePokemon.resetMove();        
@@ -214,7 +212,7 @@ public class Trainer{
      */
   public boolean canContinue() {
     for (int i = 0; i < party.length; i++) {
-      if (party[i].getHealth() > 0) {
+      if (party[i].getHealth().getValue() > 0) {
         return true;
       }
     }
@@ -224,10 +222,10 @@ public class Trainer{
   /**
    * Handles an event where a trainer is unable to continue battling
    * and the battle must end.
+   * TODO: Call some method in Battle class
   */
   public static void battleEnded(){
-    // TODO: Add names for trainers??
-      System.out.println("The battle has ended!");
+      System.out.println(Messages.BATTLE_END);
       System.exit(0);
   }
   

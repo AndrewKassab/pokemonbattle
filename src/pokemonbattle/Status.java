@@ -39,7 +39,7 @@ public enum Status {
 
     switch (this) {
     case BURN:
-      poke.setHealth(poke.getHealth() - (int) Math.round(poke.getMaxHealth()/16.0));
+      poke.setHealth(poke.getHealth().getValue() - (int) Math.round(poke.getMaxHealth()/16.0));
       System.out.printf(messageOne, name);
       if (poke.isFainted()) {
         System.out.printf(messageTwo, name);
@@ -48,7 +48,7 @@ public enum Status {
       counter++;
       break;
     case POISON:
-      poke.setHealth(poke.getHealth() - (int) Math.round(poke.getMaxHealth()/8.0));
+      poke.setHealth(poke.getHealth().getValue() - (int) Math.round(poke.getMaxHealth()/8.0));
       System.out.printf(messageOne, name);
       if (poke.isFainted()) {
         System.out.printf(messageTwo, name);
@@ -57,7 +57,7 @@ public enum Status {
       counter++;
       break;
     case BADPOISON:
-      poke.setHealth(poke.getHealth() - (int) ( Math.round( poke.getMaxHealth() * 
+      poke.setHealth(poke.getHealth().getValue() - (int) ( Math.round( poke.getMaxHealth() * 
                   ( 1.0/16.0 + (counter * 1.0/16.0) ) ) ) );
       System.out.printf(messageOne, name);
       if (poke.isFainted()) {
@@ -137,11 +137,11 @@ public enum Status {
             random = Math.random(); 
             // 33% chance of hurting self
             if (random < .33){
-              System.out.println(name + " hurt itself in confusion!");
+              System.out.printf(messageTwo, name);
               // TODO: Fix length 
-              int damage = (int) Math.round(((22 * 40 * (poke.getStat(Stat.ATTACK)/
-                                              poke.getStat(Stat.DEFENSE)))/50.0 + 2));
-              poke.setHealth(poke.getHealth() - damage);
+              int damage = (int) Math.round(((22 * 40 * (poke.getAttack().getValue()/
+                                              poke.getDefense().getValue()))/50.0 + 2));
+              poke.setHealth(poke.getHealth().getValue() - damage);
               trainer.setCanAttack(false);
               counter++;
               return;

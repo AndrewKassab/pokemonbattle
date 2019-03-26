@@ -1,0 +1,1 @@
+Working on constant strings for stat changes in Move Class 

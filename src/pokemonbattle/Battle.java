@@ -10,6 +10,8 @@ package pokemonbattle;
  */
 public class Battle 
 {   
+  
+  // TODO: Move to file, load into hashmap ( pokemon amd moves )
   // FILLER FOR TESTING
   private Move ultimate = new Move("InstantKO",Type.FIRE,10000,100,99,5,true,true,false); 
 
@@ -193,14 +195,14 @@ public class Battle
   * @return value 1 or 2, 1 for Pokemon A going first, and 2 for Pokemon B
   */
   public static int whosFirst(Pokemon pa, Pokemon pb, Move ma, Move mb) {
-    int pokemonOneSpeed = pa.getSpeed();
-    int pokemonTwoSpeed = pb.getSpeed();
+    int pokemonOneSpeed = pa.getSpeed().getValue();
+    int pokemonTwoSpeed = pb.getSpeed().getValue();
     
     // Paralysis lowers speed by 1/2
-    if (pa.getLethalStatus() != Status.NULLSTATUS && pa.getLethalStatus() == Status.PARALYSIS ) {
+    if (pa.getLethalStatus() == Status.PARALYSIS ) {
       pokemonOneSpeed = (int) Math.round(pokemonOneSpeed/2.0);
     }
-    if (pb.getLethalStatus() != null && pb.getLethalStatus() == Status.PARALYSIS ) {
+    if (pb.getLethalStatus() == Status.PARALYSIS ) {
       pokemonTwoSpeed = (int) Math.round(pokemonTwoSpeed/2.0);
     }
     
@@ -238,14 +240,8 @@ public class Battle
    * @param b Second Pokemon.
    */
   public void displayHealth(Pokemon a, Pokemon b){
-    if (a.getHealth() < 0){
-        a.setHealth(0);
-    }
-    if (b.getHealth() < 0){
-        b.setHealth(0);
-    }
-    System.out.println(a.getName() + ": " + a.getHealth() + " health");
-    System.out.println(b.getName() + ": " + b.getHealth() + " health\n");
+    System.out.println(a.getName() + ": " + a.getHealth().getValue() + " health");
+    System.out.println(b.getName() + ": " + b.getHealth().getValue() + " health\n");
   }      
   
   /**
@@ -330,12 +326,12 @@ public class Battle
     double defense;
     
     if (move.isPhysical()) {
-      attack = user.getAttack();
-      defense = target.getDefense();
+      attack = user.getAttack().getValue();
+      defense = target.getDefense().getValue();
     }
     else {
-      attack = user.getSpAttack();
-      defense = user.getSpDefense();
+      attack = user.getSpAttack().getValue();
+      defense = user.getSpDefense().getValue();
     }
 
     // Calculate damage (before type effectiveness)
@@ -359,8 +355,8 @@ public class Battle
       damage = (int) Math.round(damage/2.0);
     }
 
-    if (damage > target.getHealth()) {
-      damage = target.getHealth();
+    if (damage > target.getHealth().getValue()) {
+      damage = target.getHealth().getValue();
     }
   
     return damage;
@@ -374,6 +370,7 @@ public class Battle
    * @return Adjusted damage value
    */
   public static int calculateEffectiveness( int damage, Move move, Pokemon target) {
+
     Type[] positive = move.getType().getPosEffects();
     Type[] negative = move.getType().getNegEffects();
     Type zero = move.getType().getZeroEffects();
@@ -418,32 +415,32 @@ public class Battle
     
     // Super Effective
     if (base < calculateEffectiveness(base, move, target)){ 
-        System.out.println("It's super effective!");      
+        System.out.println(Messages.SUPER_EFF);
         if (move.wasCritical()) {
-          System.out.println(" A critical hit!");
+          System.out.println(Messages.CRIT_EFF);
         }
     }
     // Not at all effective
     else if (calculateEffectiveness(base, move, target) == 0){
-        System.out.println("But it didn't work!");
+        System.out.println(Messages.NO_EFF);
         System.out.println();
         return;
     }
     // Not very effective
     else if (base > calculateEffectiveness(base, move, target)){
-      System.out.println("It's not very effective...");
+      System.out.println(Messages.NOTV_EFF);
       if (move.wasCritical()) {
-        System.out.println(" A critical hit!");
+        System.out.println(Messages.CRIT_EFF);
       }
     }
     // Normal effectiveness
     else {
       if (move.wasCritical()) {
-        System.out.println(" A critical hit!");
+        System.out.println(Messages.CRIT_EFF);
       }
     }
 
-    System.out.println(target.getName() + " took " + damage + " damage!\n");
+    System.out.printf(Messages.DAMAGE, target.getName(), damage);
     if (move.getMessage() != null) {
       move.printMessage();
       move.resetMessage();

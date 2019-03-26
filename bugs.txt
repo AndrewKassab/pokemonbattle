@@ -1,3 +1,6 @@
 Gengar doing -1 damage with Shadow Ball to Lucario (?)
 Dark pulse didn't effect Infernape
 Infernape at 0 health , match ended without him fainting 
+Status Effects persist even when switching Pokemon, but only on the specific
+turn when switching
+Charizard had negative health after dying from the recoil of a Flare Blitz
