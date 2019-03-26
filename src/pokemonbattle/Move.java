@@ -170,7 +170,7 @@ public class Move
     Pokemon target = enemy.getActivePokemon();
     Type typeOne = target.getType()[0];
     Type typeTwo = target.getType()[1];
-    String targStatus = target.getStatus();
+    Status targStatus = target.getLethalStatus();
     
     switch(type) {
     case FIRE:
@@ -181,9 +181,9 @@ public class Move
         if (random < .1) {
           // Fire cannot be burned
           if ( ( typeOne != Type.FIRE ) && ( typeTwo != Type.FIRE ) && 
-                !targStatus.equals("burn") )
+                ( targStatus != Status.BURN ) );
           {
-            target.setStatus("burn");
+            target.setStatus(Status.BURN, StatusType.LETHAL);
             effectMessage += "\n" + target.getName() + " has been burned!";
           }
         }
@@ -192,8 +192,8 @@ public class Move
       if (name.equals("Fire Blast")) {
         if (random < .1) {
           // Fire cannot be burned
-          if ( ( typeOne != Type.FIRE ) && ( typeTwo != Type.FIRE ) && !targStatus.equals("burn")) {
-            target.setStatus("burn");
+          if ( ( typeOne != Type.FIRE ) && ( typeTwo != Type.FIRE ) && ( targStatus != Status.BURN )){
+            target.setStatus(Status.BURN, StatusType.LETHAL);
             effectMessage += "\n" + target.getName() + " has been burned!";
           }
         }
@@ -246,9 +246,9 @@ public class Move
         // Electric and ground can't be paralyzed
         if ( (random < .1) && ( typeOne != Type.ELECTRIC ) && ( typeTwo != Type.ELECTRIC )
               && ( typeOne != Type.GROUND ) && ( typeTwo != Type.GROUND )
-                && !targStatus.equals("paralysis")) 
+                && ( targStatus != Status.PARALYSIS) ) 
         {
-          target.setStatus("paralysis");
+          target.setStatus(Status.PARALYSIS, StatusType.LETHAL);
           effectMessage = target.getName() + " was paralyzed!";
         }
         return;
@@ -260,7 +260,7 @@ public class Move
               && ( typeOne != Type.GROUND ) && ( typeTwo != Type.GROUND )
                 && !targStatus.equals("paralysis")) 
         {
-          target.setStatus("paralysis");
+          target.setStatus(Status.PARALYSIS, StatusType.LETHAL);
           effectMessage = target.getName() + " was paralyzed!";
         }
         return;
@@ -307,10 +307,10 @@ public class Move
         // Ice and Fire cannot be frozen
         if ( (random < .1) && ( typeOne != Type.FIRE ) && ( typeTwo != Type.FIRE )
               && ( typeOne != Type.ICE ) && ( typeTwo != Type.ICE )
-                && !targStatus.equals("frozen")) 
+                && ( targStatus != Status.FROZEN ) )
         {
           effectMessage = target.getName() + " was frozen!";
-          target.setStatus("frozen");
+          target.setStatus(Status.FROZEN, StatusType.LETHAL);
         }
         return;
       }
@@ -321,9 +321,9 @@ public class Move
         // Poison and Steel cannot be poisoned
         if ( (random < .1) && ( typeOne != Type.POISON ) && ( typeTwo != Type.POISON )
               && ( typeOne != Type.STEEL ) && ( typeTwo != Type.STEEL )
-                && !targStatus.equals("poison")) 
+                && ( targStatus != Status.POISON ) )
         {
-            target.setStatus("poison");
+            target.setStatus(Status.POISON,StatusType.LETHAL);
             effectMessage = target.getName() + " was poisoned!";
         }
         return;
@@ -335,9 +335,9 @@ public class Move
         // Electric and ground can't be paralyzed
         if ( (random < .1) && ( typeOne != Type.ELECTRIC ) && ( typeTwo != Type.ELECTRIC )
               && ( typeOne != Type.GROUND ) && ( typeTwo != Type.GROUND )
-                && !targStatus.equals("paralysis")) 
+                && ( targStatus != Status.PARALYSIS ) )
         {
-            target.setStatus("paralysis");
+            target.setStatus( Status.PARALYSIS, StatusType.LETHAL );
             effectMessage = target.getName() + " was paralyzed!";
         }
         return;
@@ -352,18 +352,12 @@ public class Move
     double random = Math.random();
     Type typeOne = target.getType()[0];
     Type typeTwo = target.getType()[1];
-    String targStatus;
-    String targNonLethalStatus;
+    Status targStatus;
+    Status targNonLethalStatus;
     
-    if (target.getStatus() != null){
-      targStatus = target.getStatus();
-    }
-    else targStatus = ""; // Prevent null pointer
-    
-    if (target.getnonLethalStatus() != null) {
-      targNonLethalStatus = target.getnonLethalStatus();
-    }
-    else targNonLethalStatus = ""; // Prevent null pointer
+    targStatus = target.getLethalStatus();
+
+    targNonLethalStatus = target.getnonLethalStatus();
     
     switch(type) {
     case NORMAL:
@@ -433,11 +427,11 @@ public class Move
         System.out.println(attacker.getName() + " used Rest!");
         System.out.println(attacker.getName() + " fell asleep!");
         
-        if (attacker.getStatus() != null) { 
+        if (attacker.getLethalStatus() != Status.NULLSTATUS) { 
           System.out.println(attacker.getName() + " is cured!");
-          attacker.setStatus(null);
+          attacker.setStatus(Status.NULLSTATUS, StatusType.LETHAL);
         }  
-        attacker.setStatus("sleep"); 
+        attacker.setStatus(Status.SLEEP, StatusType.LETHAL);
         if (attacker.getHealth() == attacker.getMaxHealth()) {
           System.out.println(attacker.getName() + "'s health can't go any higher!");
           System.out.println();
@@ -463,11 +457,11 @@ public class Move
             System.out.println();
             return;
           }
-          if (targStatus.equals("paralysis")) {
+          if (targStatus == Status.PARALYSIS) {
             System.out.println(target.getName() + " is already paralyzed!");
             System.out.println();
           } else {
-            target.setStatus("paralysis");
+            target.setStatus(Status.PARALYSIS, StatusType.LETHAL);
             System.out.println(target.getName() + " was paralyzed!");
             System.out.println();
           }
@@ -487,14 +481,14 @@ public class Move
           if ( ( typeOne != Type.POISON ) && ( typeTwo != Type.POISON )
                 && ( typeOne != Type.STEEL ) && ( typeTwo != Type.STEEL ) ) 
           {
-            if (targStatus.equals("badPoison")) {
+            if (targStatus == Status.BADPOISON) {
               System.out.println(target.getName() + " is already poisoned!");
                 System.out.println();
             }
             else {
               System.out.println(target.getName() + " was badly poisoned!");
               System.out.println();
-              target.setStatus("badPoison");
+              target.setStatus(Status.BADPOISON, StatusType.LETHAL);
             }
           } else {
             System.out.println("But it didn't work!");
@@ -514,13 +508,13 @@ public class Move
         if (random < .85) {
           // Fire cannot be burned
           if ( ( typeOne != Type.FIRE ) && ( typeTwo != Type.FIRE ) ){
-            if (targStatus.equals("burn")) {
+            if (targStatus == Status.BURN){
               System.out.println(target.getName() + " is already burned!");
               System.out.println();
             } else {
               System.out.println(target.getName() + " was burned!");
               System.out.println();
-              target.setStatus("burn");
+              target.setStatus(Status.BURN,StatusType.LETHAL);
             }
           } else {
             System.out.println("But it didn't work!");
@@ -537,12 +531,12 @@ public class Move
       // confuses target
       if (name.equals("Confuse-Ray")){
         System.out.println(attacker.getName() + " used Confuse-Ray!");
-        if ( targNonLethalStatus == "confusion" ) {
+        if ( targNonLethalStatus == Status.CONFUSION ) {
           System.out.println(target.getName() + " is already confused!");
         }
         else {
             System.out.println(target.getName() + " became confused!\n");
-            target.setNonLethalStatus("confusion");
+            target.setStatus(Status.CONFUSION, StatusType.NONLETHAL);
         }
         return;
       }

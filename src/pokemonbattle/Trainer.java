@@ -175,11 +175,10 @@ public class Trainer{
       }
       
       // When a fire move is used on a frozen opponent
-      if (target.getStatus() != null && 
-        target.getStatus().equals("frozen") && move.getType().equals("fire")) {
+      if ( ( target.getLethalStatus() == Status.FROZEN ) && ( move.getType() == Type.FIRE ) ){
         System.out.println(target.getName() + " thawed out!");
         System.out.println();
-        target.setStatus(null);
+        target.setStatus(Status.NULLSTATUS, StatusType.LETHAL);
       }
       
       // If the attacking Pokemon has fainted from recoil 

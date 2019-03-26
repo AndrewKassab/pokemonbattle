@@ -197,10 +197,10 @@ public class Battle
     int pokemonTwoSpeed = pb.getStat(Stat.SPEED);
     
     // Paralysis lowers speed by 1/2
-    if (pa.getLethalStatus() != null && pa.getLethalStatus().equals("paralysis")) {
+    if (pa.getLethalStatus() != Status.NULLSTATUS && pa.getLethalStatus() == Status.PARALYSIS ) {
       pokemonOneSpeed = (int) Math.round(pokemonOneSpeed/2.0);
     }
-    if (pb.getLethalStatus() != null && pb.getLethalStatus().equals("paralysis")) {
+    if (pb.getLethalStatus() != null && pb.getLethalStatus() == Status.PARALYSIS ) {
       pokemonTwoSpeed = (int) Math.round(pokemonTwoSpeed/2.0);
     }
     
@@ -254,54 +254,57 @@ public class Battle
    * @throws InterruptedException Thread sleeps for user to process results
    */
   public void battle() throws InterruptedException {    
+
     // Select the active Pokemon for each trainer
     trainerOne.selectPokemon();
     trainerTwo.selectPokemon();
     
     // Battle loop
     do{
-        
-      trainerOne.getActivePokemon().selectMove(trainerOne);
-      trainerTwo.getActivePokemon().selectMove(trainerTwo);
-
+      
+      Pokemon trainerOnePokemon = trainerOne.getActivePokemon();
+      Pokemon trainerTwoPokemon = trainerTwo.getActivePokemon();
+      
+      trainerOnePokemon.selectMove(trainerOne);
+      trainerTwoPokemon.selectMove(trainerTwo);
+      
       // Decide attacking order
-      int result = whosFirst(trainerOne.getActivePokemon(),trainerTwo.getActivePokemon(),
-                              trainerOne.getActivePokemon().getActiveMove(), 
-                                trainerTwo.getActivePokemon().getActiveMove());  
+      int result = whosFirst(trainerOnePokemon, trainerTwoPokemon, 
+                     trainerOnePokemon.getActiveMove(), trainerTwoPokemon.getActiveMove() );
      
       // Attack turns begin
       if (result == 1) { // If trainer one attacks first
-        trainerOne.getActivePokemon().applyPreStatus(trainerOne); 
-        trainerOne.getActivePokemon().applyNonLethal(trainerOne);
+        trainerOnePokemon.getLethalStatus().applyPreStatus(trainerOne); 
+        trainerOnePokemon.getnonLethalStatus().applyPreStatus(trainerOne);
         if (trainerOne.canAttack()) { // If paralysis, sleep, or freeze didn't stop the turn.
           trainerOne.Attack(trainerTwo);
         } 
         Thread.sleep(3000);
         if (trainerTwo.canAttack()) {
-          trainerTwo.getActivePokemon().applyPreStatus(trainerTwo);
-          trainerTwo.getActivePokemon().applyNonLethal(trainerTwo);
+          trainerTwoPokemon.getLethalStatus().applyPreStatus(trainerTwo);
+          trainerTwoPokemon.getnonLethalStatus().applyPreStatus(trainerTwo);
           if (trainerTwo.canAttack()) { // If paralysis, sleep, or freeze didn't stop the turn.
             trainerTwo.Attack(trainerOne);
           }     
         }
       } else { // If trainer two attacks first
-        trainerTwo.getActivePokemon().applyPreStatus(trainerTwo); 
-        trainerTwo.getActivePokemon().applyNonLethal(trainerTwo);
+        trainerTwoPokemon.getLethalStatus().applyPreStatus(trainerTwo); 
+        trainerTwoPokemon.getnonLethalStatus().applyPreStatus(trainerTwo);
         if (trainerTwo.canAttack()) { // If paralysis, sleep, or freeze didn't stop the turn.
           trainerTwo.Attack(trainerOne);
         }
         Thread.sleep(3000);
         if (trainerOne.canAttack()) {
-          trainerOne.getActivePokemon().applyPreStatus(trainerOne);
-          trainerOne.getActivePokemon().applyNonLethal(trainerOne);
+          trainerOnePokemon.getLethalStatus().applyPreStatus(trainerOne);
+          trainerOnePokemon.getnonLethalStatus().applyPreStatus(trainerOne);
           if (trainerOne.canAttack()) { // If paralysis, sleep, or freeze didn't stop the turn.
             trainerOne.Attack(trainerTwo);
           }
         }
       }
         
-      trainerOne.getActivePokemon().applyPostStatus(trainerOne);
-      trainerTwo.getActivePokemon().applyPostStatus(trainerTwo);
+      trainerOnePokemon.getLethalStatus().applyPostStatus(trainerOne);
+      trainerTwoPokemon.getLethalStatus().applyPostStatus(trainerTwo);
 
       trainerTwo.setCanAttack(true);
       trainerOne.setCanAttack(true);
@@ -352,7 +355,7 @@ public class Battle
     }
     
     // Burn reduces physical damage by half
-    if (user.getStatus() != null && user.getStatus().equals("burn") && move.isPhysical()) {
+    if (user.getLethalStatus() != null && user.getLethalStatus().equals("burn") && move.isPhysical()) {
       damage = (int) Math.round(damage/2.0);
     }
 
@@ -430,13 +433,13 @@ public class Battle
     else if (base > calculateEffectiveness(base, move, target)){
       System.out.println("It's not very effective...");
       if (move.wasCritical()) {
-        System.out.print(" A critical hit!");
+        System.out.println(" A critical hit!");
       }
     }
     // Normal effectiveness
     else {
       if (move.wasCritical()) {
-        System.out.print(" A critical hit!");
+        System.out.println(" A critical hit!");
       }
     }
 
