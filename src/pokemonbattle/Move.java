@@ -270,7 +270,7 @@ public class Move
       // 20% May lower target's spDefense
       if (name.equals("Shadow Ball")) {
         if (random < .2) {
-          target.incrementStage(Stat.SPDEFENSE,Operator.DECREMENT);
+          target.incrementStage(Stat.SPDEFENSE,Operator.DECREMENT); // TODO: Left off here (3/25)
           effectMessage = target.getName() + "'s Special Defense has decreased!";
         }
         return;

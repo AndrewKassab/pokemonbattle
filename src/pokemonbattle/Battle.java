@@ -193,8 +193,8 @@ public class Battle
   * @return value 1 or 2, 1 for Pokemon A going first, and 2 for Pokemon B
   */
   public static int whosFirst(Pokemon pa, Pokemon pb, Move ma, Move mb) {
-    int pokemonOneSpeed = pa.getStat(Stat.SPEED);
-    int pokemonTwoSpeed = pb.getStat(Stat.SPEED);
+    int pokemonOneSpeed = pa.getSpeed();
+    int pokemonTwoSpeed = pb.getSpeed();
     
     // Paralysis lowers speed by 1/2
     if (pa.getLethalStatus() != Status.NULLSTATUS && pa.getLethalStatus() == Status.PARALYSIS ) {
@@ -330,12 +330,12 @@ public class Battle
     double defense;
     
     if (move.isPhysical()) {
-      attack = user.getStat(Stat.ATTACK);
-      defense = target.getStat(Stat.DEFENSE);
+      attack = user.getAttack();
+      defense = target.getDefense();
     }
     else {
-      attack = user.getStat(Stat.SPATTACK);
-      defense = target.getStat(Stat.SPDEFENSE);               
+      attack = user.getSpAttack();
+      defense = user.getSpDefense();
     }
 
     // Calculate damage (before type effectiveness)
@@ -355,7 +355,7 @@ public class Battle
     }
     
     // Burn reduces physical damage by half
-    if (user.getLethalStatus() != null && user.getLethalStatus().equals("burn") && move.isPhysical()) {
+    if ( ( user.getLethalStatus() == Status.BURN ) && move.isPhysical()) {
       damage = (int) Math.round(damage/2.0);
     }
 

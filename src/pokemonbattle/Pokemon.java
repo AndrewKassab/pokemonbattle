@@ -1,7 +1,6 @@
 package pokemonbattle;
 
 import java.util.Scanner;
-import java.util.ArrayList;
 
 /**
 * Class to create, initialize, and store a Pokemon 
@@ -14,8 +13,10 @@ public class Pokemon{
   private Type[] type; // TODO: Change to ArrayList 
   private Move[] moves = new Move[4];
   private Move activeMove;
-  // TODO: Combine into an ArrayList 
   private Status[] status; // ( 0 -> lethal, 1 -> nonlethal )
+  //TODO:
+  // private Status lethalStatus
+  // private Status nonLethalStatus
   private Stats stats;
   
   public Pokemon(String name, int ID, Type[] types, int health, int attack, int defense, 
@@ -24,32 +25,53 @@ public class Pokemon{
     this.pokeID = ID;
     this.type = types;
     this.moves = moves;
-    stats = new Stats(health,attack,defense,spAttack,spDefense,speed);
+    stats = new Stats(health,attack,spAttack,defense,spDefense,speed);
     status = new Status[] {Status.NULLSTATUS, Status.NULLSTATUS};
   }
-  
   
   public String getName(){
     return name;
   }
   
   public int getHealth(){
-    return stats.health;
+    return stats.health.value;
   }
   
   public int getMaxHealth() {
-    return stats.maxHealth;
+    return stats.health.base;
   }
   
-  public void setHealth(int h){
+  public int getAttack() {
+    return stats.attack.value;
+  }
+
+  public int getSpAttack() {
+    return stats.spAttack.value;
+  }
+
+  public int getDefense() {
+    return stats.defense.value;
+  }
+
+  public int getSpDefense() {
+    return stats.spDefense.value;
+  }
+
+  public int getSpeed() {
+    return stats.spDefense.value;
+  }
+  
+  
+  
+  public void setHealth(int health){
     // Prevents negative values and values higher than max HP
-    if (h <= 0) {
-      stats.health = 0;
+    if (health <= 0) {
+      stats.health.value = 0;
     }
-    if (h >= stats.maxHealth) {
-      stats.health = stats.maxHealth;
+    if (health >= stats.health.base) {
+      stats.health.value = stats.health.base;
     }
-    else stats.health = h;
+    else stats.health.value = health;
   }
   
   public Type[] getType(){
@@ -83,30 +105,6 @@ public class Pokemon{
     activeMove = m;
   }
   
-  /**
-   * Returns the requested stat
-   */
-  public int getStat(Stat stat) {
-    switch(stat) {
-    case ATTACK:
-      return stats.attack;
-    case DEFENSE:
-      return stats.defense;
-    case SPATTACK:
-      return stats.spAttack;
-    case SPDEFENSE:
-      return stats.spDefense;
-    case SPEED:
-      return stats.speed;
-    case HEALTH:
-      return stats.health;
-    default:
-      System.err.println("Invalid stat requested, exiting...");
-      System.exit(-1);
-      return -1;
-    }
-  }
-  
   public int getPokeID() {
     return pokeID;
   }
@@ -116,7 +114,7 @@ public class Pokemon{
    * @return true if the Pokemon's health is zero
    */
   public boolean isFainted() {
-    if (stats.health <= 0) {
+    if (stats.health.value <= 0) {
       return true;
     }
     else return false;
@@ -141,70 +139,16 @@ public class Pokemon{
   public Status getnonLethalStatus() {
     return status[1];
   }
-
-  public int getStage(Stat stat) {
-    switch (stat) {
-    case ATTACK:
-      return stats.attackStage;
-    case DEFENSE: 
-      return stats.defenseStage;
-    case SPATTACK:
-      return stats.spAttackStage;
-    case SPDEFENSE:
-      return stats.spDefenseStage;
-    case SPEED:
-      return stats.speedStage;      
-    default:
-      System.err.println("Error, invalid stat passed in, exiting...");
-      System.exit(0);
-      return -1;
-    }
-  }
   
   /**
-   * Increments a stat stage for a specific stat either up or down.
-   * @param stat the stat being incremented.
-   * @param direction + or - indicating up or down.
+   * Resets all stat stages back to 0 stat values to base
    */
-  public void incrementStage(Stat stat, Operator op) {
-    switch(stat) {
-    case ATTACK:
-      stats.incrementAttack(op);
-      break;
-    case DEFENSE: 
-      stats.incrementDefense(op);
-      break;
-    case SPDEFENSE:
-      stats.incrementSpDefense(op);
-      break;
-    case SPATTACK:
-      stats.incrementSpAttack(op);
-      break;
-    case SPEED:
-      stats.incrementSpeed(op);
-      break;
-    default:
-      System.err.println("Invalid Stat, exiting...");
-      System.exit(-1);
-      break;
-    }
-  }
-  
-  /**
-   * Resets all stat stages back to 0 and adjusts stats
-   * accordingly
-   */
-  public void resetStages() {
-    stats.attackStage = 0;
-    stats.defenseStage = 0;
-    stats.spAttackStage = 0;
-    stats.spDefenseStage = 0;
-    stats.speedStage = 0;
-    stats.calculateAttack();
-    stats.calculateDefense();
-    stats.calculateSpAttack();
-    stats.calculateSpDefense();
-    stats.calculateSpeed();
+  public void resetStats() {
+    stats.attack.resetStage();
+    stats.defense.resetStage();
+    stats.spAttack.resetStage();
+    stats.spDefense.resetStage();
+    stats.speed.resetStage();
   }
 
   /**
@@ -273,176 +217,10 @@ public class Pokemon{
    * @return true if Pokemon can be called to battle
    */
   public boolean canBattle() {
-    if (stats.health > 0) {
+    if (stats.health.value > 0) {
       return true;
     }
     else return false;
   }
   
-}
-
-/**
- * Stores and manipulates pokemon's stats.
- * @author precisemotion
- */
-class Stats {
-  
-  int health;
-  final int maxHealth;
-  int attack;
-  final int baseAttack;
-  int spAttack;
-  final int baseSpAttack;
-  int defense;
-  final int baseDefense;
-  int spDefense;
-  final int baseSpDefense;
-  int speed;
-  final int baseSpeed;
-
-  int attackStage = 0;
-  int spAttackStage = 0;
-  int defenseStage = 0;
-  int spDefenseStage = 0;
-  int speedStage = 0; 
-
-  public Stats( int h, int a, int sA, int d, int sD, int speed ) {
-    health = h;
-    maxHealth = h;
-    attack = a;
-    baseAttack = a;
-    spAttack = sA;
-    baseSpAttack = sA;
-    defense = d;
-    baseDefense = d;
-    spDefense = sD;
-    baseSpDefense = sD;
-    this.speed = speed;
-    baseSpeed = speed;
-  }
-
-  /**
-   * Factors in stat stages to calculate a Pokemon's stat in battle.
-   */
-  public void calculateSpeed() {
-    speed = (int) (baseSpeed * Math.round( ( Math.max(2.0,2.0+speedStage) )/
-                                           ( Math.max(2.0,2.0-speedStage) ) ) );
-  }
-
-  /**
-   * Factors in stat stages to calculate a Pokemon's stat in battle.
-   */
-  public void calculateAttack() {
-    attack = (int) (attack * Math.round( ( Math.max(2.0,2.0+attackStage) )/
-                                           ( Math.max(2.0,2.0-attackStage) ) ) );
-  }
-  
-  /**
-   * Factors in stat stages to calculate a Pokemon's stat in battle.
-   */
-  public void calculateSpAttack() {
-    spAttack = (int) (baseSpAttack * Math.round( ( Math.max(2.0,2.0+spAttackStage) )/
-                                           ( Math.max(2.0,2.0-spAttackStage) ) ) );
-  }
-  
-  /**
-   * Factors in stat stages to calculate a Pokemon's stat in battle.
-   */
-  public void calculateDefense() {
-    defense = (int) (baseDefense * Math.round( ( Math.max(2.0,2.0+defenseStage) )/
-                                           ( Math.max(2.0,2.0-defenseStage) ) ) );
-  }
-
-  /**
-   * Factors in stat stages to calculate a Pokemon's stat in battle.
-   */
-  public void calculateSpDefense() {
-    spDefense = (int) (baseSpDefense * Math.round( ( Math.max(2.0,2.0+spDefenseStage) )/
-                                           ( Math.max(2.0,2.0-spDefenseStage) ) ) );
-  }
-  
-  public void incrementAttack( Operator op ) {
-    switch(op) {
-    case INCREMENT:
-      if (attackStage < 6){
-        attackStage++;
-        calculateAttack();
-      }
-      break;
-    case DECREMENT:
-      if (attackStage > -6) {
-        attackStage--;
-        calculateAttack();
-      }    
-      break;
-    }
-  }
-
-  public void incrementDefense( Operator op) {
-    switch(op) {
-    case INCREMENT:
-      if (defenseStage < 6){
-        defenseStage++;
-        calculateDefense();
-      }
-      break;
-    case DECREMENT:
-      if (defenseStage > -6) {
-        defenseStage--;
-        calculateDefense();
-      }    
-      break;
-    }
-  }
-
-  public void incrementSpDefense( Operator op) {
-    switch(op) {
-    case INCREMENT:
-      if (spDefenseStage < 6){
-        spDefenseStage++;
-        calculateSpDefense();
-      }
-      break;
-    case DECREMENT:
-      if (spDefenseStage > -6) {
-        spDefenseStage--;
-        calculateSpDefense();
-      }    
-      break;
-    }
-  }
-  
-  public void incrementSpAttack( Operator op ) {
-    switch(op) {
-    case INCREMENT:
-      if (spAttackStage < 6){
-        spAttackStage++;
-        calculateSpAttack();
-      }
-      break;
-    case DECREMENT:
-      if (spAttackStage > -6) {
-        spAttackStage--;
-        calculateSpAttack();
-      }    
-      break;
-    }
-  }
-  
-  public void incrementSpeed( Operator op ) {
-    switch(op) {
-    case INCREMENT:
-      if (speedStage < 6){
-        speedStage++;
-        calculateSpeed();
-      }
-      break;
-    case DECREMENT:
-      if (speedStage > -6) {
-        speedStage--;
-        calculateSpeed();
-      }    
-      break;
-    }
-  }
 }

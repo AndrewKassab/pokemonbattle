@@ -91,7 +91,7 @@ public class Trainer{
             System.out.println("Let's go, " + party[i].getName() + "!\n");
           }
           else {
-            activePokemon.resetStages();
+            activePokemon.resetStats();
           }
           activePokemon = party[i];
           activeIndex = i;               
