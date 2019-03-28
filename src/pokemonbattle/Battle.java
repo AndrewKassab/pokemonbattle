@@ -179,58 +179,71 @@ public class Battle
   // Trainer's and their party Pokemon
   private Trainer trainerOne = new Trainer(partyOne);
   private Trainer trainerTwo = new Trainer(partyTwo);
+  
+  private Trainer first;
+  private Trainer second;
     
   public Battle() throws InterruptedException {
+	first = trainerOne;
+	second = trainerTwo;
     battle();
   }
   
   /**
   * Checks to see which Pokemon will be attacking first in the battle. 
   * If neither move has a priority factor, then it is decided by
-  * comparing the two Pokemon's speed stats.
-  * @param pa Pokemon A
-  * @param pb Pokemon B
-  * @param ma Move used by Pokemon A
-  * @param mb Move used by Pokemon B
-  * @return value 1 or 2, 1 for Pokemon A going first, and 2 for Pokemon B
+  * comparing the two trainer's active pokemon's speed stats.
   */
-  public static int whosFirst(Pokemon pa, Pokemon pb, Move ma, Move mb) {
-    int pokemonOneSpeed = pa.getSpeed().getValue();
-    int pokemonTwoSpeed = pb.getSpeed().getValue();
-    
+  public void whosFirst() {
+	 
+	Pokemon pokemonOne = trainerOne.getActivePokemon();
+	Pokemon pokemonTwo = trainerTwo.getActivePokemon();
+	int pokemonOneSpeed = pokemonOne.getSpeed().getValue();
+	int pokemonTwoSpeed = pokemonTwo.getSpeed().getValue();
+
     // Paralysis lowers speed by 1/2
-    if (pa.getLethalStatus() == Status.PARALYSIS ) {
+    if (pokemonOne.getLethalStatus() == Status.PARALYSIS ) {
       pokemonOneSpeed = (int) Math.round(pokemonOneSpeed/2.0);
     }
-    if (pb.getLethalStatus() == Status.PARALYSIS ) {
+    if (trainerTwo.getActivePokemon().getLethalStatus() == Status.PARALYSIS ) {
       pokemonTwoSpeed = (int) Math.round(pokemonTwoSpeed/2.0);
     }
     
-    if ( ma == null ) {
-      return 1;
+    if ( pokemonOne.getActiveMove() == null ) {
+      first = trainerOne;
+      second = trainerTwo;
     }
-    else if (mb == null ) {
-      return 2;
+    else if ( pokemonTwo.getActiveMove() == null ) {
+      first = trainerTwo;
+      second = trainerOne;
     }
-    else if ( ma.getPriority() > mb.getPriority()){
-      return 1;
+    else if ( pokemonOne.getActiveMove().getPriority() > pokemonTwo.getActiveMove().getPriority()){
+      first = trainerOne;
+      second = trainerTwo;
     }
-    else if ( mb.getPriority() > ma.getPriority()){
-      return 2;
+    else if ( pokemonTwo.getActiveMove().getPriority() > pokemonOne.getActiveMove().getPriority()){
+      first = trainerTwo;
+      second = trainerOne;
     }
     else if (pokemonOneSpeed > pokemonTwoSpeed){
-      return 1;
+      first = trainerOne;
+      second = trainerTwo;
     }
     else if (pokemonTwoSpeed > pokemonOneSpeed){
-      return 2;
+      first = trainerTwo;
+      second = trainerOne;
     }
     
     // Randomize in the event of a matching speed and priority case.
     else {
       if (Math.random() >= 0.5){
-        return 1;
+		first = trainerOne;
+		second = trainerTwo;
       }
-      else return 2;
+      else {
+        first = trainerTwo;
+        second = trainerOne;
+      }
     }     
   }
   
@@ -258,49 +271,29 @@ public class Battle
     // Battle loop
     do{
       
-      Pokemon trainerOnePokemon = trainerOne.getActivePokemon();
-      Pokemon trainerTwoPokemon = trainerTwo.getActivePokemon();
-      
-      trainerOnePokemon.selectMove(trainerOne);
-      trainerTwoPokemon.selectMove(trainerTwo);
+      trainerOne.getActivePokemon().selectMove(trainerOne);
+      trainerTwo.getActivePokemon().selectMove(trainerTwo);
       
       // Decide attacking order
-      int result = whosFirst(trainerOnePokemon, trainerTwoPokemon, 
-                     trainerOnePokemon.getActiveMove(), trainerTwoPokemon.getActiveMove() );
+      whosFirst();
      
       // Attack turns begin
-      if (result == 1) { // If trainer one attacks first
-        trainerOnePokemon.getLethalStatus().applyPreStatus(trainerOne); 
-        trainerOnePokemon.getnonLethalStatus().applyPreStatus(trainerOne);
-        if (trainerOne.canAttack()) { // If paralysis, sleep, or freeze didn't stop the turn.
-          trainerOne.Attack(trainerTwo);
-        } 
-        Thread.sleep(3000);
-        if (trainerTwo.canAttack()) {
-          trainerTwoPokemon.getLethalStatus().applyPreStatus(trainerTwo);
-          trainerTwoPokemon.getnonLethalStatus().applyPreStatus(trainerTwo);
-          if (trainerTwo.canAttack()) { // If paralysis, sleep, or freeze didn't stop the turn.
-            trainerTwo.Attack(trainerOne);
-          }     
-        }
-      } else { // If trainer two attacks first
-        trainerTwoPokemon.getLethalStatus().applyPreStatus(trainerTwo); 
-        trainerTwoPokemon.getnonLethalStatus().applyPreStatus(trainerTwo);
-        if (trainerTwo.canAttack()) { // If paralysis, sleep, or freeze didn't stop the turn.
-          trainerTwo.Attack(trainerOne);
-        }
-        Thread.sleep(3000);
-        if (trainerOne.canAttack()) {
-          trainerOnePokemon.getLethalStatus().applyPreStatus(trainerOne);
-          trainerOnePokemon.getnonLethalStatus().applyPreStatus(trainerOne);
-          if (trainerOne.canAttack()) { // If paralysis, sleep, or freeze didn't stop the turn.
-            trainerOne.Attack(trainerTwo);
-          }
-        }
+      first.getActivePokemon().getLethalStatus().applyPreStatus(first); 
+      first.getActivePokemon().getnonLethalStatus().applyPreStatus(first); 
+      if (first.canAttack()) { // If paralysis, sleep, or freeze didn't stop the turn.
+        first.Attack(second);
+      } 
+      Thread.sleep(3000);
+      if (second.canAttack()) {
+        second.getActivePokemon().getLethalStatus().applyPreStatus(trainerTwo);
+        second.getActivePokemon().getnonLethalStatus().applyPreStatus(trainerTwo);
+        if (second.canAttack()) { // If paralysis, sleep, or freeze didn't stop the turn.
+          second.Attack(first);
+        }     
       }
         
-      trainerOnePokemon.getLethalStatus().applyPostStatus(trainerOne);
-      trainerTwoPokemon.getLethalStatus().applyPostStatus(trainerTwo);
+      first.getActivePokemon().getLethalStatus().applyPostStatus(first);
+      second.getActivePokemon().getLethalStatus().applyPostStatus(second);
 
       trainerTwo.setCanAttack(true);
       trainerOne.setCanAttack(true);
@@ -404,7 +397,6 @@ public class Battle
   
   /**
    * Display battle messages related to the attacking turn.
-   * TODO: Move strings to their own class as constants
    * @param damage Damage done
    * @param move Move being used
    * @param target Pokemon being attacked

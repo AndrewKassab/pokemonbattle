@@ -22,7 +22,7 @@ public class Move
   private boolean effect; // if a move has an effect // TODO: change to extended classes 
   private boolean wasCritical; 
   private String effectMessage;
-    
+  
   public Move(String name, Type type, int damage, double accuracy, int pp, int priority, 
                 boolean isPhysical, boolean isSpecial, boolean hasEffect){
     this.name = name;
@@ -398,11 +398,11 @@ public class Move
       if (name.equals("Recover")) {
         System.out.println(attacker.getName() + " used Recover!");
         if (attacker.getHealth().getValue() != attacker.getMaxHealth()) {
-          System.out.println(attacker.getName() + " restored some HP!");
+          System.out.printf(Messages.HEALTH_RAISE, attacker.getName());
           attacker.setHealth(attacker.getHealth().getValue() + 
                               (int) Math.round(attacker.getMaxHealth()/2));
         }
-        else System.out.println(attacker.getName() + "'s health can't go any higher!");
+        else System.out.printf(Messages.HEALTH_CANT, attacker.getName());
         System.out.println();
         return;
       }
@@ -412,11 +412,11 @@ public class Move
       if (name.equals("Roost")) {
         System.out.println(attacker.getName() + " used Roost!");
         if (attacker.getHealth().getValue() != attacker.getMaxHealth()) {
-          System.out.println(attacker.getName() + " restored some HP!");
+          System.out.printf(Messages.HEALTH_RAISE, attacker.getName());
           attacker.setHealth(attacker.getHealth().getValue() + 
                               (int) Math.round(attacker.getMaxHealth()/2));
         }
-        else System.out.println(attacker.getName() + "'s health can't go any higher!");
+        else System.out.printf(Messages.HEALTH_CANT, attacker.getName() );
         System.out.println();
         return;
       }
@@ -434,12 +434,12 @@ public class Move
         }  
         attacker.setStatus(Status.SLEEP, StatusType.LETHAL);
         if (attacker.getHealth().getValue() == attacker.getMaxHealth()) {
-          System.out.println(attacker.getName() + "'s health can't go any higher!");
+          System.out.printf(Messages.HEALTH_CANT, attacker.getName() );
           System.out.println();
         }
         else {
           attacker.setHealth(attacker.getMaxHealth());
-          System.out.println(attacker.getName() + "'s health is restored to max");  
+          System.out.printf(Messages.HEALTH_MAX, attacker.getName() );
           System.out.println();
         }
         return;
@@ -454,7 +454,7 @@ public class Move
           if ( typeOne == Type.GROUND || typeTwo == Type.GROUND || 
                 typeOne == Type.ELECTRIC || typeTwo == Type.ELECTRIC )
           {
-              System.out.println("But it didn't work!");
+			System.out.println(Messages.NO_EFF);
             System.out.println();
             return;
           }
@@ -467,7 +467,7 @@ public class Move
             System.out.println();
           }
         } else {
-          System.out.println("But it missed!");
+          System.out.println(Messages.MISSED_EFF);
           System.out.println();
         }
         return;
@@ -492,11 +492,11 @@ public class Move
               target.setStatus(Status.BADPOISON, StatusType.LETHAL);
             }
           } else {
-            System.out.println("But it didn't work!");
+            System.out.println(Messages.NO_EFF);
             System.out.println();
           }
         } else {
-          System.out.println("But it missed!");
+          System.out.println(Messages.MISSED_EFF);
           System.out.println();
         }
         return;
@@ -518,11 +518,11 @@ public class Move
               target.setStatus(Status.BURN,StatusType.LETHAL);
             }
           } else {
-            System.out.println("But it didn't work!");
+            System.out.println(Messages.NO_EFF);
             System.out.println();
           }
         } else {
-          System.out.println("But it missed!");
+          System.out.println(Messages.MISSED_EFF);
           System.out.println();
         }
         return;     
@@ -536,8 +536,8 @@ public class Move
           System.out.println(target.getName() + " is already confused!");
         }
         else {
-            System.out.println(target.getName() + " became confused!\n");
-            target.setStatus(Status.CONFUSION, StatusType.NONLETHAL);
+			System.out.println(target.getName() + " became confused!\n");
+			target.setStatus(Status.CONFUSION, StatusType.NONLETHAL);
         }
         return;
       }

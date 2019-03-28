@@ -10,12 +10,11 @@ public class Pokemon{
   
   private final String name;
   private final int pokeID;
-  private Type[] type; // TODO: Change to ArrayList 
+  private Type[] type; 
   private Move[] moves = new Move[4];
   private Move activeMove;
   private Status[] status; // ( 0 -> lethal, 1 -> nonlethal )
-  //TODO:
-  // private Status lethalStatus
+  // TODO: private Status lethalStatus
   // private Status nonLethalStatus
   private Stats stats;
   
@@ -197,6 +196,7 @@ public class Pokemon{
   /**
    * Handles move selection for trainer.
    * @return the move selected
+   * TODO: Change to be part of Trainer class
    */
   public void selectMove(Trainer t) {
     

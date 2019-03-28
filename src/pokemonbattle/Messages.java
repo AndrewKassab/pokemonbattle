@@ -28,6 +28,9 @@ public class Messages {
   static String ATT_SHARP = "%s's Attack rose sharply!\n";
   static String SPATT_CANT = "%s's Special Attack can't go any higher!\n";
   static String ATT_SPATT_SHARP = "%s's Attack and Special Attack have rose sharply!\n";
+  static String HEALTH_CANT = "%s's health can't go any higher!\n";
+  static String HEALTH_RAISE = "%s restored some HP!";
+  static String HEALTH_MAX = "%s's health is restored to max!\n";
   
   static String BATTLE_END = "The battle has ended!";
 
