@@ -1,0 +1,26 @@
+<project name = "pokemonbattle" >
+
+  <property file = "build.properties" />
+  
+  <target name="clean">
+    <delete dir="build"/>
+  </target>
+
+  <target name = "compile">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${src.dir}" destdir="${classes.dir}"/>
+  </target>
+
+  <target name = "jar" depends = "compile">
+    <jar destfile="${jar.dir}/${jar}" basedir="${classes.dir}">
+      <manifest>
+        <attribute name="Main-Class" value="pokemonbattle.Main" />
+      </manifest>
+    </jar>
+  </target>
+
+  <target name = "run" depends = "jar" >
+    <java jar="${jar.dir}/${jar}" fork="true"/>
+  </target>
+
+</project>
